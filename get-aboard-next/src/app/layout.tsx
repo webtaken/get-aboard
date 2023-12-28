@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import NavBar from "@/components/Navigation/NavBar";
 import Providers from "./providers";
+import { OpenAPI } from "@/client";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
+
+OpenAPI.BASE = process.env.BASE_PATH_API!;
 
 const inter = Inter({ subsets: ["latin"] });
 
