@@ -1,8 +1,8 @@
+import os
 from fastapi import FastAPI, status, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from json import load, dump, JSONDecodeError
 from datetime import datetime, timezone
-import os
 
 
 description = """
@@ -21,15 +21,16 @@ app = FastAPI(
     },
     servers=[
         {
-            "url": f"https://get-aboard-production.up.railway.app",
-            "description": "Production environment"
-        },
+            "url": os.getenv("BASE_PATH_API", "http://127.0.0.1:8000"),
+            "description": "The Base path for the API"
+        }
     ]
 )
 
 origins = [
     "http://localhost:3000",
     "https://get-aboard.vercel.app",
+    "https://get-aboard-production.up.railway.app"
 ]
 
 app.add_middleware(
