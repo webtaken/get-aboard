@@ -10,7 +10,7 @@ export default function Home() {
         process
       </h1>
       <h1 className="text-center text-4xl font-extrabold tracking-tight lg:text-5xl">
-        doesn't have to be painful
+        doesn&apos;t have to be painful
       </h1>
       <p className="text-xl text-center mt-10 text-muted-foreground">
         Employees on-boarding process in tech companies <br /> are often 🫠.
