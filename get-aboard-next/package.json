@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-client": "openapi --input http://127.0.0.1:8000/openapi.json --output ./src/client --client axios --useOptions --useUnionTypes"
+    "generate-client": "openapi --input http://127.0.0.1:8000/openapi.json --output ./src/client --useOptions --useUnionTypes"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.3",
