@@ -6,6 +6,7 @@ import { OpenAPI } from "@/client";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
+console.log(process.env.BASE_PATH_API);
 OpenAPI.BASE = process.env.BASE_PATH_API!;
 
 const inter = Inter({ subsets: ["latin"] });
