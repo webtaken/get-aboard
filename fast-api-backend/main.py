@@ -20,9 +20,8 @@ app = FastAPI(
         "email": "luckly083@gmail.com",
     },
     servers=[
-        {"url": "http://127.0.0.1:8000", "description": "Development environment"},
         {
-            "url": f"https://get-aboard-production.up.railway.app:{os.getenv('PORT', '8000')}",
+            "url": f"https://get-aboard-production.up.railway.app",
             "description": "Production environment"
         },
     ]
