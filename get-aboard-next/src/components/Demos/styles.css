@@ -1,0 +1,23 @@
+.wrapper {
+    flex-grow: 1;
+    height: 100%;
+}
+
+.react-flow .react-flow__handle {
+    width: 1rem;
+    height: 1rem;
+}
+
+.react-flow .react-flow__handle-top {
+    width: 0.625rem;
+    height: 0.625rem;
+    top: -1rem;
+    border-radius: 3px;
+}
+
+.react-flow .react-flow__handle-bottom {
+    bottom: -1rem;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 10px;
+}
