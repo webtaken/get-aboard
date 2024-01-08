@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShieldBan } from "lucide-react";
+import { Github, ShieldBan } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -16,10 +16,17 @@ export default function NavBar() {
         GET-ABOARD.
       </Link>
       <div className="flex items-center gap-10">
-        <ThemeToggler />
         <Link href="/demo" className="text-muted-foreground text-base">
           demo
         </Link>
+        <Link
+          href="https://github.com/webtaken/get-aboard"
+          target="_blank"
+          className="text-muted-foreground text-base flex items-center gap-2"
+        >
+          go to project <Github className="w-4 h-4" />
+        </Link>
+        <ThemeToggler />
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
