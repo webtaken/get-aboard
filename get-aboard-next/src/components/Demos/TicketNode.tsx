@@ -5,35 +5,70 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Handle, NodeProps, Position } from "reactflow";
 import { Content } from "@tiptap/react";
-import { MousePointerClick } from "lucide-react";
+import { Menu, MousePointerClick } from "lucide-react";
+import { Button } from "../ui/button";
 
-interface TicketNodeProps {
+export interface DataTicketNode {
   title: string;
   description: Content;
   tags?: string[];
   type: "input" | "normal";
+  openDescriptionHandler?: (modeId: string) => void;
 }
 
 export default function TicketNode({
   id,
   data,
   isConnectable,
-}: NodeProps<TicketNodeProps>) {
-  const { title, type, description, tags } = data;
+}: NodeProps<DataTicketNode>) {
+  const { title, type, tags, openDescriptionHandler } = data;
 
   return (
     <>
-      <Card className="w-96 border-foreground border hover:border-2 hover:cursor-pointer bg-slate-300 dark:bg-stone-950">
+      <Card className="w-96 border-foreground border bg-slate-300 dark:bg-stone-950">
         <CardHeader>
           <CardTitle className="tracking-tight flex items-center justify-between">
             {title}
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Menu className="w-6 h-6" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Options</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => {
+                    openDescriptionHandler && openDescriptionHandler(id);
+                  }}
+                >
+                  See Description
+                </DropdownMenuItem>
+                <DropdownMenuItem disabled>Delete</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </CardTitle>
         </CardHeader>
         <CardContent className="flex items-center gap-1">
-          See description <MousePointerClick className="w-4 h-4" />
+          <Button
+            variant="link"
+            className="p-0"
+            onClick={() => {
+              openDescriptionHandler && openDescriptionHandler(id);
+            }}
+          >
+            See description <MousePointerClick className="w-4 h-4" />
+          </Button>
         </CardContent>
         <CardFooter>
           {tags &&

@@ -15,7 +15,7 @@ import {
 } from "react";
 import Editor from "../Editors/Editor";
 import { Input } from "../ui/input";
-import { DataTicketNode } from "../Demos/Nodes";
+import { DataTicketNode } from "../Demos/TicketNode";
 
 interface TicketSheetProps {
   open: boolean;
