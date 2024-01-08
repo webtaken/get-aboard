@@ -7,6 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
+import { ThemeToggler } from "../Theming/ThemeToggler";
 
 export default function NavBar() {
   return (
@@ -15,6 +16,7 @@ export default function NavBar() {
         GET-ABOARD.
       </Link>
       <div className="flex items-center gap-10">
+        <ThemeToggler />
         <Link href="/demo" className="text-muted-foreground text-base">
           demo
         </Link>
