@@ -1,0 +1,202 @@
+openapi: 3.0.3
+info:
+  title: Your Project API
+  version: 1.0.0
+  description: Your project description
+paths:
+  /flows/:
+    get:
+      operationId: flows_list
+      tags:
+      - flows
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Flow'
+          description: ''
+    post:
+      operationId: flows_create
+      tags:
+      - flows
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Flow'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Flow'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Flow'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Flow'
+          description: ''
+  /flows/{flow_id}/:
+    get:
+      operationId: flows_retrieve
+      parameters:
+      - in: path
+        name: flow_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this flow.
+        required: true
+      tags:
+      - flows
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Flow'
+          description: ''
+    put:
+      operationId: flows_update
+      parameters:
+      - in: path
+        name: flow_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this flow.
+        required: true
+      tags:
+      - flows
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Flow'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Flow'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Flow'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Flow'
+          description: ''
+    patch:
+      operationId: flows_partial_update
+      parameters:
+      - in: path
+        name: flow_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this flow.
+        required: true
+      tags:
+      - flows
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedFlow'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedFlow'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedFlow'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Flow'
+          description: ''
+    delete:
+      operationId: flows_destroy
+      parameters:
+      - in: path
+        name: flow_id
+        schema:
+          type: integer
+        description: A unique integer value identifying this flow.
+        required: true
+      tags:
+      - flows
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    Flow:
+      type: object
+      properties:
+        flow_id:
+          type: integer
+          readOnly: true
+        user_id:
+          type: integer
+        title:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+        edges: {}
+      required:
+      - description
+      - flow_id
+      - title
+      - user_id
+    PatchedFlow:
+      type: object
+      properties:
+        flow_id:
+          type: integer
+          readOnly: true
+        user_id:
+          type: integer
+        title:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+        edges: {}
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
