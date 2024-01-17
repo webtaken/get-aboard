@@ -1,1 +1,1 @@
-web: uvicorn GetAboardBackend.asgi:application --host 0.0.0.0
+web: gunicorn GetAboardBackend.asgi:application -k uvicorn.workers.UvicornWorker
