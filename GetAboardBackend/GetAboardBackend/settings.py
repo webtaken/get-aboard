@@ -31,7 +31,12 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = True if os.getenv('DEBUG', True) == True or os.getenv(
     'DEBUG', True) == 'True' else False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    '.localhost',
+    '127.0.0.1',
+    '[::1]',
+    'get-aboard-production.up.railway.app'
+]
 
 # CORS WHITELIST
 CORS_ALLOWED_ORIGINS = [
