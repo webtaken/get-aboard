@@ -1,10 +1,9 @@
 import io
 from .models import Flow, Node
-from rest_framework.parsers import JSONParser
-from rest_framework import permissions, viewsets
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.renderers import JSONRenderer
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework.request import Request
 from .serializers import FlowSerializer, NodeSerializer
 
@@ -12,6 +11,7 @@ from .serializers import FlowSerializer, NodeSerializer
 class FlowViewSet(viewsets.ModelViewSet):
     queryset = Flow.objects.all().order_by('-updated_at')
     serializer_class = FlowSerializer
+    permission_classes = [IsAuthenticated]
 
     def retrieve(self, request: Request, pk=None):
         get_nodes = request.query_params.pop('get_nodes', None)
@@ -29,6 +29,7 @@ class FlowViewSet(viewsets.ModelViewSet):
 class NodeViewSet(viewsets.ModelViewSet):
     queryset = Node.objects.all()
     serializer_class = NodeSerializer
+    permission_classes = [IsAuthenticated]
 
     @extend_schema(
         parameters=[
@@ -63,8 +64,4 @@ class NodeViewSet(viewsets.ModelViewSet):
             drop=to_drop,
             many=True,
         )
-        # stream = io.BytesIO(json)
-        # data = JSONParser().parse(stream)
-        # serializer = NodeSerializer(data=data, many=True)
-        # serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
