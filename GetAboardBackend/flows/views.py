@@ -55,7 +55,6 @@ class NodeViewSet(viewsets.ModelViewSet):
         if flow_id:
             nodes = nodes.filter(flow_id=flow_id)
         to_drop = None
-        print(description)
         if not description:
             nodes = nodes.defer('description')
             to_drop = ('description',)
