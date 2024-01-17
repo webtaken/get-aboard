@@ -13,18 +13,6 @@ class FlowViewSet(viewsets.ModelViewSet):
     serializer_class = FlowSerializer
     permission_classes = [IsAuthenticated]
 
-    def retrieve(self, request: Request, pk=None):
-        get_nodes = request.query_params.pop('get_nodes', None)
-        if get_nodes:
-            flow = Flow.objects.get(pk=pk)
-            nodes = Flow.node_set.all()
-            print(nodes)
-            serializer = NodeSerializer(nodes, many=True)
-            return Response(serializer.data)
-        flow = Flow.objects.get(pk=pk)
-        serializer = FlowSerializer(flow)
-        return Response(serializer.data)
-
 
 class NodeViewSet(viewsets.ModelViewSet):
     queryset = Node.objects.all()

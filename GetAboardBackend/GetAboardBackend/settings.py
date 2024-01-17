@@ -36,11 +36,11 @@ ALLOWED_HOSTS = ['*']
 # CORS WHITELIST
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
-    'https://get-aboard-production.up.railway.app/'
+    'https://get-aboard-production.up.railway.app'
 ]
 
 # CSRF
-CSRF_TRUSTED_ORIGINS = ['https://get-aboard-production.up.railway.app/']
+CSRF_TRUSTED_ORIGINS = ['https://get-aboard-production.up.railway.app']
 
 # Application definition
 
