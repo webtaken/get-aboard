@@ -28,10 +28,19 @@ load_dotenv(os.path.join(BASE_DIR, ".env.local"))
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if os.getenv('DEBUG', True) == True or os.getenv(
+    'DEBUG', True) == 'True' else False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
+# CORS WHITELIST
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'https://get-aboard-production.up.railway.app/'
+]
+
+# CSRF
+CSRF_TRUSTED_ORIGINS = ['https://get-aboard-production.up.railway.app/']
 
 # Application definition
 
