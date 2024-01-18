@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv(os.path.join(BASE_DIR, ".env.local"))
+load_dotenv(os.path.join(BASE_DIR, ".env.prod"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -31,13 +31,13 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = True if os.getenv('DEBUG', True) == True or os.getenv(
     'DEBUG', True) == 'True' else False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['get-aboard-production.up.railway.app']
 
 # CORS WHITELIST
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
+CORS_ALLOWED_ORIGINS = ['https://get-aboard-production.up.railway.app']
 
 # CSRF
-CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+CSRF_TRUSTED_ORIGINS = ['https://get-aboard-production.up.railway.app']
 
 # Application definition
 
@@ -90,12 +90,9 @@ WSGI_APPLICATION = 'GetAboardBackend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-DATABASE_URL = os.getenv("DATABASE_URL", "")
+DATABASE_URL = os.getenv("DATABASE_URL")
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    },
+    'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=1800),
 }
 
 
@@ -162,27 +159,3 @@ SIMPLE_JWT = {
     # Lifetime 1 week
     "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
 }
-
-
-# Testing
-# LOGGING = {
-#     'version': 1,
-#     'filters': {
-#         'require_debug_true': {
-#             '()': 'django.utils.log.RequireDebugTrue',
-#         }
-#     },
-#     'handlers': {
-#         'console': {
-#             'level': 'DEBUG',
-#             'filters': ['require_debug_true'],
-#             'class': 'logging.StreamHandler',
-#         }
-#     },
-#     'loggers': {
-#         'django.db.backends': {
-#             'level': 'DEBUG',
-#             'handlers': ['console'],
-#         }
-#     }
-# }

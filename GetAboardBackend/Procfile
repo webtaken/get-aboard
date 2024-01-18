@@ -1,1 +1,1 @@
-web: gunicorn GetAboardBackend.asgi:application -k uvicorn.workers.UvicornWorker
+web: export ENV_MODE=production && gunicorn GetAboardBackend.asgi:application -k uvicorn.workers.UvicornWorker
