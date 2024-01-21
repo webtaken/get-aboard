@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import NavBar from "@/components/Navigation/NavBar";
-import Providers, { ThemeProvider } from "./providers";
+import Providers from "./providers";
 import { Toaster } from "@/components/ui/toaster";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-slate-100 dark:bg-slate-900`}>
-        <ThemeProvider
+        <Providers
           attribute="class"
           defaultTheme="system"
           enableSystem
@@ -30,7 +30,7 @@ export default function RootLayout({
           <NavBar />
           {children}
           <Toaster />
-        </ThemeProvider>
+        </Providers>
         <Analytics />
       </body>
     </html>
