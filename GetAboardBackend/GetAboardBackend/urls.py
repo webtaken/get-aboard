@@ -29,10 +29,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('flows/', include((router.urls, 'flows'))),
 
-    # SECURITY jwt
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path("api/auth/", include("nextjs_drf_auth.urls")),
 
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     # Optional UI:
