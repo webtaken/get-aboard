@@ -91,3 +91,7 @@
     background-position: 100% 50%;
   }
 }
+
+.highlighted-text {
+  text-shadow: 1px 1px 20px rgba(183, 44, 238, 0.89);
+}

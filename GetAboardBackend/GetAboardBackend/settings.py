@@ -197,7 +197,9 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'Get-Aboard API',
     'DESCRIPTION': 'The API for Get-Aboard side project',
     'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
+    'SERVE_INCLUDE_SCHEMA': True,
+    # OTHER SETTINGS
+    'SERVERS': [{'url': 'http://127.0.0.1:8001', 'description': 'my local server'}]
 }
 
 SIMPLE_JWT = {
