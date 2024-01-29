@@ -20,8 +20,8 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-    BASE: 'https://get-aboard-production.up.railway.app',
-    VERSION: '0.0.1',
+    BASE: 'http://127.0.0.1:8001',
+    VERSION: '1.0.0',
     WITH_CREDENTIALS: false,
     CREDENTIALS: 'include',
     TOKEN: undefined,

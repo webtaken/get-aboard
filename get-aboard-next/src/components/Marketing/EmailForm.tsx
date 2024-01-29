@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "../ui/use-toast";
-import { MarketingService } from "@/client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -32,20 +31,9 @@ export default function EmailForm() {
   const { toast } = useToast();
 
   const onSubmitEmail = async (values: z.infer<typeof formSchema>) => {
-    try {
-      await MarketingService.registerEmailRegisterEmailPost({
-        email: values.email,
-      });
-      toast({
-        title: "E-mail sent successfully ✔️",
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title:
-          "E-mail sent failed try again later or contact @snode_rojas1 on X",
-      });
-    }
+    toast({
+      title: "E-mail sent successfully ✔️",
+    });
   };
 
   return (

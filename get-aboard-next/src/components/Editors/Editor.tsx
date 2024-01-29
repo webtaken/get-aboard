@@ -82,8 +82,12 @@ export default function Editor({ content }: EditorProps) {
 
   return (
     <>
-      <EditorContent editor={editor} />
-      <div className="flex gap-2 mt-4">
+      <EditorContent
+        className="w-[1500px]"
+        style={{ width: "2000px" }}
+        editor={editor}
+      />
+      <div className="flex items-center mt-4">
         <Button
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editor.can().chain().focus().toggleBold().run()}

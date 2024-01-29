@@ -30,7 +30,7 @@ export default function NavBar() {
   }
 
   return (
-    <nav className="flex justify-between py-5 px-10">
+    <nav className="flex justify-between py-5">
       <Link
         href="/"
         className={`flex items-center gap-x-2 ${notoSans.className}`}
@@ -39,7 +39,7 @@ export default function NavBar() {
         <span className="text-2xl font-semibold">Get-Aboard</span>
       </Link>
       <div className="flex items-center gap-10">
-        <Link href="/demo" className="text-muted-foreground text-base">
+        <Link href="/demo" className="text-base highlighted-text">
           demo
         </Link>
         <Link

@@ -13,6 +13,31 @@ class FlowViewSet(viewsets.ModelViewSet):
     serializer_class = FlowSerializer
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='user_id',
+                description='get all the flows related to a user',
+                required=False,
+                type=int,
+            ),
+        ]
+    )
+    def list(self, request: Request, *args, **kwargs):
+        user_id = request.query_params.get('user_id', None)
+        flows = Flow.objects.all().defer('edges')
+        print(user_id)
+        if user_id:
+            flows = flows.filter(user_id=user_id)
+        print(flows.query)
+        to_drop = ('edges',)
+        serializer = FlowSerializer(
+            flows,
+            drop=to_drop,
+            many=True,
+        )
+        return Response(serializer.data)
+
 
 class NodeViewSet(viewsets.ModelViewSet):
     queryset = Node.objects.all()

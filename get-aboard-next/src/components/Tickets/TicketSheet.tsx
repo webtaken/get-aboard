@@ -33,8 +33,8 @@ export default function TicketSheet({ open, setOpen, data }: TicketSheetProps) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent className="w-1/2 sm:max-w-none" side="right">
-        <SheetHeader className="pr-5 pt-5">
-          <SheetTitle className="w-11/12">
+        <SheetHeader className="pr-6 pt-6">
+          <SheetTitle className="my-2">
             <Input
               defaultValue={title}
               autoFocus={false}
@@ -42,9 +42,7 @@ export default function TicketSheet({ open, setOpen, data }: TicketSheetProps) {
               className="text-4xl"
             />
           </SheetTitle>
-          <SheetDescription asChild className="w-11/12 mx-auto">
-            <Editor content={description} />
-          </SheetDescription>
+          <Editor content={description} />
         </SheetHeader>
       </SheetContent>
     </Sheet>

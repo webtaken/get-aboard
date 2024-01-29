@@ -1,4 +1,6 @@
 import EmailForm from "@/components/Marketing/EmailForm";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -13,10 +15,18 @@ export default function Home() {
         doesn&apos;t have to be painful
       </h1>
       <p className="text-xl text-center mt-10 text-muted-foreground">
-        Employees on-boarding process in tech companies <br /> are often 🫠.
-        Improve it with <span className="font-semibold">Get-Aboard</span>
+        Avoid tricky 🫠 on-boardings with{" "}
+        <span className="font-semibold">Get-Aboard</span>
       </p>
-      <EmailForm />
+      <div className="flex flex-col justify-center mt-5 gap-y-2">
+        <Button className="mx-auto w-32 text-base" asChild>
+          <Link href="/login">Login</Link>
+        </Button>
+        <p className="text-sm text-center">
+          We&apos;ll launch a first version soon 👀 <br />
+          <span className="font-bold">Login</span> to receive the latest updates
+        </p>
+      </div>
     </main>
   );
 }
