@@ -3,10 +3,10 @@ import axios from "axios";
 import { NextAuthOptions } from "next-auth";
 
 // These two values should be a bit less than actual token lifetimes
-// 5 days and 20 hours
-const BACKEND_ACCESS_TOKEN_LIFETIME = 5 * 24 * 60 * 60 + 20 * 60 * 60;
-// 9 days and 20 hours
-const BACKEND_REFRESH_TOKEN_LIFETIME = 9 * 24 * 60 * 60 + 20 * 60 * 60;
+// 6 days
+const BACKEND_ACCESS_TOKEN_LIFETIME = 6 * 24 * 60 * 60;
+// 29 days
+const BACKEND_REFRESH_TOKEN_LIFETIME = 29 * 24 * 60 * 60;
 
 const getCurrentEpochTime = () => {
   return Math.floor(new Date().getTime() / 1000);
@@ -63,6 +63,30 @@ export const authOptions: NextAuthOptions = {
         // eslint-disable-next-line
         // @ts-ignore
         token.django_data = { ...account.django_data };
+        token.ref = getCurrentEpochTime() + BACKEND_ACCESS_TOKEN_LIFETIME;
+        return token;
+      }
+
+      // Refresh the backend token if necessary
+      // eslint-disable-next-line
+      // @ts-ignore
+      if (getCurrentEpochTime() > token["ref"]) {
+        const response = await axios({
+          method: "post",
+          url: `${process.env.NEXTAUTH_BACKEND_URL}/api/auth/token/refresh/`,
+          data: {
+            // eslint-disable-next-line
+            // @ts-ignore
+            refresh: token.django_data["refresh"],
+          },
+        });
+        // eslint-disable-next-line
+        // @ts-ignore
+        token.django_data["access"] = response.data.access;
+        // eslint-disable-next-line
+        // @ts-ignore
+        // token.django_data["refresh"] = response.data.refresh;
+        token["ref"] = getCurrentEpochTime() + BACKEND_ACCESS_TOKEN_LIFETIME;
       }
       return token;
     },

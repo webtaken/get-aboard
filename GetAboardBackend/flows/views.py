@@ -25,11 +25,9 @@ class FlowViewSet(viewsets.ModelViewSet):
     )
     def list(self, request: Request, *args, **kwargs):
         user_id = request.query_params.get('user_id', None)
-        flows = Flow.objects.all().defer('edges')
-        print(user_id)
+        flows = Flow.objects.all().order_by("-updated_at").defer('edges')
         if user_id:
             flows = flows.filter(user_id=user_id)
-        print(flows.query)
         to_drop = ('edges',)
         serializer = FlowSerializer(
             flows,

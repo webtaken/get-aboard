@@ -6,18 +6,28 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-import { Flow } from "@/client";
 import GetAboardIcon from "../Icons/GetAboardIcon";
-import { getUserFlows } from "@/lib/utils";
+import { getUserFlows } from "@/lib/flow-actions";
 import { Skeleton } from "../ui/skeleton";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Pencil } from "lucide-react";
+import Link from "next/link";
 
-interface FlowsListProps {
-  flows: Flow[];
-}
+dayjs.extend(relativeTime);
 
 export async function FlowsList() {
-  setTimeout(() => {}, 2000);
   const flows = await getUserFlows();
 
   if (flows === undefined) {
@@ -37,17 +47,41 @@ export async function FlowsList() {
             className="min-w-[200px] transition ease-in-out delay-100 duration-200 hover:shadow-xl hover:cursor-pointer"
           >
             <CardHeader className="space-y-2">
-              <CardTitle className="flex items-center gap-x-2">
-                <GetAboardIcon className="w-6 h-6 stroke-slate-900 dark:stroke-slate-200" />{" "}
-                {flow.title}
+              <CardTitle className="flex items-center justify-between gap-x-2">
+                <div className="flex items-center gap-x-2">
+                  <GetAboardIcon className="w-6 h-6 stroke-slate-900 dark:stroke-slate-200" />{" "}
+                  {flow.title}
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="icon">
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href={`/dashboard/flows/${flow.flow_id}`}>
+                        Edit
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>Delete</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </CardTitle>
-              <CardDescription>Click to see</CardDescription>
+              <CardDescription className="pl-8">Click to see</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="line-clamp-3">{flow.description}</p>
             </CardContent>
             <CardFooter>
-              <p>{flow.updated_at}</p>
+              <Badge
+                variant="outline"
+                title={dayjs(flow.updated_at).format("YYYY-MM-DD (hh:mm A)")}
+              >
+                {dayjs(flow.updated_at).fromNow()}
+              </Badge>
             </CardFooter>
           </Card>
         );
