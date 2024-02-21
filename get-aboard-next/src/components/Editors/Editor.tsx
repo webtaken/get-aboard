@@ -11,6 +11,7 @@ import {
   List,
   ListOrdered,
   Redo,
+  Save,
   SquareCode,
   Strikethrough,
   Text,
@@ -21,12 +22,19 @@ import StarterKit from "@tiptap/starter-kit";
 import React, { useCallback } from "react";
 import "./styles.css";
 import { Button } from "../ui/button";
+import { PatchedNode } from "@/client";
+import { updateNodeById } from "@/lib/node-actions";
+import { useFlowStore } from "@/stores/FlowStore";
+import { useToast } from "../ui/use-toast";
 
 interface EditorProps {
+  nodeId: string;
   content?: Content;
 }
 
-export default function Editor({ content }: EditorProps) {
+export default function Editor({ nodeId, content }: EditorProps) {
+  const { toast } = useToast();
+  const { setNodeUpdated } = useFlowStore();
   const editor = useEditor({
     extensions: [
       Link.configure({
@@ -43,13 +51,10 @@ export default function Editor({ content }: EditorProps) {
         },
       }),
     ],
-    onUpdate: ({ editor }) => {
-      console.log(editor.getHTML());
-    },
     editorProps: {
       attributes: {
         class:
-          "prose dark:prose-invert prose-sm hover:prose-a:cursor-pointer h-72 md:h-80 lg:h-96 overflow-auto py-2 px-2",
+          "prose dark:prose-invert min-w-full prose-sm hover:prose-a:cursor-pointer h-72 md:h-80 lg:h-96 overflow-auto p-1",
       },
     },
     content: content,
@@ -82,12 +87,8 @@ export default function Editor({ content }: EditorProps) {
 
   return (
     <>
-      <EditorContent
-        className="w-[1500px]"
-        style={{ width: "2000px" }}
-        editor={editor}
-      />
-      <div className="flex items-center mt-4">
+      <EditorContent editor={editor} />
+      <div className="flex items-center gap-x-1 mt-4">
         <Button
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editor.can().chain().focus().toggleBold().run()}
@@ -222,6 +223,22 @@ export default function Editor({ content }: EditorProps) {
           <Redo className="w-4 h-4" />
         </Button>
       </div>
+      <Button
+        className="flex items-center gap-x-2"
+        onClick={async () => {
+          const newData: PatchedNode = {
+            description: editor.getHTML(),
+          };
+          const updatedNode = await updateNodeById(+nodeId, newData);
+          setNodeUpdated();
+          toast({
+            description: "Your node was updated!",
+            duration: 1000,
+          });
+        }}
+      >
+        <Save className="w-4 h-4" /> Save
+      </Button>
     </>
   );
 }

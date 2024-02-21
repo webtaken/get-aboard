@@ -22,6 +22,7 @@ import { Button } from "../ui/button";
 export interface DataTicketNode {
   title: string;
   description: Content;
+  onDB: boolean;
   tags?: string[];
   type: "input" | "normal";
   openDescriptionHandler?: (modeId: string) => void;

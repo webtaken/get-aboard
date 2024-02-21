@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { FlowsList, FlowsListFallback } from "@/components/Flows/FlowsList";
-import { getUserFlows } from "@/lib/flow-actions";
+import { getUserFlows } from "@/lib/node-actions";
 import FlowsCreator from "@/components/Flows/FlowsCreator";
 
 export default async function Page() {

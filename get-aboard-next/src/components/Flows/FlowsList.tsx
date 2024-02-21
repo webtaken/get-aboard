@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import GetAboardIcon from "../Icons/GetAboardIcon";
-import { getUserFlows } from "@/lib/flow-actions";
+import { getUserFlows } from "@/lib/node-actions";
 import { Skeleton } from "../ui/skeleton";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";

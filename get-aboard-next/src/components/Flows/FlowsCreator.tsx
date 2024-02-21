@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "../ui/textarea";
-import { State, createFlow } from "@/lib/actions";
+import { State, createFlow } from "@/lib/flow-actions";
 import { useFormState } from "react-dom";
 
 export default function FlowsCreator() {

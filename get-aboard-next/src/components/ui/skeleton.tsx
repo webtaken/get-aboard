@@ -1,4 +1,4 @@
-import { cn } from "@/lib/flow-actions";
+import { cn } from "@/lib/utils";
 
 function Skeleton({
   className,
