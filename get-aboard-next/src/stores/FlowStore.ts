@@ -1,35 +1,35 @@
 import { create } from "zustand";
-import { Node, Edge } from "reactflow";
+import { Node } from "@/client";
 import { DataTicketNode } from "@/components/Demos/TicketNode";
 
 export interface FlowState {
-  nodeId: string;
+  flowId: number | null;
+  nodeId: number | null;
+  node: Node | null;
   nodeUpdated: boolean;
-  nodes: Node<DataTicketNode>[];
-  edges: Edge[];
-  setEdgesHandler: (newEdges: Edge[]) => void;
-  setNodesHandler: (newNodes: Node<DataTicketNode>[]) => void;
-  changeNodeHandler: (newId: string) => void;
+  setFlowId: (newId: number | null) => void;
+  setNodeId: (newId: number | null) => void;
   setNodeUpdated: () => void;
+  setNode: (newNode: Node | null) => void;
 }
 
 export const useFlowStore = create<FlowState>()((set) => {
   return {
-    nodeId: "0",
-    nodes: [],
-    edges: [],
+    flowId: null,
+    nodeId: null,
+    node: null,
     nodeUpdated: false,
-    setNodesHandler: (newNodes) =>
+    setFlowId: (newId) =>
       set((state) => ({
-        nodes: [...newNodes],
+        flowId: newId,
       })),
-    setEdgesHandler: (newEdges) =>
-      set((state) => ({
-        edges: [...newEdges],
-      })),
-    changeNodeHandler: (newId) =>
+    setNodeId: (newId) =>
       set((state) => ({
         nodeId: newId,
+      })),
+    setNode: (newNode) =>
+      set((state) => ({
+        node: newNode,
       })),
     setNodeUpdated: () =>
       set((state) => ({

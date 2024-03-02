@@ -5,13 +5,12 @@ from django.conf import settings
 class Flow(models.Model):
     flow_id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='flows'
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="flows"
     )
     title = models.CharField(max_length=100)
     description = models.TextField()
-    edges = models.JSONField(default=dict)
+    edges_map = models.JSONField(default=list)
+    nodes_map = models.JSONField(default=list)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -19,20 +18,14 @@ class Flow(models.Model):
         return self.title
 
     class Meta:
-        db_table = 'flows'
+        db_table = "flows"
 
 
 class Node(models.Model):
     node_id = models.BigAutoField(primary_key=True)
-    flow = models.ForeignKey(
-        Flow,
-        on_delete=models.CASCADE,
-        related_name='nodes'
-    )
+    flow = models.ForeignKey(Flow, on_delete=models.CASCADE, related_name="nodes")
     title = models.CharField(max_length=100)
-    x_pos = models.FloatField()
-    y_pos = models.FloatField()
-    description = models.TextField()
+    description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -40,4 +33,4 @@ class Node(models.Model):
         return self.title
 
     class Meta:
-        db_table = 'nodes'
+        db_table = "nodes"

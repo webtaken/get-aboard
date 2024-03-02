@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import GetAboardIcon from "../Icons/GetAboardIcon";
-import { getUserFlows } from "@/lib/node-actions";
+import { getUserFlows } from "@/lib/flow-actions";
 import { Skeleton } from "../ui/skeleton";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -24,10 +24,12 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Pencil } from "lucide-react";
 import Link from "next/link";
+import { useFlowStore } from "@/stores/FlowStore";
 
 dayjs.extend(relativeTime);
 
 export async function FlowsList() {
+  const { setFlowId } = useFlowStore();
   const flows = await getUserFlows();
 
   if (flows === undefined) {
@@ -62,7 +64,10 @@ export async function FlowsList() {
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link href={`/dashboard/flows/${flow.flow_id}`}>
+                      <Link
+                        href={`/dashboard/flows/${flow.flow_id}`}
+                        onClick={() => setFlowId(flow.flow_id)}
+                      >
                         Edit
                       </Link>
                     </DropdownMenuItem>

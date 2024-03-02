@@ -7,9 +7,7 @@ export type Node = {
     readonly node_id: number;
     flow: number;
     title: string;
-    x_pos: number;
-    y_pos: number;
-    description: string;
+    description?: string;
     readonly created_at: string;
     readonly updated_at: string;
 };

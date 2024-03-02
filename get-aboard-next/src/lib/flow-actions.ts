@@ -4,7 +4,7 @@ import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 import { revalidatePath } from "next/cache";
-import { FlowsService, OpenAPI } from "@/client";
+import { FlowsService, OpenAPI, PatchedFlow } from "@/client";
 
 // This is temporary until @types/react-dom is updated
 export type State = {
@@ -33,7 +33,6 @@ export async function createFlow(prevState: State, formData: FormData) {
     };
   }
   const { title, description } = validatedFields.data;
-  const edges = "[]";
 
   try {
     const session = await getServerSession(authOptions);
@@ -45,14 +44,12 @@ export async function createFlow(prevState: State, formData: FormData) {
     // @ts-ignore
     const django_user = session.django_data.user;
     await FlowsService.flowsCreate({
+      // @ts-ignore
       requestBody: {
         user: +django_user.pk,
         flow_id: 0,
         title: title,
         description: description,
-        edges: edges,
-        created_at: "",
-        updated_at: "",
       },
     });
     revalidatePath(`/dashboard`);
@@ -90,6 +87,23 @@ export async function getFlowById(id: number) {
     OpenAPI.TOKEN = session.django_data.access;
     const flow = await FlowsService.flowsRetrieve({ flowId: id });
     return flow;
+  } catch (error) {
+    return undefined;
+  }
+}
+
+export async function updateFlowById(id: number, data: PatchedFlow) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) return undefined;
+    // eslint-disable-next-line
+    // @ts-ignore
+    OpenAPI.TOKEN = session.django_data.access;
+    const updatedFlow = await FlowsService.flowsPartialUpdate({
+      flowId: id,
+      requestBody: data,
+    });
+    return updatedFlow;
   } catch (error) {
     return undefined;
   }

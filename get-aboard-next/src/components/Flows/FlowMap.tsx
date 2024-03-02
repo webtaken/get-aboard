@@ -1,9 +1,7 @@
 "use client";
 
 import {
-  Dispatch,
   DragEventHandler,
-  SetStateAction,
   useCallback,
   useEffect,
   useRef,
@@ -25,85 +23,116 @@ import ReactFlow, {
   Panel,
   ReactFlowProvider,
   Edge,
+  OnNodesDelete,
 } from "reactflow";
 import TicketSheetEditor from "../Tickets/TicketSheetEditor";
-import "reactflow/dist/style.css";
 import TicketNode, { DataTicketNode } from "@/components/Demos/TicketNode";
 import FlowControls from "./FlowControls";
-import { useDebounce } from "use-debounce";
+import { Node as ApiNode } from "@/client";
 import { useFlowStore } from "@/stores/FlowStore";
+import { useDebounce } from "@uidotdev/usehooks";
+import { toast } from "../ui/use-toast";
+import { updateFlowById } from "@/lib/flow-actions";
 
 // we define the nodeTypes outside of the component to prevent re-renderings
 // you could also use useMemo inside the component
 const nodeTypes: NodeTypes = { ticket: TicketNode };
 const getId = () => uuidv4();
 
+export const buildFlowNodesMap = (nodes: Node<DataTicketNode>[]) => {
+  return nodes.map((node) => ({
+    id: node.id,
+    type: node.type,
+    position: { ...node.position },
+    data: { ...node.data },
+  }));
+};
+export const buildFlowEdgesMap = (edges: Edge[]) => {
+  return edges.map((edge) => ({
+    id: edge.id,
+    source: edge.source,
+    target: edge.target,
+  }));
+};
+
 interface FlowProps {
-  nodeId?: string;
+  defaultNodeId?: string;
   initialNodes: Node<DataTicketNode>[];
   initialEdges: Edge[];
-  openEditor: boolean;
-  setOpenEditor: Dispatch<SetStateAction<boolean>>;
 }
 
-export function Flow({
-  nodeId,
-  initialNodes,
-  openEditor,
-  initialEdges,
-  setOpenEditor,
-}: FlowProps) {
+export function Flow({ defaultNodeId, initialNodes, initialEdges }: FlowProps) {
   const reactFlowWrapper = useRef(null);
+  const { flowId } = useFlowStore();
   const connectingNodeId = useRef<string | null>(null);
   const [nodes, setNodes, onNodesChange] =
     useNodesState<DataTicketNode>(initialNodes);
-  const [nodesDebounced] = useDebounce(nodes, 1000);
+  const debouncedNodes = useDebounce(nodes, 500);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const debouncedEdges = useDebounce(edges, 500);
   const { screenToFlowPosition, setViewport } = useReactFlow();
-  const { changeNodeHandler } = useFlowStore();
+  const { setNodeId } = useFlowStore();
 
   const startTransform = useCallback(() => {
     setViewport({ x: 600, y: 50, zoom: 1 }, { duration: 800 });
   }, [setViewport]);
 
-  const openDescriptionHandler = useCallback(
-    (nodeId: string) => {
-      const foundIndex = nodes.findIndex((node) => node.id == nodeId);
-      if (foundIndex === -1) return;
-      changeNodeHandler(nodes[foundIndex].id);
-      setOpenEditor(true);
-    },
-    [nodes]
-  );
-
   useEffect(() => {
-    nodes.forEach((node) => {
-      if (!node.data.openDescriptionHandler) {
-        node.data.openDescriptionHandler = openDescriptionHandler;
+    const saveHandler = async () => {
+      const nodesMap = buildFlowNodesMap(debouncedNodes);
+      const edgesMap = buildFlowEdgesMap(debouncedEdges);
+
+      const updatedFlow = await updateFlowById(flowId!, {
+        nodes_map: nodesMap,
+        edges_map: edgesMap,
+      });
+
+      if (updatedFlow) {
+        toast({ description: "Saved successfully.", duration: 700 });
+      } else {
+        toast({
+          variant: "destructive",
+          description:
+            "Error while saving the flow, please reload the page or contact support.",
+        });
       }
-    });
-  }, [nodes]);
+    };
+
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "s" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        saveHandler();
+      }
+    };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, [debouncedNodes, debouncedEdges]);
 
   useEffect(() => {
-    const nodesToSave = nodes.filter((node) => !node.data.onDB);
-    console.log("nodes to save: ", nodesToSave);
-  }, [nodesDebounced]);
-
-  useEffect(() => {
-    let defaultSelectedIndex = 0;
-    if (nodeId) {
-      defaultSelectedIndex = nodes.findIndex((node) => node.id == nodeId);
-    }
-    if (defaultSelectedIndex !== -1 && nodeId !== undefined) {
-      setOpenEditor(true);
-      changeNodeHandler(nodes[defaultSelectedIndex].id);
-    }
+    // let defaultSelectedIndex = 0;
+    // if (nodeId) {
+    //   defaultSelectedIndex = nodes.findIndex((node) => node.id == nodeId);
+    // }
+    // if (defaultSelectedIndex !== -1 && nodeId !== undefined) {
+    //   setNodeId(nodes[defaultSelectedIndex].id);
+    // }
   }, []);
 
   const onConnect: OnConnect = useCallback((params) => {
     // reset the start node on connections
     connectingNodeId.current = null;
-    setEdges((eds) => addEdge(params, eds));
+    setEdges((eds) =>
+      addEdge(
+        {
+          ...params,
+          animated: true,
+          style: {
+            strokeWidth: "0.125rem",
+          },
+        },
+        eds
+      )
+    );
   }, []);
 
   const onConnectStart: OnConnectStart = useCallback((_, { nodeId }) => {
@@ -130,8 +159,7 @@ export function Flow({
           data: {
             title: "New node",
             type: "normal",
-            description: ``,
-            onDB: false,
+            idOnDB: -1,
           },
         };
         setNodes((nds) => nds.concat({ ...newNode }));
@@ -178,8 +206,7 @@ export function Flow({
           data: {
             title: "New node",
             type: "normal",
-            description: ``,
-            onDB: false,
+            idOnDB: -1,
           },
         };
 
@@ -189,11 +216,9 @@ export function Flow({
     [screenToFlowPosition]
   );
 
-  const saveHandler = () => {
-    const nodesToSave = nodes.filter((node) => !node.data.onDB);
-    console.log("nodes to save: ", nodesToSave);
-    console.log("edges: ", edges);
-  };
+  const onNodesDelete: OnNodesDelete = useCallback((nodes) => {
+    console.log(nodes);
+  }, []);
 
   return (
     <>
@@ -203,6 +228,7 @@ export function Flow({
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
+          onNodesDelete={onNodesDelete}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           onConnectStart={onConnectStart}
@@ -216,7 +242,7 @@ export function Flow({
           <Background size={2} />
           <Controls />
           <Panel position="top-right">
-            <FlowControls saveHandler={saveHandler} />
+            <FlowControls nodes={nodes} edges={edges} />
           </Panel>
         </ReactFlow>
       </div>
@@ -225,19 +251,15 @@ export function Flow({
 }
 
 interface FlowMapProps {
-  nodeId?: string;
   initialNodes: Node<DataTicketNode>[];
   initialEdges: Edge[];
 }
 export function FlowMap(props: FlowMapProps) {
-  const { nodeId } = useFlowStore();
-  const [open, setOpen] = useState(false);
   return (
     <>
       <ReactFlowProvider>
-        <Flow {...props} openEditor={open} setOpenEditor={setOpen} />
+        <Flow {...props} />
       </ReactFlowProvider>
-      <TicketSheetEditor open={open} setOpen={setOpen} nodeId={nodeId} />
     </>
   );
 }

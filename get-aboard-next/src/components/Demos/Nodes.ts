@@ -1,10 +1,8 @@
-import { v4 as uuidv4 } from "uuid";
 import { Node } from "reactflow";
-import { DataTicketNode } from "./TicketNode";
+import { DataTicketNodeDemo } from "./TicketNodeDemo";
 
-export const initialNodes: Node<DataTicketNode>[] = [
+export const initialNodes: Node<DataTicketNodeDemo>[] = [
   {
-    // id: uuidv4(),
     id: "0",
     type: "ticket",
     position: { x: 0, y: 50 },

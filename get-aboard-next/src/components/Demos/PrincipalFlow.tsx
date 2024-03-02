@@ -17,7 +17,7 @@ import ReactFlow, {
   NodeMouseHandler,
   Panel,
 } from "reactflow";
-import TicketSheet from "../Tickets/TicketSheet";
+import TicketSheetDemo from "../Tickets/TicketSheetDemo";
 import "reactflow/dist/style.css";
 import TicketNode, { DataTicketNode } from "./TicketNode";
 import { initialNodes } from "./Nodes";
@@ -25,6 +25,7 @@ import { initialEdges } from "./Edges";
 import "./styles.css";
 import { RotateCcw } from "lucide-react";
 import { Button } from "../ui/button";
+import { DataTicketNodeDemo } from "./TicketNodeDemo";
 
 // we define the nodeTypes outside of the component to prevent re-renderings
 // you could also use useMemo inside the component
@@ -39,7 +40,7 @@ function Flow({ nodeId }: PrincipalFlowProps) {
   const reactFlowWrapper = useRef(null);
   const connectingNodeId = useRef<string | null>(null);
   const [nodes, setNodes, onNodesChange] =
-    useNodesState<DataTicketNode>(initialNodes);
+    useNodesState<DataTicketNodeDemo>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const { screenToFlowPosition, setViewport } = useReactFlow();
 
@@ -98,7 +99,7 @@ function Flow({ nodeId }: PrincipalFlowProps) {
       if (targetIsPane) {
         // we need to remove the wrapper bounds, in order to get the correct position
         const id = getId();
-        const newNode: Node<DataTicketNode> = {
+        const newNode: Node<DataTicketNodeDemo> = {
           id,
           type: "ticket",
           position: screenToFlowPosition({
@@ -157,7 +158,7 @@ function Flow({ nodeId }: PrincipalFlowProps) {
           </Panel>
         </ReactFlow>
       </div>
-      <TicketSheet
+      <TicketSheetDemo
         open={open}
         setOpen={setOpen}
         data={nodes[selectedIndex].data}

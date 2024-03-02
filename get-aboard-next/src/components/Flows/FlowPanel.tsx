@@ -6,9 +6,8 @@ import { Suspense } from "react";
 import { getFlowNodes } from "@/lib/node-actions";
 
 interface FlowPanelProps {
-  flowId: string;
-  nodeId?: string;
-  initialEdges: string;
+  edgesMap: any[];
+  nodesMap: any[];
 }
 
 export function FlowPanelFallback() {
@@ -16,46 +15,10 @@ export function FlowPanelFallback() {
 }
 
 export default async function FlowPanel({
-  flowId,
-  nodeId,
-  initialEdges,
+  edgesMap,
+  nodesMap,
 }: FlowPanelProps) {
-  const nodes = await getFlowNodes(+flowId);
-  let reactFlowNodes: Node<DataTicketNode>[] = [];
-  if (nodes) {
-    reactFlowNodes = nodes.map((node) => {
-      return {
-        id: String(node.node_id),
-        type: "ticket",
-        position: { x: node.x_pos, y: node.y_pos },
-        data: {
-          title: node.title,
-          description: "",
-          tags: [],
-          type: "normal",
-          onDB: true,
-        },
-      };
-    });
-  }
-
-  console.log("flowpanel init edges", initialEdges);
-
-  let reactFlowEdges: Edge[] = [];
-  // const initialEdges: Edge[] = [
-  //   {
-  //     id: "0",
-  //     source: "0",
-  //     target: "1",
-  //     style: {
-  //       strokeWidth: "0.125rem",
-  //     },
-  //     animated: true,
-  //   },
-  // ];
-
-  // @ts-ignore
-  const flowEdges: Edge[] = (JSON.parse(initialEdges) as any[]).map((edge) => {
+  const reactFlowEdges: Edge[] = edgesMap.map((edge) => {
     return {
       id: edge.id,
       source: edge.source,
@@ -67,13 +30,18 @@ export default async function FlowPanel({
     };
   });
 
+  const reactFlowNodes: Node<DataTicketNode>[] = nodesMap.map((node) => {
+    return {
+      id: node.id,
+      type: node.type,
+      position: node.position,
+      data: node.data,
+    };
+  });
+
   return (
     <Suspense fallback={<FlowPanelFallback />}>
-      <FlowMap
-        nodeId={nodeId}
-        initialNodes={reactFlowNodes}
-        initialEdges={reactFlowEdges}
-      />
+      <FlowMap initialNodes={reactFlowNodes} initialEdges={reactFlowEdges} />
     </Suspense>
   );
 }

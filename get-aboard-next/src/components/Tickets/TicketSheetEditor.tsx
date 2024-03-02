@@ -4,14 +4,9 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
+  SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Editor from "../Editors/Editor";
 import { Node as ApiNode } from "@/client";
 import { Input } from "../ui/input";
@@ -21,35 +16,53 @@ import { Skeleton } from "../ui/skeleton";
 import { useFlowStore } from "@/stores/FlowStore";
 
 interface TicketSheetEditorProps {
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-  nodeId: string;
+  children: React.ReactNode;
+  data?: DataTicketNode;
 }
 
 export default function TicketEditorSheet({
-  open,
-  setOpen,
-  nodeId,
+  children,
+  data,
 }: TicketSheetEditorProps) {
-  const { nodeUpdated } = useFlowStore();
-  const [node, setNode] = useState<ApiNode>();
+  const { nodeUpdated, nodeId, node } = useFlowStore();
 
-  useEffect(() => {
-    const fetchNodeData = async () => {
-      const node = await getNodeById(+nodeId);
-      setNode(node);
-    };
-    fetchNodeData();
-  }, [nodeId, nodeUpdated]);
+  // useEffect(() => {
+  //   const fetchNodeData = async () => {
+  //     const node = await getNodeById(+nodeId!);
+  //     setNode(node);
+  //   };
+  //   if (nodeId && nodeId !== "-1") {
+  //     fetchNodeData();
+  //   }
+  // }, [nodeId, nodeUpdated]);
 
   const changeTitleHandler = (e: ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.value);
   };
 
+  const canRender = node && nodeId && node.node_id === +nodeId;
+
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet>
+      <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent className="w-1/2 sm:max-w-none" side="right">
-        {node ? (
+        {data ? (
+          <>
+            <SheetHeader className="pt-6">
+              <SheetTitle className="my-2">
+                {/* <Input
+                  defaultValue={node.title}
+                  onChange={changeTitleHandler}
+                  className="text-4xl"
+                /> */}
+                <p className="text-4xl">{data.title}</p>
+              </SheetTitle>
+            </SheetHeader>
+            <div className="space-y-4 w-full">
+              <Editor nodeId={nodeId!} content={""} />
+            </div>
+          </>
+        ) : canRender ? (
           <>
             <SheetHeader className="pt-6">
               <SheetTitle className="my-2">
@@ -62,7 +75,7 @@ export default function TicketEditorSheet({
               </SheetTitle>
             </SheetHeader>
             <div className="space-y-4 w-full">
-              <Editor nodeId={nodeId} content={node.description} />
+              <Editor nodeId={nodeId!} content={node.description} />
             </div>
           </>
         ) : (
