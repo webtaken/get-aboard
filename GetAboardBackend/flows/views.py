@@ -1,34 +1,22 @@
-from .models import Flow, Node
+from .models import Node
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework.request import Request
 from .serializers import FlowSerializer, NodeSerializer
+from .mixins import UserMixin
 
 
-class FlowViewSet(viewsets.ModelViewSet):
-    queryset = Flow.objects.all().order_by("-updated_at")
+class FlowViewSet(UserMixin, viewsets.ModelViewSet):
     serializer_class = FlowSerializer
     permission_classes = [IsAuthenticated]
 
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(
-                name="user_id",
-                description="get all the flows related to a user",
-                required=False,
-                type=int,
-            ),
-        ]
-    )
+    def get_queryset(self):
+        return self.user.flows.all().order_by("-updated_at")
+
     def list(self, request: Request, *args, **kwargs):
-        user_id = request.query_params.get("user_id", None)
-        flows = (
-            Flow.objects.all().order_by("-updated_at").defer("edges_map", "nodes_map")
-        )
-        if user_id:
-            flows = flows.filter(user_id=user_id)
+        flows = self.get_queryset().defer("edges_map", "nodes_map")
         to_drop = ("edges_map", "nodes_map")
         serializer = FlowSerializer(
             flows,

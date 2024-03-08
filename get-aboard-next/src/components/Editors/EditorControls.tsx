@@ -1,3 +1,4 @@
+"use client";
 import { Editor } from "@tiptap/react";
 import {
   Bold,
@@ -6,6 +7,7 @@ import {
   Code,
   Link2,
   Heading1,
+  Text,
   Heading2,
   List,
   ListOrdered,
@@ -14,12 +16,34 @@ import {
   Redo,
 } from "lucide-react";
 import { Button } from "../ui/button";
+import { useCallback } from "react";
 
 interface EditorControlsProps {
   editor: Editor;
 }
 
 export default function EditorControls({ editor }: EditorControlsProps) {
+  const setLink = useCallback(() => {
+    if (!editor) return;
+    const previousUrl = editor.getAttributes("link").href;
+    const url = window.prompt("URL", previousUrl);
+
+    // cancelled
+    if (url === null) {
+      return;
+    }
+
+    // empty
+    if (url === "") {
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+
+      return;
+    }
+
+    // update link
+    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+  }, [editor]);
+
   return (
     <div className="flex items-center gap-x-1 mt-4">
       <Button

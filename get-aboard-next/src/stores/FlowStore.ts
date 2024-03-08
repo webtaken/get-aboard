@@ -1,27 +1,45 @@
 import { create } from "zustand";
-import { Node } from "@/client";
-import { DataTicketNode } from "@/components/Demos/TicketNode";
+import { Node, Flow } from "@/client";
 
 export interface FlowState {
   flowId: number | null;
+  flow: Flow | null;
+  nodeMapId: string | null;
   nodeId: number | null;
   node: Node | null;
-  nodeUpdated: boolean;
-  setFlowId: (newId: number | null) => void;
-  setNodeId: (newId: number | null) => void;
-  setNodeUpdated: () => void;
-  setNode: (newNode: Node | null) => void;
 }
 
-export const useFlowStore = create<FlowState>()((set) => {
+export interface FlowActions {
+  setFlowId: (newId: number | null) => void;
+  setFlow: (newFlow: Flow | null) => void;
+  setNodeMapId: (newId: string | null) => void;
+  setNodeId: (newId: number | null) => void;
+  setNode: (newNode: Node | null) => void;
+  reset: () => void;
+}
+
+const initialState: FlowState = {
+  flowId: null,
+  flow: null,
+  nodeMapId: null,
+  nodeId: null,
+  node: null,
+};
+
+export const useFlowStore = create<FlowState & FlowActions>()((set) => {
   return {
-    flowId: null,
-    nodeId: null,
-    node: null,
-    nodeUpdated: false,
+    ...initialState,
     setFlowId: (newId) =>
       set((state) => ({
         flowId: newId,
+      })),
+    setFlow: (newFlow) =>
+      set((state) => ({
+        flow: newFlow,
+      })),
+    setNodeMapId: (newId) =>
+      set((state) => ({
+        nodeMapId: newId,
       })),
     setNodeId: (newId) =>
       set((state) => ({
@@ -31,9 +49,6 @@ export const useFlowStore = create<FlowState>()((set) => {
       set((state) => ({
         node: newNode,
       })),
-    setNodeUpdated: () =>
-      set((state) => ({
-        nodeUpdated: !state.nodeUpdated,
-      })),
+    reset: () => set(initialState),
   };
 });

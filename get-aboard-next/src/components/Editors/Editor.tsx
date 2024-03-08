@@ -1,25 +1,10 @@
 "use client";
 
 import Link from "@tiptap/extension-link";
-import {
-  Bold,
-  Code,
-  Heading1,
-  Heading2,
-  Italic,
-  Link2,
-  List,
-  ListOrdered,
-  Redo,
-  Save,
-  SquareCode,
-  Strikethrough,
-  Text,
-  Undo,
-} from "lucide-react";
+import { Save } from "lucide-react";
 import { Content, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import React, { useCallback } from "react";
+import React from "react";
 import "./styles.css";
 import { Button } from "../ui/button";
 import { PatchedNode } from "@/client";
@@ -30,22 +15,22 @@ import { Node } from "reactflow";
 import { Node as ApiNode } from "@/client";
 import { DataTicketNode } from "../Demos/TicketNode";
 import EditorControls from "./EditorControls";
+import { buildFlowNodesMap, buildReactFlowNodesMap } from "../Flows/FlowMap";
+import { updateFlowById } from "@/lib/flow-actions";
 
 interface EditorProps {
-  nodeId: number;
-  nodeData?: Node<DataTicketNode>;
   content?: Content;
 }
 
-export default function Editor({ nodeId, nodeData, content }: EditorProps) {
+export default function Editor({ content }: EditorProps) {
   const { toast } = useToast();
-  const { flowId, setNodeUpdated, setNode } = useFlowStore();
+  const { flowId, flow, setFlow, nodeId, nodeMapId, setNodeId, setNode } =
+    useFlowStore();
   const editor = useEditor({
     extensions: [
       Link.configure({
         protocols: ["mailto"],
       }),
-      // @ts-expect-error
       StarterKit.configure({
         bulletList: {
           keepMarks: true,
@@ -66,27 +51,6 @@ export default function Editor({ nodeId, nodeData, content }: EditorProps) {
     content: content,
   });
 
-  const setLink = useCallback(() => {
-    if (!editor) return;
-    const previousUrl = editor.getAttributes("link").href;
-    const url = window.prompt("URL", previousUrl);
-
-    // cancelled
-    if (url === null) {
-      return;
-    }
-
-    // empty
-    if (url === "") {
-      editor.chain().focus().extendMarkRange("link").unsetLink().run();
-
-      return;
-    }
-
-    // update link
-    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
-  }, [editor]);
-
   if (!editor) {
     return null;
   }
@@ -98,24 +62,49 @@ export default function Editor({ nodeId, nodeData, content }: EditorProps) {
       <Button
         className="flex items-center gap-x-2"
         onClick={async () => {
-          const newData: PatchedNode = {
-            description: editor.getHTML(),
-          };
-
-          if (nodeId === -1 && nodeData) {
+          // Node doesn't exist, we'll create a new one
+          if (!nodeId) {
             //@ts-expect-error
             const newNodeData: ApiNode = {
               flow: flowId!,
-              title: nodeData.data.title,
-              description: "",
+              title: "New node",
+              description: editor.getHTML(),
             };
             const newNode = await createNode(newNodeData);
             if (newNode) {
               setNode(newNode);
+              setNodeId(newNode.node_id);
               toast({
                 description: "Description updated successfully!",
                 duration: 1000,
               });
+
+              const updatedNodesMap = buildFlowNodesMap(
+                buildReactFlowNodesMap(flow?.nodes_map).map((nodeFromMap) => {
+                  if (nodeFromMap.id === nodeMapId) {
+                    return {
+                      ...nodeFromMap,
+                      data: { ...nodeFromMap.data, idOnDB: newNode.node_id },
+                    };
+                  }
+                  return nodeFromMap;
+                })
+              );
+
+              // we'll update the flow
+              const updatedFlow = await updateFlowById(flow?.flow_id!, {
+                nodes_map: updatedNodesMap,
+              });
+
+              if (updatedFlow) {
+                console.log("updated flow", updatedFlow);
+                setFlow(updatedFlow);
+              } else {
+                toast({
+                  variant: "destructive",
+                  description: "Flow data could not be updated",
+                });
+              }
             } else {
               toast({
                 variant: "destructive",
@@ -126,10 +115,13 @@ export default function Editor({ nodeId, nodeData, content }: EditorProps) {
             return;
           }
 
+          const newData: PatchedNode = {
+            description: editor.getHTML(),
+          };
           const updatedNode = await updateNodeById(+nodeId, newData);
           if (updatedNode) {
             setNode(updatedNode);
-            setNodeUpdated();
+            setNodeId(updatedNode.node_id);
             toast({
               description: "Description updated successfully!",
               duration: 1000,

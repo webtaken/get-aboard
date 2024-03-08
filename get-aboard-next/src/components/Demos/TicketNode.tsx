@@ -20,24 +20,25 @@ import { Menu, MousePointerClick } from "lucide-react";
 import { Button } from "../ui/button";
 import { Delete } from "lucide-react";
 import { deleteNodeById } from "@/lib/node-actions";
-import { Dispatch, SetStateAction } from "react";
 import { useFlowStore } from "@/stores/FlowStore";
-import TicketEditorSheet from "../Tickets/TicketSheetEditor";
+import { useEditorSheetStore } from "@/stores/SheetEditorStore";
+import { buildFlowNodesMap, buildReactFlowNodesMap } from "../Flows/FlowMap";
+import { updateFlowById } from "@/lib/flow-actions";
+import { toast } from "../ui/use-toast";
 
 export interface DataTicketNode {
   title: string;
-  idOnDB: number;
+  idOnDB: number | null;
   tags?: string[];
   type: "input" | "normal";
 }
 
-export default function TicketNode({
-  id,
-  data,
-  isConnectable,
-}: NodeProps<DataTicketNode>) {
-  const { setNodeId } = useFlowStore();
+export default function TicketNode(props: NodeProps<DataTicketNode>) {
+  const { setNodeId, setNode, setNodeMapId, flow, setFlow } = useFlowStore();
+  const { setOpen } = useEditorSheetStore();
+  const { id, data, isConnectable } = props;
   const { title, type, idOnDB, tags } = data;
+
   return (
     <>
       <Card className="w-96 border-foreground border bg-slate-300 dark:bg-stone-950">
@@ -53,10 +54,42 @@ export default function TicketNode({
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={async () => {
-                    // const ok = await deleteNodeById(pathname, +id);
-                    // if (ok === undefined) {
-                    //   console.log("Couldn't delete the node");
-                    // }
+                    if (idOnDB) {
+                      console.log("deleting the node on db", idOnDB);
+                      const ok = await deleteNodeById(idOnDB);
+                      if (ok) {
+                        toast({
+                          description: "Node deleted successfully!",
+                          duration: 700,
+                        });
+                      } else {
+                        toast({
+                          variant: "destructive",
+                          description: "Could not delete the node",
+                        });
+                      }
+                    }
+
+                    const updatedNodesMap = buildFlowNodesMap(
+                      buildReactFlowNodesMap(flow?.nodes_map).filter(
+                        (nodeFromMap) => nodeFromMap.id !== id
+                      )
+                    );
+
+                    // we'll update the flow
+                    const updatedFlow = await updateFlowById(flow?.flow_id!, {
+                      nodes_map: updatedNodesMap,
+                    });
+
+                    if (updatedFlow) {
+                      console.log("updated flow", updatedFlow);
+                      setFlow(updatedFlow);
+                    } else {
+                      toast({
+                        variant: "destructive",
+                        description: "Flow data could not be updated",
+                      });
+                    }
                   }}
                   className="flex items-center gap-x-2"
                 >
@@ -67,20 +100,18 @@ export default function TicketNode({
           </CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
-          <TicketEditorSheet data={idOnDB === -1 ? data : undefined}>
-            <Button
-              variant="link"
-              className="p-0"
-              onClick={() => {
-                idOnDB !== -1 && setNodeId(idOnDB);
-              }}
-            >
-              See description <MousePointerClick className="w-4 h-4" />
-            </Button>
-          </TicketEditorSheet>
-          {/* <Button variant="link" className="p-0 gap-x-1">
-            <Delete className="w-4 h-4" /> Delete
-          </Button> */}
+          <Button
+            variant="link"
+            className="p-0"
+            onClick={() => {
+              setOpen(true);
+              setNodeId(idOnDB);
+              !idOnDB && setNode(null);
+              setNodeMapId(id);
+            }}
+          >
+            See description <MousePointerClick className="w-4 h-4" />
+          </Button>
         </CardContent>
         <CardFooter>
           {tags &&

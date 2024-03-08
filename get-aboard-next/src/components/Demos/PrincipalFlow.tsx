@@ -19,17 +19,17 @@ import ReactFlow, {
 } from "reactflow";
 import TicketSheetDemo from "../Tickets/TicketSheetDemo";
 import "reactflow/dist/style.css";
-import TicketNode, { DataTicketNode } from "./TicketNode";
 import { initialNodes } from "./Nodes";
 import { initialEdges } from "./Edges";
 import "./styles.css";
 import { RotateCcw } from "lucide-react";
 import { Button } from "../ui/button";
 import { DataTicketNodeDemo } from "./TicketNodeDemo";
+import TicketNodeDemo from "./TicketNodeDemo";
 
 // we define the nodeTypes outside of the component to prevent re-renderings
 // you could also use useMemo inside the component
-const nodeTypes: NodeTypes = { ticket: TicketNode };
+const nodeTypes: NodeTypes = { ticket: TicketNodeDemo };
 const getId = () => uuidv4();
 
 interface PrincipalFlowProps {

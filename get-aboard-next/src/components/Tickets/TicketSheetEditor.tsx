@@ -4,65 +4,65 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect } from "react";
 import Editor from "../Editors/Editor";
-import { Node as ApiNode } from "@/client";
-import { Input } from "../ui/input";
-import { DataTicketNode } from "../Demos/TicketNode";
 import { getNodeById } from "@/lib/node-actions";
 import { Skeleton } from "../ui/skeleton";
 import { useFlowStore } from "@/stores/FlowStore";
+import { toast } from "../ui/use-toast";
+import { useEditorSheetStore } from "@/stores/SheetEditorStore";
 
-interface TicketSheetEditorProps {
-  children: React.ReactNode;
-  data?: DataTicketNode;
-}
+interface TicketSheetEditorProps {}
 
-export default function TicketEditorSheet({
-  children,
-  data,
-}: TicketSheetEditorProps) {
-  const { nodeUpdated, nodeId, node } = useFlowStore();
+export default function TicketEditorSheet({}: TicketSheetEditorProps) {
+  const { open, setOpen } = useEditorSheetStore();
+  const { nodeId, node, nodeMapId, setNode } = useFlowStore();
 
-  // useEffect(() => {
-  //   const fetchNodeData = async () => {
-  //     const node = await getNodeById(+nodeId!);
-  //     setNode(node);
-  //   };
-  //   if (nodeId && nodeId !== "-1") {
-  //     fetchNodeData();
-  //   }
-  // }, [nodeId, nodeUpdated]);
+  useEffect(() => {
+    const fetchNodeData = async (fetchingNodeId: number) => {
+      const fetchedNode = await getNodeById(fetchingNodeId!);
+      if (fetchedNode) {
+        setNode(fetchedNode);
+      } else {
+        toast({
+          variant: "destructive",
+          description: "Data couldn't be retrieved",
+        });
+      }
+    };
+    console.log("id on map", nodeMapId, "id on db", nodeId);
+    // If there exist the nodeId and the editor is opened we fetch the node data
+    if (nodeId && open) {
+      fetchNodeData(nodeId);
+    }
+  }, [nodeId, nodeMapId, open]);
+
+  useEffect(() => {
+    if (!open) {
+      setNode(null);
+    }
+  }, [open]);
 
   const changeTitleHandler = (e: ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.value);
   };
 
-  const canRender = node && nodeId && node.node_id === +nodeId;
-
   return (
-    <Sheet>
-      <SheetTrigger asChild>{children}</SheetTrigger>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent className="w-1/2 sm:max-w-none" side="right">
-        {data ? (
+        {!nodeId ? (
           <>
             <SheetHeader className="pt-6">
               <SheetTitle className="my-2">
-                {/* <Input
-                  defaultValue={node.title}
-                  onChange={changeTitleHandler}
-                  className="text-4xl"
-                /> */}
-                <p className="text-4xl">{data.title}</p>
+                <p className="text-4xl">New node</p>
               </SheetTitle>
             </SheetHeader>
             <div className="space-y-4 w-full">
-              <Editor nodeId={nodeId!} content={""} />
+              <Editor content={``} />
             </div>
           </>
-        ) : canRender ? (
+        ) : node ? (
           <>
             <SheetHeader className="pt-6">
               <SheetTitle className="my-2">
@@ -75,7 +75,7 @@ export default function TicketEditorSheet({
               </SheetTitle>
             </SheetHeader>
             <div className="space-y-4 w-full">
-              <Editor nodeId={nodeId!} content={node.description} />
+              <Editor content={node.description} />
             </div>
           </>
         ) : (

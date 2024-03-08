@@ -33,8 +33,8 @@ export default function FlowsCreator() {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create your flow</DialogTitle>
-          <DialogDescription>
-            <form action={dispatch} className="space-y-6 mt-3 px-5 mx-auto">
+          <DialogDescription asChild>
+            <form action={dispatch} className="space-y-3 pt-3 px-5">
               <div className="w-full items-center space-y-1.5">
                 <Label htmlFor="title">Title</Label>
                 <Input
@@ -85,10 +85,4 @@ export default function FlowsCreator() {
       </DialogContent>
     </Dialog>
   );
-
-  {
-    /* <div className="w-full">
-        <PrincipalFlow />
-      </div> */
-  }
 }

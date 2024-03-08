@@ -17,20 +17,10 @@ export class FlowsService {
      * @returns Flow
      * @throws ApiError
      */
-    public static flowsList({
-        userId,
-    }: {
-        /**
-         * get all the flows related to a user
-         */
-        userId?: number,
-    }): CancelablePromise<Array<Flow>> {
+    public static flowsList(): CancelablePromise<Array<Flow>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/flows/',
-            query: {
-                'user_id': userId,
-            },
         });
     }
 
@@ -56,18 +46,15 @@ export class FlowsService {
      * @throws ApiError
      */
     public static flowsRetrieve({
-        flowId,
+        id,
     }: {
-        /**
-         * A unique integer value identifying this flow.
-         */
-        flowId: number,
+        id: string,
     }): CancelablePromise<Flow> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/flows/{flow_id}/',
+            url: '/flows/{id}/',
             path: {
-                'flow_id': flowId,
+                'id': id,
             },
         });
     }
@@ -77,20 +64,17 @@ export class FlowsService {
      * @throws ApiError
      */
     public static flowsUpdate({
-        flowId,
+        id,
         requestBody,
     }: {
-        /**
-         * A unique integer value identifying this flow.
-         */
-        flowId: number,
+        id: string,
         requestBody: Flow,
     }): CancelablePromise<Flow> {
         return __request(OpenAPI, {
             method: 'PUT',
-            url: '/flows/{flow_id}/',
+            url: '/flows/{id}/',
             path: {
-                'flow_id': flowId,
+                'id': id,
             },
             body: requestBody,
             mediaType: 'application/json',
@@ -102,20 +86,17 @@ export class FlowsService {
      * @throws ApiError
      */
     public static flowsPartialUpdate({
-        flowId,
+        id,
         requestBody,
     }: {
-        /**
-         * A unique integer value identifying this flow.
-         */
-        flowId: number,
+        id: string,
         requestBody?: PatchedFlow,
     }): CancelablePromise<Flow> {
         return __request(OpenAPI, {
             method: 'PATCH',
-            url: '/flows/{flow_id}/',
+            url: '/flows/{id}/',
             path: {
-                'flow_id': flowId,
+                'id': id,
             },
             body: requestBody,
             mediaType: 'application/json',
@@ -127,18 +108,15 @@ export class FlowsService {
      * @throws ApiError
      */
     public static flowsDestroy({
-        flowId,
+        id,
     }: {
-        /**
-         * A unique integer value identifying this flow.
-         */
-        flowId: number,
+        id: string,
     }): CancelablePromise<void> {
         return __request(OpenAPI, {
             method: 'DELETE',
-            url: '/flows/{flow_id}/',
+            url: '/flows/{id}/',
             path: {
-                'flow_id': flowId,
+                'id': id,
             },
         });
     }

@@ -25,14 +25,20 @@ import ReactFlow, {
   Edge,
   OnNodesDelete,
 } from "reactflow";
-import TicketSheetEditor from "../Tickets/TicketSheetEditor";
+import { Flow } from "@/client";
 import TicketNode, { DataTicketNode } from "@/components/Demos/TicketNode";
 import FlowControls from "./FlowControls";
-import { Node as ApiNode } from "@/client";
 import { useFlowStore } from "@/stores/FlowStore";
 import { useDebounce } from "@uidotdev/usehooks";
 import { toast } from "../ui/use-toast";
 import { updateFlowById } from "@/lib/flow-actions";
+import isEqual from "lodash.isequal";
+// Important! don't delete the styles css, otherwise the flow won't work.
+import "reactflow/dist/style.css";
+import TicketEditorSheet from "../Tickets/TicketSheetEditor";
+import { Button } from "../ui/button";
+import { CheckCircle2, Loader2, Workflow, XCircle } from "lucide-react";
+import FlowStatus from "./FlowStatus";
 
 // we define the nodeTypes outside of the component to prevent re-renderings
 // you could also use useMemo inside the component
@@ -47,12 +53,44 @@ export const buildFlowNodesMap = (nodes: Node<DataTicketNode>[]) => {
     data: { ...node.data },
   }));
 };
+
+export const buildReactFlowNodesMap = (nodes_map: any[]) => {
+  const reactFlowNodes: Node<DataTicketNode>[] = nodes_map.map((node) => {
+    return {
+      id: node.id,
+      type: node.type,
+      position: node.position,
+      data: node.data,
+    };
+  });
+  return reactFlowNodes;
+};
+
 export const buildFlowEdgesMap = (edges: Edge[]) => {
   return edges.map((edge) => ({
     id: edge.id,
     source: edge.source,
     target: edge.target,
+    animated: true,
+    style: {
+      strokeWidth: "0.125rem",
+    },
   }));
+};
+
+export const buildReactFlowEdgesMap = (edges_map: any[]) => {
+  const reactFlowEdges: Edge[] = edges_map.map((edge) => {
+    return {
+      id: edge.id,
+      source: edge.source,
+      target: edge.target,
+      style: {
+        strokeWidth: "0.125rem",
+      },
+      animated: true,
+    };
+  });
+  return reactFlowEdges;
 };
 
 interface FlowProps {
@@ -61,17 +99,19 @@ interface FlowProps {
   initialEdges: Edge[];
 }
 
-export function Flow({ defaultNodeId, initialNodes, initialEdges }: FlowProps) {
-  const reactFlowWrapper = useRef(null);
-  const { flowId } = useFlowStore();
+function Flow({ defaultNodeId, initialNodes, initialEdges }: FlowProps) {
+  const { flowId, flow, setFlow } = useFlowStore();
   const connectingNodeId = useRef<string | null>(null);
   const [nodes, setNodes, onNodesChange] =
     useNodesState<DataTicketNode>(initialNodes);
   const debouncedNodes = useDebounce(nodes, 500);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const debouncedEdges = useDebounce(edges, 500);
+  const [saveStatus, setStatusSaved] = useState<
+    "initial" | "loading" | "success" | "error"
+  >("initial");
+  const [flowMapsChanged, setFlowMapsChanged] = useState(false);
   const { screenToFlowPosition, setViewport } = useReactFlow();
-  const { setNodeId } = useFlowStore();
 
   const startTransform = useCallback(() => {
     setViewport({ x: 600, y: 50, zoom: 1 }, { duration: 800 });
@@ -88,16 +128,60 @@ export function Flow({ defaultNodeId, initialNodes, initialEdges }: FlowProps) {
       });
 
       if (updatedFlow) {
-        toast({ description: "Saved successfully.", duration: 700 });
+        setFlow(updatedFlow);
+        const newReactFlowNodes = buildReactFlowNodesMap(updatedFlow.nodes_map);
+        const newReactFlowEdges = buildReactFlowEdgesMap(updatedFlow.edges_map);
+        setNodes(newReactFlowNodes);
+        setEdges(newReactFlowEdges);
+        setStatusSaved("success");
       } else {
         toast({
           variant: "destructive",
           description:
             "Error while saving the flow, please reload the page or contact support.",
         });
+        setStatusSaved("error");
       }
     };
 
+    const flowMapsHasChanged = () => {
+      const newReactFlowNodes = buildReactFlowNodesMap(flow?.nodes_map);
+      if (debouncedNodes.length !== newReactFlowNodes.length) {
+        return true;
+      }
+      for (let i = 0; i < newReactFlowNodes.length; i++) {
+        const n1 = newReactFlowNodes[i];
+        const n2 = debouncedNodes[i];
+        if (
+          n1.id !== n2.id ||
+          n1.type !== n2.type ||
+          !isEqual(n1.position, n2.position) ||
+          !isEqual(n1.data, n2.data)
+        ) {
+          return true;
+        }
+      }
+      const newReactFlowEdges = buildReactFlowEdgesMap(flow?.edges_map);
+      if (debouncedEdges.length !== newReactFlowEdges.length) {
+        return true;
+      }
+      for (let i = 0; i < newReactFlowEdges.length; i++) {
+        const e1 = newReactFlowEdges[i];
+        const e2 = debouncedEdges[i];
+        if (
+          e1.id !== e2.id ||
+          e1.source !== e2.source ||
+          e1.target !== e2.target
+        ) {
+          return true;
+        }
+      }
+      return false;
+    };
+    if (flow && flowMapsHasChanged()) {
+      saveHandler();
+      setStatusSaved("loading");
+    }
     const down = (e: KeyboardEvent) => {
       if (e.key === "s" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
@@ -106,17 +190,7 @@ export function Flow({ defaultNodeId, initialNodes, initialEdges }: FlowProps) {
     };
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
-  }, [debouncedNodes, debouncedEdges]);
-
-  useEffect(() => {
-    // let defaultSelectedIndex = 0;
-    // if (nodeId) {
-    //   defaultSelectedIndex = nodes.findIndex((node) => node.id == nodeId);
-    // }
-    // if (defaultSelectedIndex !== -1 && nodeId !== undefined) {
-    //   setNodeId(nodes[defaultSelectedIndex].id);
-    // }
-  }, []);
+  }, [debouncedNodes, debouncedEdges, flow]);
 
   const onConnect: OnConnect = useCallback((params) => {
     // reset the start node on connections
@@ -159,7 +233,7 @@ export function Flow({ defaultNodeId, initialNodes, initialEdges }: FlowProps) {
           data: {
             title: "New node",
             type: "normal",
-            idOnDB: -1,
+            idOnDB: null,
           },
         };
         setNodes((nds) => nds.concat({ ...newNode }));
@@ -206,7 +280,7 @@ export function Flow({ defaultNodeId, initialNodes, initialEdges }: FlowProps) {
           data: {
             title: "New node",
             type: "normal",
-            idOnDB: -1,
+            idOnDB: null,
           },
         };
 
@@ -216,50 +290,58 @@ export function Flow({ defaultNodeId, initialNodes, initialEdges }: FlowProps) {
     [screenToFlowPosition]
   );
 
-  const onNodesDelete: OnNodesDelete = useCallback((nodes) => {
-    console.log(nodes);
-  }, []);
-
   return (
-    <>
-      <div ref={reactFlowWrapper} className="wrapper h-[500px]">
-        <ReactFlow
-          className="border-2"
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onNodesDelete={onNodesDelete}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onConnectStart={onConnectStart}
-          onConnectEnd={onConnectEnd}
-          onDrop={onDrop}
-          onDragOver={onDragOver}
-          nodeTypes={nodeTypes}
-          fitView
-          nodeOrigin={[0.5, 0]}
-        >
-          <Background size={2} />
-          <Controls />
-          <Panel position="top-right">
-            <FlowControls nodes={nodes} edges={edges} />
-          </Panel>
-        </ReactFlow>
-      </div>
-    </>
+    <ReactFlow
+      className="border-2"
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      deleteKeyCode={null}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
+      onConnectStart={onConnectStart}
+      onConnectEnd={onConnectEnd}
+      onDrop={onDrop}
+      onDragOver={onDragOver}
+      nodeTypes={nodeTypes}
+      fitView
+      nodeOrigin={[0.5, 0]}
+    >
+      <Background size={2} />
+      <Controls />
+      <Panel position="top-right">
+        <FlowControls />
+      </Panel>
+      <Panel position="top-left">
+        <FlowStatus status={saveStatus} />
+      </Panel>
+    </ReactFlow>
   );
 }
 
 interface FlowMapProps {
-  initialNodes: Node<DataTicketNode>[];
-  initialEdges: Edge[];
+  flow: Flow;
 }
-export function FlowMap(props: FlowMapProps) {
+export default function FlowMap({ flow }: FlowMapProps) {
+  const { setFlowId, setFlow, reset } = useFlowStore();
+
+  useEffect(() => {
+    setFlowId(flow.flow_id);
+    setFlow(flow);
+    return () => {
+      reset();
+    };
+  }, []);
+
+  const reactFlowEdges = buildFlowEdgesMap(flow.edges_map);
+  const reactFlowNodes = buildFlowNodesMap(flow.nodes_map);
+
   return (
     <>
       <ReactFlowProvider>
-        <Flow {...props} />
+        <Flow initialEdges={reactFlowEdges} initialNodes={reactFlowNodes} />
       </ReactFlowProvider>
+      <TicketEditorSheet />
     </>
   );
 }

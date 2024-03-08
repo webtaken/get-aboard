@@ -6,14 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 import GetAboardIcon from "../Icons/GetAboardIcon";
 import { getUserFlows } from "@/lib/flow-actions";
@@ -21,15 +13,11 @@ import { Skeleton } from "../ui/skeleton";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { Pencil } from "lucide-react";
-import Link from "next/link";
-import { useFlowStore } from "@/stores/FlowStore";
+import FlowOptions from "./FlowOptions";
 
 dayjs.extend(relativeTime);
 
 export async function FlowsList() {
-  const { setFlowId } = useFlowStore();
   const flows = await getUserFlows();
 
   if (flows === undefined) {
@@ -54,26 +42,7 @@ export async function FlowsList() {
                   <GetAboardIcon className="w-6 h-6 stroke-slate-900 dark:stroke-slate-200" />{" "}
                   {flow.title}
                 </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon">
-                      <Pencil className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href={`/dashboard/flows/${flow.flow_id}`}
-                        onClick={() => setFlowId(flow.flow_id)}
-                      >
-                        Edit
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>Delete</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <FlowOptions flow={flow} />
               </CardTitle>
               <CardDescription className="pl-8">Click to see</CardDescription>
             </CardHeader>

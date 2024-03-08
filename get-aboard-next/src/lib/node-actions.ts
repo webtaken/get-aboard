@@ -1,18 +1,12 @@
 "use server";
 
-import { FlowsService, OpenAPI, PatchedNode } from "@/client";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth";
+import { FlowsService, PatchedNode } from "@/client";
 import { Node } from "@/client";
-import { revalidatePath } from "next/cache";
+import { setCredentialsToAPI } from "./utils";
 
 export async function getFlowNodes(id: number) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) return undefined;
-    // eslint-disable-next-line
-    // @ts-ignore
-    OpenAPI.TOKEN = session.django_data.access;
+    await setCredentialsToAPI();
     const nodes = await FlowsService.flowsNodesList({ flowId: id });
     return nodes;
   } catch (error) {
@@ -22,11 +16,7 @@ export async function getFlowNodes(id: number) {
 
 export async function getNodeById(id: number) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) return undefined;
-    // eslint-disable-next-line
-    // @ts-ignore
-    OpenAPI.TOKEN = session.django_data.access;
+    await setCredentialsToAPI();
     const node = await FlowsService.flowsNodesRetrieve({ nodeId: id });
     return node;
   } catch (error) {
@@ -36,11 +26,7 @@ export async function getNodeById(id: number) {
 
 export async function updateNodeById(id: number, data: PatchedNode) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) return undefined;
-    // eslint-disable-next-line
-    // @ts-ignore
-    OpenAPI.TOKEN = session.django_data.access;
+    await setCredentialsToAPI();
     const node = await FlowsService.flowsNodesPartialUpdate({
       nodeId: id,
       requestBody: data,
@@ -53,11 +39,7 @@ export async function updateNodeById(id: number, data: PatchedNode) {
 
 export async function createNode(node: Node) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) return undefined;
-    // eslint-disable-next-line
-    // @ts-ignore
-    OpenAPI.TOKEN = session.django_data.access;
+    await setCredentialsToAPI();
     const newNode = await FlowsService.flowsNodesCreate({
       requestBody: node,
     });
@@ -67,35 +49,12 @@ export async function createNode(node: Node) {
   }
 }
 
-export async function createNodes(flowId: number, nodes: Node[]) {
+export async function deleteNodeById(id: number) {
   try {
-    const nodesPromises = nodes.map((node) => createNode(node));
-    const results = await Promise.allSettled(nodesPromises);
-    const rejected = results.filter((r) => r.status === "rejected");
-    if (rejected.length > 0) {
-      revalidatePath(`/dashboard/flows/${flowId}/`);
-      return undefined;
-    }
-    revalidatePath(`/dashboard/flows/${flowId}/`);
-    // @ts-ignore
-    const createdNodes: Node[] = results.map((r) => r.value);
-    return createdNodes;
-  } catch (error) {
-    return undefined;
-  }
-}
-
-export async function deleteNodeById(path: string, id: number) {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session) return undefined;
-    // eslint-disable-next-line
-    // @ts-ignore
-    OpenAPI.TOKEN = session.django_data.access;
+    await setCredentialsToAPI();
     await FlowsService.flowsNodesDestroy({
       nodeId: id,
     });
-    revalidatePath(path);
     return true;
   } catch (error) {
     return undefined;

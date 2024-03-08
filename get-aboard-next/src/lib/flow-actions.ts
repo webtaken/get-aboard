@@ -3,8 +3,9 @@
 import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
+import { setCredentialsToAPI } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
-import { FlowsService, OpenAPI, PatchedFlow } from "@/client";
+import { FlowsService, PatchedFlow } from "@/client";
 
 // This is temporary until @types/react-dom is updated
 export type State = {
@@ -35,21 +36,19 @@ export async function createFlow(prevState: State, formData: FormData) {
   const { title, description } = validatedFields.data;
 
   try {
+    await setCredentialsToAPI();
     const session = await getServerSession(authOptions);
-    if (!session) throw Error("no session available");
-    // eslint-disable-next-line
-    // @ts-ignore
-    OpenAPI.TOKEN = session.django_data.access;
     // eslint-disable-next-line
     // @ts-ignore
     const django_user = session.django_data.user;
     await FlowsService.flowsCreate({
-      // @ts-ignore
+      // @ts-expect-error
       requestBody: {
         user: +django_user.pk,
-        flow_id: 0,
         title: title,
         description: description,
+        nodes_map: [],
+        edges_map: [],
       },
     });
     revalidatePath(`/dashboard`);
@@ -63,15 +62,8 @@ export async function createFlow(prevState: State, formData: FormData) {
 
 export async function getUserFlows() {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) return undefined;
-    // eslint-disable-next-line
-    // @ts-ignore
-    OpenAPI.TOKEN = session.django_data.access;
-    // eslint-disable-next-line
-    // @ts-ignore
-    const django_user = session.django_data.user;
-    const flows = await FlowsService.flowsList({ userId: django_user.pk });
+    await setCredentialsToAPI();
+    const flows = await FlowsService.flowsList();
     return flows;
   } catch (error) {
     return undefined;
@@ -80,12 +72,8 @@ export async function getUserFlows() {
 
 export async function getFlowById(id: number) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) return undefined;
-    // eslint-disable-next-line
-    // @ts-ignore
-    OpenAPI.TOKEN = session.django_data.access;
-    const flow = await FlowsService.flowsRetrieve({ flowId: id });
+    await setCredentialsToAPI();
+    const flow = await FlowsService.flowsRetrieve({ id: String(id) });
     return flow;
   } catch (error) {
     return undefined;
@@ -94,13 +82,9 @@ export async function getFlowById(id: number) {
 
 export async function updateFlowById(id: number, data: PatchedFlow) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) return undefined;
-    // eslint-disable-next-line
-    // @ts-ignore
-    OpenAPI.TOKEN = session.django_data.access;
+    await setCredentialsToAPI();
     const updatedFlow = await FlowsService.flowsPartialUpdate({
-      flowId: id,
+      id: String(id),
       requestBody: data,
     });
     return updatedFlow;
