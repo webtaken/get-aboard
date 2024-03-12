@@ -1,3 +1,4 @@
+"use client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +12,8 @@ import { Pencil } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Flow } from "@/client";
+import { deleteFlowById } from "@/lib/flow-actions";
+import { toast } from "../ui/use-toast";
 
 interface FlowOptionsProps {
   flow: Flow;
@@ -21,7 +24,7 @@ export default function FlowOptions({ flow }: FlowOptionsProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon">
-          <Pencil className="w-4 h-4" />
+          <Pencil className="min-w-4 min-h-4 w-4 h-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
@@ -30,7 +33,20 @@ export default function FlowOptions({ flow }: FlowOptionsProps) {
         <DropdownMenuItem asChild>
           <Link href={`/dashboard/flows/${flow.flow_id}`}>Edit</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>Delete</DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={async () => {
+            const status = await deleteFlowById(flow.flow_id);
+            if (!status) {
+              toast({
+                variant: "destructive",
+                description:
+                  "Couldn't delete the flow contact support or refresh the page.",
+              });
+            }
+          }}
+        >
+          Delete
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

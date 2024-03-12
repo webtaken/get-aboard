@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
-import { setCredentialsToAPI } from "@/lib/utils";
+import { setCredentialsToAPI, sleep } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { FlowsService, PatchedFlow } from "@/client";
 
@@ -14,6 +14,7 @@ export type State = {
     description?: string[];
   };
   message?: string | null;
+  status: "initial" | "success" | "error";
 };
 
 const CreateFlow = z.object({
@@ -31,6 +32,7 @@ export async function createFlow(prevState: State, formData: FormData) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: "Missing Fields. Failed to Create Flow.",
+      status: "error",
     };
   }
   const { title, description } = validatedFields.data;
@@ -52,10 +54,11 @@ export async function createFlow(prevState: State, formData: FormData) {
       },
     });
     revalidatePath(`/dashboard`);
-    return { message: "Flow created" };
+    return { message: "Flow created", status: "success" };
   } catch (error) {
     return {
       message: "An error ocurred while creating the flow, try again later.",
+      status: "error",
     };
   }
 }
@@ -72,6 +75,8 @@ export async function getUserFlows() {
 
 export async function getFlowById(id: number) {
   try {
+    console.log("awaiting");
+    await sleep(2000);
     await setCredentialsToAPI();
     const flow = await FlowsService.flowsRetrieve({ id: String(id) });
     return flow;
@@ -88,6 +93,58 @@ export async function updateFlowById(id: number, data: PatchedFlow) {
       requestBody: data,
     });
     return updatedFlow;
+  } catch (error) {
+    return undefined;
+  }
+}
+
+export async function updateFlowByForm(
+  id: number,
+  prevState: State,
+  formData: FormData
+) {
+  const validatedFields = CreateFlow.safeParse({
+    title: formData.get("title"),
+    description: formData.get("description"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Missing Fields. Failed to Create Flow.",
+      status: "error",
+    };
+  }
+  const { title, description } = validatedFields.data;
+
+  try {
+    await setCredentialsToAPI();
+    await FlowsService.flowsPartialUpdate({
+      id: String(id),
+      requestBody: {
+        title: title,
+        description: description,
+      },
+    });
+    revalidatePath(`/dashboard/flows/${id}`);
+    revalidatePath("/dashboard");
+    return { message: "Flow updated", status: "success" };
+  } catch (error) {
+    return {
+      message: "An error ocurred while creating the flow, try again later.",
+      status: "error",
+    };
+  }
+}
+
+export async function deleteFlowById(id: number) {
+  try {
+    await setCredentialsToAPI();
+    await FlowsService.flowsDestroy({
+      id: String(id),
+    });
+    revalidatePath("/dashboard");
+    return true;
   } catch (error) {
     return undefined;
   }

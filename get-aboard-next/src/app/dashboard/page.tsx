@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { FlowsList, FlowsListFallback } from "@/components/Flows/FlowsList";
-import FlowsCreator from "@/components/Flows/FlowsCreator";
+import FlowEditDialog from "@/components/commons/FlowEditDialog";
+import { Button } from "@/components/ui/button";
+import { createFlow } from "@/lib/flow-actions";
 
 export default function Page() {
   return (
@@ -9,7 +11,13 @@ export default function Page() {
         <h2 className="text-left px-2 text-2xl font-semibold tracking-tight">
           My flows
         </h2>
-        <FlowsCreator />
+        <FlowEditDialog
+          trigger={<Button>Create Flow</Button>}
+          title="Create your flow"
+          submitText="Create"
+          // @ts-expect-error
+          action={createFlow.bind(null)}
+        />
       </div>
       <Suspense fallback={<FlowsListFallback />}>
         <FlowsList />

@@ -36,9 +36,8 @@ import isEqual from "lodash.isequal";
 // Important! don't delete the styles css, otherwise the flow won't work.
 import "reactflow/dist/style.css";
 import TicketEditorSheet from "../Tickets/TicketSheetEditor";
-import { Button } from "../ui/button";
-import { CheckCircle2, Loader2, Workflow, XCircle } from "lucide-react";
 import FlowStatus from "./FlowStatus";
+import FlowBasicEditor from "./FlowBasicEditor";
 
 // we define the nodeTypes outside of the component to prevent re-renderings
 // you could also use useMemo inside the component
@@ -338,6 +337,7 @@ export default function FlowMap({ flow }: FlowMapProps) {
 
   return (
     <>
+      <FlowBasicEditor flow={flow} />
       <ReactFlowProvider>
         <Flow initialEdges={reactFlowEdges} initialNodes={reactFlowNodes} />
       </ReactFlowProvider>

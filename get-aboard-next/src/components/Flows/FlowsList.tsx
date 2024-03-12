@@ -25,7 +25,7 @@ export async function FlowsList() {
   }
 
   if (flows.length === 0) {
-    return <div>You don&apos;t have flows, create a new one</div>;
+    return <div>You don&apos;t have flows yet, create a new one</div>;
   }
 
   return (
@@ -37,12 +37,18 @@ export async function FlowsList() {
             className="min-w-[200px] transition ease-in-out delay-100 duration-200 hover:shadow-xl hover:cursor-pointer"
           >
             <CardHeader className="space-y-2">
-              <CardTitle className="flex items-center justify-between gap-x-2">
-                <div className="flex items-center gap-x-2">
-                  <GetAboardIcon className="w-6 h-6 stroke-slate-900 dark:stroke-slate-200" />{" "}
-                  {flow.title}
+              <CardTitle>
+                <div className="grid grid-cols-6 place-content-center gap-x-2">
+                  <div className="col-span-5 flex items-center gap-x-2">
+                    <GetAboardIcon className="min-w-6 min-h-6 w-6 h-6 stroke-slate-900 dark:stroke-slate-200" />
+                    <p className="truncate align-middle" title={flow.title}>
+                      {flow.title}aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                    </p>
+                  </div>
+                  <div className="col-span-1 mx-auto">
+                    <FlowOptions flow={flow} />
+                  </div>
                 </div>
-                <FlowOptions flow={flow} />
               </CardTitle>
               <CardDescription className="pl-8">Click to see</CardDescription>
             </CardHeader>
@@ -52,7 +58,9 @@ export async function FlowsList() {
             <CardFooter>
               <Badge
                 variant="outline"
-                title={dayjs(flow.updated_at).format("YYYY-MM-DD (hh:mm A)")}
+                title={`last update: ${dayjs(flow.updated_at).format(
+                  "YYYY-MM-DD (hh:mm A)"
+                )}`}
               >
                 {dayjs(flow.updated_at).fromNow()}
               </Badge>
