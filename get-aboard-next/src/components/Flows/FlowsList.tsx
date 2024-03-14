@@ -14,6 +14,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Badge } from "../ui/badge";
 import FlowOptions from "./FlowOptions";
+import { Pencil } from "lucide-react";
 
 dayjs.extend(relativeTime);
 
@@ -34,7 +35,7 @@ export async function FlowsList() {
         return (
           <Card
             key={flow.flow_id}
-            className="min-w-[200px] transition ease-in-out delay-100 duration-200 hover:shadow-xl hover:cursor-pointer"
+            className="min-w-[200px] transition ease-in-out delay-100 duration-200 hover:shadow-xl"
           >
             <CardHeader className="space-y-2">
               <CardTitle>
@@ -42,7 +43,7 @@ export async function FlowsList() {
                   <div className="col-span-5 flex items-center gap-x-2">
                     <GetAboardIcon className="min-w-6 min-h-6 w-6 h-6 stroke-slate-900 dark:stroke-slate-200" />
                     <p className="truncate align-middle" title={flow.title}>
-                      {flow.title}aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                      {flow.title}
                     </p>
                   </div>
                   <div className="col-span-1 mx-auto">
@@ -50,10 +51,12 @@ export async function FlowsList() {
                   </div>
                 </div>
               </CardTitle>
-              <CardDescription className="pl-8">Click to see</CardDescription>
+              <CardDescription className="pl-8 flex items-center gap-x-1">
+                Click <Pencil className="w-3 h-3" /> to see options
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="line-clamp-3">{flow.description}</p>
+              <p className="line-clamp-3 text-sm">{flow.description}</p>
             </CardContent>
             <CardFooter>
               <Badge

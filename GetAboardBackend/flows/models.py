@@ -1,3 +1,4 @@
+from typing import Optional
 from django.db import models
 from django.conf import settings
 
@@ -9,16 +10,52 @@ class Flow(models.Model):
     )
     title = models.CharField(max_length=100)
     description = models.TextField()
-    edges_map = models.JSONField(default=list)
-    nodes_map = models.JSONField(default=list)
+    edges_map = models.JSONField(default=list, blank=True)
+    nodes_map = models.JSONField(default=list, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
 
+    def share(self, option: str) -> str:
+        allowed_options = {"view", "comment", "edit"}
+        if option not in allowed_options:
+            raise ValueError(f"Invalid option, only {allowed_options} are allowed")
+
+        share_options, _ = ShareOption.objects.get_or_create(flow=self)
+        url_prefix = f"{settings.CLIENT_HOST}/share/{self.pk}"
+
+        def get_or_create_url(url_field: Optional[str], url_suffix: str) -> str:
+            if not url_field:
+                url = f"{url_prefix}/{url_suffix}"
+                setattr(share_options, f"{url_suffix}_url", url)
+                share_options.save()
+                return url
+            return url_field
+
+        option_to_url_suffix = {
+            "view": "view",
+            "comment": "comment",
+            "edit": "edit",
+        }
+
+        url_suffix = option_to_url_suffix[option]
+        url_field = getattr(share_options, f"{url_suffix}_url")
+        return get_or_create_url(url_field, url_suffix)
+
     class Meta:
         db_table = "flows"
+
+
+class ShareOption(models.Model):
+    flow = models.OneToOneField(Flow, on_delete=models.CASCADE, primary_key=True)
+    view_url = models.URLField(null=True, blank=True)
+    comment_url = models.URLField(null=True, blank=True)
+    edit_url = models.URLField(null=True, blank=True)
+
+    def __str__(self):
+        return f'Share options for flow "{str(self.flow)}"'
 
 
 class Node(models.Model):

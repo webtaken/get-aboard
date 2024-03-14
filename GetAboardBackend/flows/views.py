@@ -1,10 +1,13 @@
-from .models import Node
+from .models import Node, Flow
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK
+from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 from rest_framework.request import Request
-from .serializers import FlowSerializer, NodeSerializer
+from .serializers import FlowSerializer, NodeSerializer, FlowShareURLSerializer
 from .mixins import UserMixin
 
 
@@ -24,6 +27,34 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
             many=True,
         )
         return Response(serializer.data)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="option",
+                description='Sends the option to share only allowed: "view", "comment" or "edit"',
+                required=True,
+                type=OpenApiTypes.STR,
+            ),
+        ],
+        methods=["PATCH"],
+        responses={HTTP_200_OK: FlowShareURLSerializer},
+    )
+    @action(detail=True, methods=["patch"], url_name="share_flow")
+    def share_flow(self, request: Request, pk=None):
+        # By default share is only for view
+        option = request.query_params.get("option", "view")
+        flow: Flow = self.get_object()
+
+        try:
+            share_url = flow.share(option)
+        except ValueError as e:
+            return Response(data={"msg": str(e)}, status=HTTP_400_BAD_REQUEST)
+
+        url_serializer = FlowShareURLSerializer(data={"url": share_url})
+        if url_serializer.is_valid():
+            return Response(url_serializer.data)
+        return Response(url_serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 
 class NodeViewSet(viewsets.ModelViewSet):

@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Flow } from '../models/Flow';
+import type { FlowShareURL } from '../models/FlowShareURL';
 import type { Node } from '../models/Node';
 import type { PatchedFlow } from '../models/PatchedFlow';
 import type { PatchedNode } from '../models/PatchedNode';
@@ -118,6 +119,36 @@ export class FlowsService {
             path: {
                 'id': id,
             },
+        });
+    }
+
+    /**
+     * @returns FlowShareURL
+     * @throws ApiError
+     */
+    public static flowsShareFlowPartialUpdate({
+        id,
+        option,
+        requestBody,
+    }: {
+        id: string,
+        /**
+         * Sends the option to share only allowed: "view", "comment" or "edit"
+         */
+        option: string,
+        requestBody?: PatchedFlow,
+    }): CancelablePromise<FlowShareURL> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/flows/{id}/share_flow/',
+            path: {
+                'id': id,
+            },
+            query: {
+                'option': option,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
         });
     }
 

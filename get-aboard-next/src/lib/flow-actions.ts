@@ -75,8 +75,6 @@ export async function getUserFlows() {
 
 export async function getFlowById(id: number) {
   try {
-    console.log("awaiting");
-    await sleep(2000);
     await setCredentialsToAPI();
     const flow = await FlowsService.flowsRetrieve({ id: String(id) });
     return flow;
@@ -145,6 +143,23 @@ export async function deleteFlowById(id: number) {
     });
     revalidatePath("/dashboard");
     return true;
+  } catch (error) {
+    return undefined;
+  }
+}
+
+export async function shareFlow(
+  id: number,
+  option: "view" | "comment" | "edit"
+) {
+  try {
+    await setCredentialsToAPI();
+    console.log("sharing");
+    const shareOption = await FlowsService.flowsShareFlowPartialUpdate({
+      id: String(id),
+      option: option,
+    });
+    return shareOption.url;
   } catch (error) {
     return undefined;
   }

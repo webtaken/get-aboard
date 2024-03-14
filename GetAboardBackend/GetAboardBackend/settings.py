@@ -24,12 +24,14 @@ load_dotenv(os.path.join(BASE_DIR, ".env.local"))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
+CLIENT_HOST = os.getenv("CLIENT_HOST", "http://localhost:3000")
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if os.getenv('DEBUG', True) == True or os.getenv(
-    'DEBUG', True) == 'True' else False
+DEBUG = (
+    True if os.getenv("DEBUG", True) or os.getenv("DEBUG", True) == "True" else False
+)
 
 ALLOWED_HOSTS = []
 
@@ -43,33 +45,32 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
     # Third party
-    'rest_framework',
-    'rest_framework.authtoken',
-    'rest_framework_simplejwt',
-    'drf_spectacular',
-    'corsheaders',
-    'django.contrib.sites',
+    "rest_framework",
+    "rest_framework.authtoken",
+    "rest_framework_simplejwt",
+    "drf_spectacular",
+    "corsheaders",
+    "django.contrib.sites",
     # Authentication
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
-    'dj_rest_auth',
-    'dj_rest_auth.registration',
-
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "dj_rest_auth",
+    "dj_rest_auth.registration",
     # Own Apps
-    'flows',
-    'nextjs_drf_auth',
+    "flows",
+    "nextjs_drf_auth",
 ]
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
@@ -77,7 +78,7 @@ SOCIALACCOUNT_PROVIDERS = {
             "client_id": os.getenv("GOOGLE_CLIENT_ID", ""),  # replace me
             # replace me
             "secret": os.getenv("GOOGLE_CLIENT_SECRET", ""),
-            "key": "",                               # leave empty
+            "key": "",  # leave empty
         },
         "SCOPE": [
             "profile",
@@ -94,51 +95,51 @@ SITE_ID = 1  # https://dj-rest-auth.readthedocs.io/en/latest/installation.html#r
 
 # we are turning off email verification for now
 SOCIALACCOUNT_EMAIL_REQUIRED = False
-SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
-ROOT_URLCONF = 'GetAboardBackend.urls'
+ROOT_URLCONF = "GetAboardBackend.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'GetAboardBackend.wsgi.application'
+WSGI_APPLICATION = "GetAboardBackend.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 DATABASE_URL = os.getenv("DATABASE_URL", "")
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     },
-    'production': dj_database_url.config(default=DATABASE_URL, conn_max_age=1800),
+    "production": dj_database_url.config(default=DATABASE_URL, conn_max_age=1800),
 }
 
 
@@ -146,16 +147,16 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -163,9 +164,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -182,24 +183,24 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # REST FRAMEWORK config
 REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
 }
 
 # SPECTACULAR config
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Get-Aboard API',
-    'DESCRIPTION': 'The API for Get-Aboard side project',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': True,
+    "TITLE": "Get-Aboard API",
+    "DESCRIPTION": "The API for Get-Aboard side project",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": True,
     # OTHER SETTINGS
-    'SERVERS': [{'url': 'http://127.0.0.1:8001', 'description': 'my local server'}]
+    "SERVERS": [{"url": "http://127.0.0.1:8001", "description": "my local server"}],
 }
 
 SIMPLE_JWT = {

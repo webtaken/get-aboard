@@ -37,6 +37,10 @@ class FlowSerializer(serializers.ModelSerializer):
                 self.fields.pop(field_name)
 
 
+class FlowShareURLSerializer(serializers.Serializer):
+    url = serializers.URLField()
+
+
 class NodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Node
