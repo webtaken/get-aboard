@@ -150,16 +150,42 @@ export async function deleteFlowById(id: number) {
 
 export async function shareFlow(
   id: number,
-  option: "view" | "comment" | "edit"
+  option: "view" | "comment" | "edit",
+  withPIN: boolean
 ) {
   try {
     await setCredentialsToAPI();
-    console.log("sharing");
     const shareOption = await FlowsService.flowsShareFlowPartialUpdate({
       id: String(id),
       option: option,
+      withPin: withPIN,
     });
-    return shareOption.url;
+    return shareOption;
+  } catch (error) {
+    return undefined;
+  }
+}
+
+export async function unshareFlow(id: number, field: "url" | "pin") {
+  try {
+    await setCredentialsToAPI();
+    await FlowsService.flowsUnshareFlowPartialUpdate({
+      id: String(id),
+      field: field,
+    });
+    return true;
+  } catch (error) {
+    return undefined;
+  }
+}
+
+export async function getFlowShareOption(id: number) {
+  try {
+    await setCredentialsToAPI();
+    const shareOption = await FlowsService.flowsGetShareOptionsRetrieve({
+      id: String(id),
+    });
+    return shareOption;
   } catch (error) {
     return undefined;
   }

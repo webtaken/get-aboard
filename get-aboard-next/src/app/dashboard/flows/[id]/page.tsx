@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { getFlowById } from "@/lib/flow-actions";
+import { getFlowById, getFlowShareOption } from "@/lib/flow-actions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import FlowMap from "@/components/Flows/FlowMap";
@@ -8,6 +8,7 @@ import { AlertCircle } from "lucide-react";
 export default async function Page({ params }: { params: { id: string } }) {
   const { id } = params;
   const flow = await getFlowById(+id);
+  const shareOption = await getFlowShareOption(+id);
 
   if (!flow) {
     return (
@@ -24,7 +25,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   return (
     <div className="my-4">
       <div className="w-full h-[500px]">
-        <FlowMap flow={flow} />
+        <FlowMap flow={flow} shareOption={shareOption} />
       </div>
     </div>
   );

@@ -19,3 +19,7 @@ export async function setCredentialsToAPI() {
     OpenAPI.TOKEN = session.django_data.access;
   }
 }
+
+export async function copyTextToClipboard(text: string) {
+  await navigator.clipboard.writeText(text);
+}

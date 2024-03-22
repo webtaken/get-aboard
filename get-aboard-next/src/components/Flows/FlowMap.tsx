@@ -25,13 +25,13 @@ import ReactFlow, {
   Edge,
   OnNodesDelete,
 } from "reactflow";
-import { Flow } from "@/client";
+import { Flow, FlowShareURL } from "@/client";
 import TicketNode, { DataTicketNode } from "@/components/Demos/TicketNode";
 import FlowControls from "./FlowControls";
 import { useFlowStore } from "@/stores/FlowStore";
 import { useDebounce } from "@uidotdev/usehooks";
 import { toast } from "../ui/use-toast";
-import { updateFlowById } from "@/lib/flow-actions";
+import { getFlowShareOption, updateFlowById } from "@/lib/flow-actions";
 import isEqual from "lodash.isequal";
 // Important! don't delete the styles css, otherwise the flow won't work.
 import "reactflow/dist/style.css";
@@ -320,13 +320,15 @@ function Flow({ defaultNodeId, initialNodes, initialEdges }: FlowProps) {
 
 interface FlowMapProps {
   flow: Flow;
+  shareOption?: FlowShareURL;
 }
-export default function FlowMap({ flow }: FlowMapProps) {
-  const { setFlowId, setFlow, reset } = useFlowStore();
+export default function FlowMap({ flow, shareOption }: FlowMapProps) {
+  const { setFlowId, setFlow, setFlowShareOption, reset } = useFlowStore();
 
   useEffect(() => {
     setFlowId(flow.flow_id);
     setFlow(flow);
+    setFlowShareOption(shareOption ? shareOption : null);
     return () => {
       reset();
     };

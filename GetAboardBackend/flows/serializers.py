@@ -38,7 +38,8 @@ class FlowSerializer(serializers.ModelSerializer):
 
 
 class FlowShareURLSerializer(serializers.Serializer):
-    url = serializers.URLField()
+    url = serializers.URLField(allow_null=True)
+    pin = serializers.CharField(allow_null=True)
 
 
 class NodeSerializer(serializers.ModelSerializer):

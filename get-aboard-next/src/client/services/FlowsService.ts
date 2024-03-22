@@ -126,17 +126,70 @@ export class FlowsService {
      * @returns FlowShareURL
      * @throws ApiError
      */
-    public static flowsShareFlowPartialUpdate({
+    public static flowsGetShareOptionsRetrieve({
+        id,
+    }: {
+        id: string,
+    }): CancelablePromise<FlowShareURL> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/flows/{id}/get_share_options/',
+            path: {
+                'id': id,
+            },
+        });
+    }
+
+    /**
+     * @returns Flow
+     * @throws ApiError
+     */
+    public static flowsGetSharedFlowRetrieve({
         id,
         option,
-        requestBody,
+        pin,
     }: {
         id: string,
         /**
          * Sends the option to share only allowed: "view", "comment" or "edit"
          */
         option: string,
-        requestBody?: PatchedFlow,
+        /**
+         * The access pin in case share options will need it
+         */
+        pin?: string,
+    }): CancelablePromise<Flow> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/flows/{id}/get_shared_flow/',
+            path: {
+                'id': id,
+            },
+            query: {
+                'option': option,
+                'pin': pin,
+            },
+        });
+    }
+
+    /**
+     * @returns FlowShareURL
+     * @throws ApiError
+     */
+    public static flowsShareFlowPartialUpdate({
+        id,
+        option,
+        withPin,
+    }: {
+        id: string,
+        /**
+         * Sends the option to share only allowed: "view", "comment" or "edit"
+         */
+        option: string,
+        /**
+         * Specify if url will need an access pin
+         */
+        withPin: boolean,
     }): CancelablePromise<FlowShareURL> {
         return __request(OpenAPI, {
             method: 'PATCH',
@@ -146,9 +199,36 @@ export class FlowsService {
             },
             query: {
                 'option': option,
+                'with_pin': withPin,
             },
-            body: requestBody,
-            mediaType: 'application/json',
+        });
+    }
+
+    /**
+     * @returns any No response body
+     * @throws ApiError
+     */
+    public static flowsUnshareFlowPartialUpdate({
+        field,
+        id,
+    }: {
+        /**
+         * Deletes the associated ShareOption model to the Flow depending on fields
+         * if field equals 'url' we delete all the flow, if field equals 'pin' we delete only pin field
+         * on the ShareOption model
+         */
+        field: string,
+        id: string,
+    }): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/flows/{id}/unshare_flow/',
+            path: {
+                'id': id,
+            },
+            query: {
+                'field': field,
+            },
         });
     }
 

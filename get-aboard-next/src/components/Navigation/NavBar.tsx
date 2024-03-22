@@ -29,6 +29,36 @@ export default function NavBar() {
     return null;
   }
 
+  if (pathname.startsWith("/share/")) {
+    return (
+      <nav className="flex justify-between py-5">
+        <Link
+          href="/"
+          className={`flex items-center gap-x-2 ${notoSans.className}`}
+        >
+          <GetAboardIcon className="w-6 h-6 stroke-slate-900 dark:stroke-slate-200" />{" "}
+          <span className="text-2xl font-semibold">Get-Aboard</span>
+        </Link>
+        <div className="flex items-center gap-10">
+          <Link href="/demo" className="text-base highlighted-text">
+            demo
+          </Link>
+          <Link
+            href="https://github.com/webtaken/get-aboard"
+            target="_blank"
+            className="text-muted-foreground text-base flex items-center gap-2"
+          >
+            go to project <Github className="w-4 h-4" />
+          </Link>
+          <ThemeToggler />
+          <Button asChild className="rounded-xl">
+            <Link href={session?.user ? "/dashboard" : "/login"}>Log in</Link>
+          </Button>
+        </div>
+      </nav>
+    );
+  }
+
   return (
     <nav className="flex justify-between py-5">
       <Link

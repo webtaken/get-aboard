@@ -1,9 +1,10 @@
 import { create } from "zustand";
-import { Node, Flow } from "@/client";
+import { Node, Flow, FlowShareURL } from "@/client";
 
 export interface FlowState {
   flowId: number | null;
   flow: Flow | null;
+  flowShareOption: FlowShareURL | null;
   nodeMapId: string | null;
   nodeId: number | null;
   node: Node | null;
@@ -12,6 +13,7 @@ export interface FlowState {
 export interface FlowActions {
   setFlowId: (newId: number | null) => void;
   setFlow: (newFlow: Flow | null) => void;
+  setFlowShareOption: (newFlowShareOption: FlowShareURL | null) => void;
   setNodeMapId: (newId: string | null) => void;
   setNodeId: (newId: number | null) => void;
   setNode: (newNode: Node | null) => void;
@@ -21,6 +23,7 @@ export interface FlowActions {
 const initialState: FlowState = {
   flowId: null,
   flow: null,
+  flowShareOption: null,
   nodeMapId: null,
   nodeId: null,
   node: null,
@@ -36,6 +39,10 @@ export const useFlowStore = create<FlowState & FlowActions>()((set) => {
     setFlow: (newFlow) =>
       set((state) => ({
         flow: newFlow,
+      })),
+    setFlowShareOption: (newFlowShareOption) =>
+      set((state) => ({
+        flowShareOption: newFlowShareOption,
       })),
     setNodeMapId: (newId) =>
       set((state) => ({

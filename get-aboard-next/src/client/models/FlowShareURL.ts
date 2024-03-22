@@ -4,6 +4,7 @@
 /* eslint-disable */
 
 export type FlowShareURL = {
-    url: string;
+    url: string | null;
+    pin: string | null;
 };
 
