@@ -28,6 +28,7 @@ export interface FlowMapActions {
   addNode: (nodes: Node<DataTicketNode>) => void;
   deleteNode: (nodeId: string) => void;
   updateNodeMapData: (nodeId: string, dbData: DataTicketNode) => void;
+  reset: () => void;
 }
 
 const initialState: FlowMapState = {
@@ -86,5 +87,6 @@ export const useFlowMapStore = create<FlowMapState & FlowMapActions>(
         }),
       }));
     },
+    reset: () => set(initialState),
   })
 );

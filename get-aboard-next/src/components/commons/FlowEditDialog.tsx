@@ -105,6 +105,11 @@ export default function FlowEditDialog({
                 </div>
               </div>
               <Submit submitText={submitText} />
+              {state.errors?.general && (
+                <p className="mt-2 text-sm text-red-500">
+                  {state.errors.general}
+                </p>
+              )}
             </form>
           </DialogDescription>
         </DialogHeader>

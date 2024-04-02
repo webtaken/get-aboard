@@ -12,6 +12,7 @@ export type State = {
   errors?: {
     title?: string[];
     description?: string[];
+    general?: string;
   };
   message?: string | null;
   status: "initial" | "success" | "error";
@@ -55,11 +56,16 @@ export async function createFlow(prevState: State, formData: FormData) {
     });
     revalidatePath(`/dashboard`);
     return { message: "Flow created", status: "success" };
-  } catch (error) {
-    return {
+  } catch (error: any) {
+    const errorData = {
+      errors: {
+        general: undefined,
+      },
       message: "An error ocurred while creating the flow, try again later.",
       status: "error",
     };
+    if (error.body) errorData.errors.general = error.body[0];
+    return errorData;
   }
 }
 

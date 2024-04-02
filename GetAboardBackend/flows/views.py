@@ -15,6 +15,7 @@ from .mixins import UserMixin
 class FlowViewSet(UserMixin, viewsets.ModelViewSet):
     serializer_class = FlowSerializer
     permission_classes = [IsAuthenticated]
+    MAX_FLOWS = 1
 
     def get_queryset(self):
         return self.user.flows.all().order_by("-updated_at")
@@ -28,6 +29,12 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
             many=True,
         )
         return Response(serializer.data)
+
+    def create(self, request: Request, *args, **kwargs):
+        print(self.get_queryset().count())
+        if self.get_queryset().count() >= self.MAX_FLOWS:
+            raise ValidationError("Max flows limit reached")
+        return super().create(request, *args, **kwargs)
 
     @extend_schema(
         request=None,
