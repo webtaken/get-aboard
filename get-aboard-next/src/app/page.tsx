@@ -22,9 +22,9 @@ export default function Home() {
         <Button className="mx-auto w-32 text-base" asChild>
           <Link href="/login">Login</Link>
         </Button>
-        <p className="text-sm text-center">
-          We&apos;ll launch a first version soon 👀 <br />
-          <span className="font-bold">Login</span> to receive the latest updates
+        <p className="text-md text-center font-bold">
+          We&apos;ve launched our first version 🚀
+          <br /> Try it now!
         </p>
       </div>
     </main>
