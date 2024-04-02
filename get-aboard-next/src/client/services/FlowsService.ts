@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Flow } from '../models/Flow';
+import type { FlowShareURL } from '../models/FlowShareURL';
 import type { Node } from '../models/Node';
 import type { PatchedFlow } from '../models/PatchedFlow';
 import type { PatchedNode } from '../models/PatchedNode';
@@ -17,20 +18,10 @@ export class FlowsService {
      * @returns Flow
      * @throws ApiError
      */
-    public static flowsList({
-        userId,
-    }: {
-        /**
-         * get all the flows related to a user
-         */
-        userId?: number,
-    }): CancelablePromise<Array<Flow>> {
+    public static flowsList(): CancelablePromise<Array<Flow>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/flows/',
-            query: {
-                'user_id': userId,
-            },
         });
     }
 
@@ -56,18 +47,15 @@ export class FlowsService {
      * @throws ApiError
      */
     public static flowsRetrieve({
-        flowId,
+        id,
     }: {
-        /**
-         * A unique integer value identifying this flow.
-         */
-        flowId: number,
+        id: string,
     }): CancelablePromise<Flow> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/flows/{flow_id}/',
+            url: '/flows/{id}/',
             path: {
-                'flow_id': flowId,
+                'id': id,
             },
         });
     }
@@ -77,20 +65,17 @@ export class FlowsService {
      * @throws ApiError
      */
     public static flowsUpdate({
-        flowId,
+        id,
         requestBody,
     }: {
-        /**
-         * A unique integer value identifying this flow.
-         */
-        flowId: number,
+        id: string,
         requestBody: Flow,
     }): CancelablePromise<Flow> {
         return __request(OpenAPI, {
             method: 'PUT',
-            url: '/flows/{flow_id}/',
+            url: '/flows/{id}/',
             path: {
-                'flow_id': flowId,
+                'id': id,
             },
             body: requestBody,
             mediaType: 'application/json',
@@ -102,20 +87,17 @@ export class FlowsService {
      * @throws ApiError
      */
     public static flowsPartialUpdate({
-        flowId,
+        id,
         requestBody,
     }: {
-        /**
-         * A unique integer value identifying this flow.
-         */
-        flowId: number,
+        id: string,
         requestBody?: PatchedFlow,
     }): CancelablePromise<Flow> {
         return __request(OpenAPI, {
             method: 'PATCH',
-            url: '/flows/{flow_id}/',
+            url: '/flows/{id}/',
             path: {
-                'flow_id': flowId,
+                'id': id,
             },
             body: requestBody,
             mediaType: 'application/json',
@@ -127,18 +109,125 @@ export class FlowsService {
      * @throws ApiError
      */
     public static flowsDestroy({
-        flowId,
+        id,
     }: {
-        /**
-         * A unique integer value identifying this flow.
-         */
-        flowId: number,
+        id: string,
     }): CancelablePromise<void> {
         return __request(OpenAPI, {
             method: 'DELETE',
-            url: '/flows/{flow_id}/',
+            url: '/flows/{id}/',
             path: {
-                'flow_id': flowId,
+                'id': id,
+            },
+        });
+    }
+
+    /**
+     * @returns FlowShareURL
+     * @throws ApiError
+     */
+    public static flowsGetShareOptionsRetrieve({
+        id,
+    }: {
+        id: string,
+    }): CancelablePromise<FlowShareURL> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/flows/{id}/get_share_options/',
+            path: {
+                'id': id,
+            },
+        });
+    }
+
+    /**
+     * @returns Flow
+     * @throws ApiError
+     */
+    public static flowsGetSharedFlowRetrieve({
+        id,
+        option,
+        pin,
+    }: {
+        id: string,
+        /**
+         * Sends the option to share only allowed: "view", "comment" or "edit"
+         */
+        option: string,
+        /**
+         * The access pin in case share options will need it
+         */
+        pin?: string,
+    }): CancelablePromise<Flow> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/flows/{id}/get_shared_flow/',
+            path: {
+                'id': id,
+            },
+            query: {
+                'option': option,
+                'pin': pin,
+            },
+        });
+    }
+
+    /**
+     * @returns FlowShareURL
+     * @throws ApiError
+     */
+    public static flowsShareFlowPartialUpdate({
+        id,
+        option,
+        withPin,
+    }: {
+        id: string,
+        /**
+         * Sends the option to share only allowed: "view", "comment" or "edit"
+         */
+        option: string,
+        /**
+         * Specify if url will need an access pin
+         */
+        withPin: boolean,
+    }): CancelablePromise<FlowShareURL> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/flows/{id}/share_flow/',
+            path: {
+                'id': id,
+            },
+            query: {
+                'option': option,
+                'with_pin': withPin,
+            },
+        });
+    }
+
+    /**
+     * @returns any No response body
+     * @throws ApiError
+     */
+    public static flowsUnshareFlowPartialUpdate({
+        field,
+        id,
+    }: {
+        /**
+         * Deletes the associated ShareOption model to the Flow depending on fields
+         * if field equals 'url' we delete all the flow, if field equals 'pin' we delete only pin field
+         * on the ShareOption model
+         */
+        field: string,
+        id: string,
+    }): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/flows/{id}/unshare_flow/',
+            path: {
+                'id': id,
+            },
+            query: {
+                'field': field,
             },
         });
     }

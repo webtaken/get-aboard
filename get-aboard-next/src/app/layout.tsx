@@ -31,8 +31,8 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <NavBar />
-          {children}
           <Toaster />
+          {children}
         </Providers>
         <Analytics />
       </body>

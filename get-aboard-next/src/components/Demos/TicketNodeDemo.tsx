@@ -19,7 +19,7 @@ import { Content } from "@tiptap/react";
 import { Menu, MousePointerClick } from "lucide-react";
 import { Button } from "../ui/button";
 
-export interface DataTicketNode {
+export interface DataTicketNodeDemo {
   title: string;
   description: Content;
   tags?: string[];
@@ -27,11 +27,11 @@ export interface DataTicketNode {
   openDescriptionHandler?: (modeId: string) => void;
 }
 
-export default function TicketNode({
+export default function TicketNodeDemo({
   id,
   data,
   isConnectable,
-}: NodeProps<DataTicketNode>) {
+}: NodeProps<DataTicketNodeDemo>) {
   const { title, type, tags, openDescriptionHandler } = data;
 
   return (

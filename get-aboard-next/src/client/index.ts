@@ -8,6 +8,7 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { Flow } from './models/Flow';
+export type { FlowShareURL } from './models/FlowShareURL';
 export type { JWT } from './models/JWT';
 export type { Login } from './models/Login';
 export type { Node } from './models/Node';

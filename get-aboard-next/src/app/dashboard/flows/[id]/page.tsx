@@ -1,0 +1,23 @@
+import { getFlowById, getFlowShareOption } from "@/lib/flow-actions";
+import FlowMap from "@/components/Flows/FlowMap";
+import { notFound } from "next/navigation";
+
+export default async function Page({ params }: { params: { id: string } }) {
+  const { id } = params;
+  const [flow, shareOption] = await Promise.all([
+    getFlowById(+id),
+    getFlowShareOption(+id),
+  ]);
+
+  if (!flow) {
+    notFound();
+  }
+
+  return (
+    <div className="my-4">
+      <div className="w-full h-[500px]">
+        <FlowMap flow={flow} shareOption={shareOption} />
+      </div>
+    </div>
+  );
+}

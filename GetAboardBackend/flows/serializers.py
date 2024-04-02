@@ -6,19 +6,20 @@ class FlowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Flow
         fields = [
-            'flow_id',
-            'user',
-            'title',
-            'description',
-            'created_at',
-            'updated_at',
-            'edges',
+            "flow_id",
+            "user",
+            "title",
+            "description",
+            "created_at",
+            "updated_at",
+            "edges_map",
+            "nodes_map",
         ]
 
     def __init__(self, *args, **kwargs):
         # Don't pass the 'fields' arg up to the superclass
-        fields = kwargs.pop('fields', None)
-        drop = kwargs.pop('drop', None)
+        fields = kwargs.pop("fields", None)
+        drop = kwargs.pop("drop", None)
 
         # Instantiate the superclass normally
         super().__init__(*args, **kwargs)
@@ -36,24 +37,27 @@ class FlowSerializer(serializers.ModelSerializer):
                 self.fields.pop(field_name)
 
 
+class FlowShareURLSerializer(serializers.Serializer):
+    url = serializers.URLField(allow_null=True)
+    pin = serializers.CharField(allow_null=True)
+
+
 class NodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Node
         fields = [
-            'node_id',
-            'flow',
-            'title',
-            'x_pos',
-            'y_pos',
-            'description',
-            'created_at',
-            'updated_at',
+            "node_id",
+            "flow",
+            "title",
+            "description",
+            "created_at",
+            "updated_at",
         ]
 
     def __init__(self, *args, **kwargs):
         # Don't pass the 'fields' arg up to the superclass
-        fields = kwargs.pop('fields', None)
-        drop = kwargs.pop('drop', None)
+        fields = kwargs.pop("fields", None)
+        drop = kwargs.pop("drop", None)
 
         # Instantiate the superclass normally
         super().__init__(*args, **kwargs)

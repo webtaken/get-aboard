@@ -1,29 +1,25 @@
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  ChangeEvent,
-  Dispatch,
-  FormEvent,
-  SetStateAction,
-  useState,
-} from "react";
-import Editor from "../Editors/Editor";
+import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { Input } from "../ui/input";
-import { DataTicketNode } from "../Demos/TicketNode";
+import { DataTicketNodeDemo } from "../Demos/TicketNodeDemo";
+import EditorDemo from "../Editors/EditorDemo";
 
-interface TicketSheetProps {
+interface TicketSheetDemoProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  data: DataTicketNode;
+  data: DataTicketNodeDemo;
 }
 
-export default function TicketSheet({ open, setOpen, data }: TicketSheetProps) {
+export default function TicketSheetDemo({
+  open,
+  setOpen,
+  data,
+}: TicketSheetDemoProps) {
   const { title, description } = data;
 
   const changeTitleHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +38,7 @@ export default function TicketSheet({ open, setOpen, data }: TicketSheetProps) {
               className="text-4xl"
             />
           </SheetTitle>
-          <Editor content={description} />
+          <EditorDemo content={description} />
         </SheetHeader>
       </SheetContent>
     </Sheet>
