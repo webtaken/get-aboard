@@ -13,10 +13,11 @@ import { useFlowStore } from "@/stores/FlowStore";
 import { toast } from "../ui/use-toast";
 import { useEditorSheetStore } from "@/stores/SheetEditorStore";
 import { Input } from "../ui/input";
+import EditorShared from "../Editors/EditorShared";
 
-interface TicketSheetEditorProps {}
+interface TicketSheetEditorSharedProps {}
 
-export default function TicketEditorSheet({}: TicketSheetEditorProps) {
+export default function TicketEditorSheetShared({}: TicketSheetEditorSharedProps) {
   const { open, setOpen } = useEditorSheetStore();
   const { nodeId, node, nodeMapId, setNode } = useFlowStore();
   const [title, setTitle] = useState(node?.title || "New Node");
@@ -48,10 +49,6 @@ export default function TicketEditorSheet({}: TicketSheetEditorProps) {
     setTitle(node?.title || "New Node");
   }, [node]);
 
-  const changeTitleHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
-  };
-
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent className="w-1/2 sm:max-w-none" side="right">
@@ -59,30 +56,22 @@ export default function TicketEditorSheet({}: TicketSheetEditorProps) {
           <>
             <SheetHeader className="pt-6">
               <SheetTitle className="my-2">
-                <Input
-                  onChange={changeTitleHandler}
-                  value={title}
-                  className="text-2xl"
-                />
+                <Input value={title} readOnly className="text-2xl" />
               </SheetTitle>
             </SheetHeader>
             <div className="space-y-4 w-full">
-              <Editor content={``} title={title} />
+              <EditorShared content={``} />
             </div>
           </>
         ) : node ? (
           <>
             <SheetHeader className="pt-6">
               <SheetTitle className="my-2">
-                <Input
-                  onChange={changeTitleHandler}
-                  value={title}
-                  className="text-2xl"
-                />
+                <Input value={title} readOnly className="text-2xl" />
               </SheetTitle>
             </SheetHeader>
             <div className="space-y-4 w-full">
-              <Editor content={node.description} title={title} />
+              <EditorShared content={node.description} />
             </div>
           </>
         ) : (

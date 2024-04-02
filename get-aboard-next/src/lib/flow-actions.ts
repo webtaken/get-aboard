@@ -90,6 +90,7 @@ export async function updateFlowById(id: number, data: PatchedFlow) {
       id: String(id),
       requestBody: data,
     });
+    revalidatePath(`/dashboard/flows/${id}`);
     return updatedFlow;
   } catch (error) {
     return undefined;
@@ -132,6 +133,7 @@ export async function updateFlowByForm(
       message: "An error ocurred while creating the flow, try again later.",
       status: "error",
     };
+  } finally {
   }
 }
 
@@ -186,6 +188,18 @@ export async function getFlowShareOption(id: number) {
       id: String(id),
     });
     return shareOption;
+  } catch (error) {
+    return undefined;
+  }
+}
+
+export async function validateFlowPin(flowId: number, pin: string) {
+  try {
+    await setCredentialsToAPI();
+    const shareOption = await getFlowShareOption(flowId);
+    if (!shareOption || !shareOption.pin) throw Error("No pin required");
+    revalidatePath(`/share/${flowId}/view`);
+    return shareOption.pin === pin;
   } catch (error) {
     return undefined;
   }

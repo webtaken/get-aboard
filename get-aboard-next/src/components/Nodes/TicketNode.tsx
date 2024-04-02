@@ -22,9 +22,8 @@ import { Delete } from "lucide-react";
 import { deleteNodeById } from "@/lib/node-actions";
 import { useFlowStore } from "@/stores/FlowStore";
 import { useEditorSheetStore } from "@/stores/SheetEditorStore";
-import { buildFlowNodesMap, buildReactFlowNodesMap } from "../Flows/FlowMap";
-import { updateFlowById } from "@/lib/flow-actions";
 import { toast } from "../ui/use-toast";
+import { useFlowMapStore } from "@/stores/FlowMapStore";
 
 export interface DataTicketNode {
   title: string;
@@ -34,7 +33,8 @@ export interface DataTicketNode {
 }
 
 export default function TicketNode(props: NodeProps<DataTicketNode>) {
-  const { setNodeId, setNode, setNodeMapId, flow, setFlow } = useFlowStore();
+  const { setNodeId, setNode, setNodeMapId } = useFlowStore();
+  const { deleteNode } = useFlowMapStore();
   const { setOpen } = useEditorSheetStore();
   const { id, data, isConnectable } = props;
   const { title, type, idOnDB, tags } = data;
@@ -55,7 +55,6 @@ export default function TicketNode(props: NodeProps<DataTicketNode>) {
                 <DropdownMenuItem
                   onClick={async () => {
                     if (idOnDB) {
-                      console.log("deleting the node on db", idOnDB);
                       const ok = await deleteNodeById(idOnDB);
                       if (ok) {
                         toast({
@@ -69,27 +68,7 @@ export default function TicketNode(props: NodeProps<DataTicketNode>) {
                         });
                       }
                     }
-
-                    const updatedNodesMap = buildFlowNodesMap(
-                      buildReactFlowNodesMap(flow?.nodes_map).filter(
-                        (nodeFromMap) => nodeFromMap.id !== id
-                      )
-                    );
-
-                    // we'll update the flow
-                    const updatedFlow = await updateFlowById(flow?.flow_id!, {
-                      nodes_map: updatedNodesMap,
-                    });
-
-                    if (updatedFlow) {
-                      console.log("updated flow", updatedFlow);
-                      setFlow(updatedFlow);
-                    } else {
-                      toast({
-                        variant: "destructive",
-                        description: "Flow data could not be updated",
-                      });
-                    }
+                    deleteNode(id);
                   }}
                   className="flex items-center gap-x-2"
                 >

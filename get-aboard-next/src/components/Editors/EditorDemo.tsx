@@ -34,7 +34,6 @@ export default function EditorDemo({ content }: EditorDemoProps) {
       Link.configure({
         protocols: ["mailto"],
       }),
-      // @ts-expect-error
       StarterKit.configure({
         bulletList: {
           keepMarks: true,

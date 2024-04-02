@@ -53,8 +53,6 @@ export default function FlowControls({}: FlowControlsProps) {
               <Switch
                 defaultChecked={shareable}
                 onCheckedChange={async (checked) => {
-                  console.log("FOO");
-
                   if (checked) {
                     let shareOption = await shareFlow(
                       flow?.flow_id!,
@@ -107,7 +105,6 @@ export default function FlowControls({}: FlowControlsProps) {
                 disabled={!shareable}
                 defaultChecked={withPIN}
                 onCheckedChange={async (checked) => {
-                  console.log("BUZZ");
                   if (checked) {
                     let shareOption = await shareFlow(
                       flow?.flow_id!,

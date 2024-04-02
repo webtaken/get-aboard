@@ -23,3 +23,9 @@ export async function setCredentialsToAPI() {
 export async function copyTextToClipboard(text: string) {
   await navigator.clipboard.writeText(text);
 }
+
+export function accessCodeHasExpired(timestamp: number) {
+  const currentTimestamp = Date.now();
+  const givenTimestamp = new Date(timestamp).getTime();
+  return givenTimestamp < currentTimestamp;
+}

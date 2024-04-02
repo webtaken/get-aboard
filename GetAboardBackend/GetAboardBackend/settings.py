@@ -14,34 +14,52 @@ import os
 import dj_database_url
 from pathlib import Path
 from datetime import timedelta
-from dotenv import load_dotenv
+from environ import Env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv(os.path.join(BASE_DIR, ".env.local"))
+env = Env(
+    ENV_PATH=(str, str(".env")),
+    ENV_MODE=(str, "development"),
+    DEBUG=(bool, False),
+    SECRET_KEY=(str, "SECRET_KEY"),
+    STATIC_ROOT_PATH=(str, str(BASE_DIR / "static")),
+    MEDIA_ROOT_PATH=(str, str(BASE_DIR / "media")),
+    CLIENT_HOST=(str, "http://localhost:3000"),
+    DATABASE_URL=(str, "DATABASE_URL"),
+    GOOGLE_CLIENT_ID=(str, "GOOGLE_CLIENT_ID"),
+    GOOGLE_CLIENT_SECRET=(str, "GOOGLE_CLIENT_SECRET"),
+    # CORS_ALLOW_ALL_ORIGINS=(bool, False),
+    ALLOWED_HOSTS=(list, "ALLOWED_HOSTS"),
+    CORS_ALLOWED_ORIGINS=(list, "CORS_ALLOWED_ORIGINS"),
+    CSRF_TRUSTED_ORIGINS=(list, "CSRF_TRUSTED_ORIGINS"),
+)
+
+# Take environment variables from env file
+if not os.path.isfile(env("ENV_PATH")):
+    print(f'file env doest exist {env("ENV_PATH")}')
+else:
+    env.read_env(env("ENV_PATH"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-CLIENT_HOST = os.getenv("CLIENT_HOST", "http://localhost:3000")
+CLIENT_HOST = env("CLIENT_HOST")
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = (
-    True if os.getenv("DEBUG", True) or os.getenv("DEBUG", True) == "True" else False
-)
+DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = []
+# ALLOWED HOSTS
+ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 
 # CORS WHITELIST
-CORS_ALLOW_ALL_ORIGINS = True
-# CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:8000']
+CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS")
 
 # CSRF
-# CSRF_TRUSTED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:8000']
-
+CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS")
 
 # Application definition
 INSTALLED_APPS = [
@@ -75,9 +93,8 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APP": {
-            "client_id": os.getenv("GOOGLE_CLIENT_ID", ""),  # replace me
-            # replace me
-            "secret": os.getenv("GOOGLE_CLIENT_SECRET", ""),
+            "client_id": env("GOOGLE_CLIENT_ID"),
+            "secret": env("GOOGLE_CLIENT_SECRET"),
             "key": "",  # leave empty
         },
         "SCOPE": [
@@ -133,13 +150,14 @@ WSGI_APPLICATION = "GetAboardBackend.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-DATABASE_URL = os.getenv("DATABASE_URL", "")
+DATABASE_URL = env("DATABASE_URL")
 DATABASES = {
-    "default": {
+    "default": dj_database_url.config(default=DATABASE_URL, conn_max_age=1800)
+    if env("ENV_MODE") == "production"
+    else {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
-    },
-    "production": dj_database_url.config(default=DATABASE_URL, conn_max_age=1800),
+    }
 }
 
 
