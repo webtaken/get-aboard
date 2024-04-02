@@ -17,6 +17,7 @@ export async function setCredentialsToAPI() {
     // eslint-disable-next-line
     // @ts-ignore
     OpenAPI.TOKEN = session.django_data.access;
+    OpenAPI.BASE = process.env.BASE_PATH_API!;
   }
 }
 
