@@ -11,11 +11,7 @@ import ReactFlow, {
 } from "reactflow";
 import { Flow } from "@/client";
 import { useShallow } from "zustand/react/shallow";
-import {
-  FlowMapActions,
-  FlowMapState,
-  useFlowMapStore,
-} from "@/stores/FlowMapStore";
+import { useFlowMapStore } from "@/stores/FlowMapStore";
 import FlowBasicEditor from "./FlowBasicEditor";
 import { buildFlowEdgesMap, buildFlowNodesMap } from "./FlowMap";
 import FlowStatus from "./FlowStatus";
@@ -26,20 +22,17 @@ import TicketNodeShared from "../Nodes/TicketNodeShared";
 
 const nodeTypes: NodeTypes = { ticket: TicketNodeShared };
 
-const selector = (state: FlowMapState & FlowMapActions) => ({
-  nodes: state.nodes,
-  edges: state.edges,
-  onNodesChange: state.onNodesChange,
-  onEdgesChange: state.onEdgesChange,
-  onConnect: state.onConnect,
-  setNodes: state.setNodes,
-  setEdges: state.setEdges,
-  addNode: state.addNode,
-});
-
 function Flow() {
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect } =
-    useFlowMapStore(useShallow((state) => selector(state)));
+    useFlowMapStore(
+      useShallow((state) => ({
+        nodes: state.nodes,
+        edges: state.edges,
+        onNodesChange: state.onNodesChange,
+        onEdgesChange: state.onEdgesChange,
+        onConnect: state.onConnect,
+      }))
+    );
   const { screenToFlowPosition, setViewport } = useReactFlow();
 
   const startTransform = useCallback(() => {

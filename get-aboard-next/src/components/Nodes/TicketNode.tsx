@@ -24,6 +24,7 @@ import { useFlowStore } from "@/stores/FlowStore";
 import { useEditorSheetStore } from "@/stores/SheetEditorStore";
 import { toast } from "../ui/use-toast";
 import { useFlowMapStore } from "@/stores/FlowMapStore";
+import { useShallow } from "zustand/react/shallow";
 
 export interface DataTicketNode {
   title: string;
@@ -34,11 +35,12 @@ export interface DataTicketNode {
 
 export default function TicketNode(props: NodeProps<DataTicketNode>) {
   const { setNodeId, setNode, setNodeMapId } = useFlowStore();
-  const { deleteNode } = useFlowMapStore();
+  const { deleteNode } = useFlowMapStore(
+    useShallow((state) => ({ deleteNode: state.deleteNode }))
+  );
   const { setOpen } = useEditorSheetStore();
   const { id, data, isConnectable } = props;
   const { title, type, idOnDB, tags } = data;
-
   return (
     <>
       <Card className="w-96 border-foreground border bg-slate-300 dark:bg-stone-950">

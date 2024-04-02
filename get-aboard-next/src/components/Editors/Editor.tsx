@@ -14,6 +14,7 @@ import { Node as ApiNode } from "@/client";
 import EditorControls from "./EditorControls";
 import { useFlowMapStore } from "@/stores/FlowMapStore";
 import "./styles.css";
+import { useShallow } from "zustand/react/shallow";
 
 interface EditorProps {
   title: string;
@@ -22,7 +23,11 @@ interface EditorProps {
 
 export default function Editor({ title, content }: EditorProps) {
   const { toast } = useToast();
-  const { updateNodeMapData } = useFlowMapStore();
+  const { updateNodeMapData } = useFlowMapStore(
+    useShallow((state) => ({
+      updateNodeMapData: state.updateNodeMapData,
+    }))
+  );
   const { flowId, nodeId, nodeMapId, setNodeId, setNode } = useFlowStore();
   const editor = useEditor({
     extensions: [

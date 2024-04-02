@@ -27,11 +27,7 @@ import isEqual from "lodash.isequal";
 import TicketEditorSheet from "../Tickets/TicketSheetEditor";
 import FlowStatus from "./FlowStatus";
 import { useShallow } from "zustand/react/shallow";
-import {
-  FlowMapActions,
-  FlowMapState,
-  useFlowMapStore,
-} from "@/stores/FlowMapStore";
+import { useFlowMapStore } from "@/stores/FlowMapStore";
 import FlowBasicEditor from "./FlowBasicEditor";
 import { toast } from "../ui/use-toast";
 import { updateFlowById } from "@/lib/flow-actions";
@@ -91,31 +87,21 @@ export const buildReactFlowEdgesMap = (edges_map: any[]) => {
 const nodeTypes: NodeTypes = { ticket: TicketNode };
 const getId = () => uuidv4();
 
-const selector = (state: FlowMapState & FlowMapActions) => ({
-  nodes: state.nodes,
-  edges: state.edges,
-  onNodesChange: state.onNodesChange,
-  onEdgesChange: state.onEdgesChange,
-  onConnect: state.onConnect,
-  setNodes: state.setNodes,
-  setEdges: state.setEdges,
-  addNode: state.addNode,
-});
-
 function Flow() {
   const { flowId, flow, setFlow } = useFlowStore();
-  const {
-    nodes,
-    edges,
-    onNodesChange,
-    onEdgesChange,
-    onConnect,
-    addNode,
-    setNodes,
-    setEdges,
-  } = useFlowMapStore(useShallow((state) => selector(state)));
-  const debouncedNodes = useDebounce(nodes, 500);
-  const debouncedEdges = useDebounce(edges, 500);
+  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, addNode } =
+    useFlowMapStore(
+      useShallow((state) => ({
+        nodes: state.nodes,
+        edges: state.edges,
+        onNodesChange: state.onNodesChange,
+        onEdgesChange: state.onEdgesChange,
+        onConnect: state.onConnect,
+        addNode: state.addNode,
+      }))
+    );
+  const debouncedNodes = useDebounce(nodes, 800);
+  const debouncedEdges = useDebounce(edges, 800);
   const [saveStatus, setStatusSaved] = useState<
     "initial" | "loading" | "success" | "error"
   >("initial");
@@ -176,11 +162,11 @@ function Flow() {
       }
       return false;
     };
+
     const canUpdate =
       flow?.nodes_map &&
-      flow.edges_map &&
-      debouncedNodes.length > 0 &&
-      debouncedEdges.length > 0;
+      flow?.edges_map &&
+      (debouncedNodes.length > 0 || debouncedEdges.length > 0);
 
     if (canUpdate && flowMapsHaveChanged()) {
       setStatusSaved("loading");
@@ -256,8 +242,13 @@ interface FlowMapProps {
   shareOption?: FlowShareURL;
 }
 export default function FlowMap({ flow, shareOption }: FlowMapProps) {
-  const { setNodes, setEdges } = useFlowMapStore();
-  const { setFlowId, setFlow, setFlowShareOption, reset } = useFlowStore();
+  const { setNodes, setEdges, reset: resetFlowMap } = useFlowMapStore();
+  const {
+    setFlowId,
+    setFlow,
+    setFlowShareOption,
+    reset: resetFlow,
+  } = useFlowStore();
 
   useEffect(() => {
     setFlowId(flow.flow_id);
@@ -270,7 +261,8 @@ export default function FlowMap({ flow, shareOption }: FlowMapProps) {
     setEdges(reactFlowEdges);
 
     return () => {
-      reset();
+      resetFlowMap();
+      resetFlow();
     };
   }, []);
 

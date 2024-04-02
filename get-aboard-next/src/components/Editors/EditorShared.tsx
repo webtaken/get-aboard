@@ -1,18 +1,9 @@
 "use client";
 
 import Link from "@tiptap/extension-link";
-import { Save } from "lucide-react";
 import { Content, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import React from "react";
-import { Button } from "../ui/button";
-import { PatchedNode } from "@/client";
-import { createNode, updateNodeById } from "@/lib/node-actions";
-import { useFlowStore } from "@/stores/FlowStore";
-import { useToast } from "../ui/use-toast";
-import { Node as ApiNode } from "@/client";
-import EditorControls from "./EditorControls";
-import { useFlowMapStore } from "@/stores/FlowMapStore";
 import "./styles.css";
 
 interface EditorSharedProps {
