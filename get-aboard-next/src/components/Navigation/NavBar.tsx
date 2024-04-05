@@ -2,36 +2,28 @@
 
 import Link from "next/link";
 import { Noto_Sans } from "next/font/google";
-import { Github, LogOut, LayoutDashboard } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Github } from "lucide-react";
 import GetAboardIcon from "../Icons/GetAboardIcon";
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ThemeToggler } from "../Theming/ThemeToggler";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import ProfileActions from "./ProfileActions";
+import { Badge } from "@/components/ui/badge";
 
 const notoSans = Noto_Sans({ subsets: ["latin"] });
 
 export default function NavBar() {
   const pathname = usePathname();
-  const router = useRouter();
   const { status, data: session } = useSession();
 
   if (pathname == "/login" || pathname == "/register") {
     return null;
   }
 
-  if (pathname.startsWith("/share/")) {
-    return (
-      <nav className="flex justify-between py-5">
+  return (
+    <nav className="flex justify-between py-5">
+      <div className="flex items-center gap-x-2">
         <Link
           href="/"
           className={`flex items-center gap-x-2 ${notoSans.className}`}
@@ -39,35 +31,9 @@ export default function NavBar() {
           <GetAboardIcon className="w-6 h-6 stroke-slate-900 dark:stroke-slate-200" />{" "}
           <span className="text-2xl font-semibold">Get-Aboard</span>
         </Link>
-        <div className="flex items-center gap-10">
-          <Link href="/demo" className="text-base highlighted-text">
-            demo
-          </Link>
-          <Link
-            href="https://github.com/webtaken/get-aboard"
-            target="_blank"
-            className="text-muted-foreground text-base flex items-center gap-2"
-          >
-            go to project <Github className="w-4 h-4" />
-          </Link>
-          <ThemeToggler />
-          <Button asChild className="rounded-xl">
-            <Link href={session?.user ? "/dashboard" : "/login"}>Log in</Link>
-          </Button>
-        </div>
-      </nav>
-    );
-  }
+        <Badge className="outline">Beta v0.1.0</Badge>
+      </div>
 
-  return (
-    <nav className="flex justify-between py-5">
-      <Link
-        href="/"
-        className={`flex items-center gap-x-2 ${notoSans.className}`}
-      >
-        <GetAboardIcon className="w-6 h-6 stroke-slate-900 dark:stroke-slate-200" />{" "}
-        <span className="text-2xl font-semibold">Get-Aboard</span>
-      </Link>
       <div className="flex items-center gap-10">
         <Link href="/demo" className="text-base highlighted-text">
           demo
@@ -77,48 +43,15 @@ export default function NavBar() {
           target="_blank"
           className="text-muted-foreground text-base flex items-center gap-2"
         >
-          go to project <Github className="w-4 h-4" />
+          project <Github className="w-4 h-4" />
         </Link>
         <ThemeToggler />
-        {session?.user ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Image
-                width={100}
-                height={100}
-                className="w-10 h-10 rounded-full"
-                src={session.user.image as string}
-                alt="profile image"
-              />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onSelect={() => {
-                  router.push("/dashboard");
-                }}
-              >
-                <LayoutDashboard className="mr-2 w-4 h-4" />
-                <span>Dashboard</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onSelect={() => {
-                  async function logout() {
-                    const data = await signOut({
-                      redirect: false,
-                      callbackUrl: "/",
-                    });
-                    router.push(data.url);
-                  }
-                  logout();
-                }}
-              >
-                <LogOut className="mr-2 w-4 h-4" /> <span>Log out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        {pathname.startsWith("/share/") ? (
+          <Button asChild className="rounded-xl">
+            <Link href={session?.user ? "/dashboard" : "/login"}>Log in</Link>
+          </Button>
+        ) : session?.user ? (
+          <ProfileActions session={session} />
         ) : status === "loading" ? (
           <div className="rounded-full w-10 h-10 animate-pulse bg-slate-500" />
         ) : (
