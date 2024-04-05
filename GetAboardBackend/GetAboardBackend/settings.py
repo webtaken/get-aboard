@@ -11,9 +11,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 import os
-import dj_database_url
-from pathlib import Path
 from datetime import timedelta
+from pathlib import Path
+
+import dj_database_url
 from environ import Env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -34,6 +35,10 @@ env = Env(
     ALLOWED_HOSTS=(list, "ALLOWED_HOSTS"),
     CORS_ALLOWED_ORIGINS=(list, "CORS_ALLOWED_ORIGINS"),
     CSRF_TRUSTED_ORIGINS=(list, "CSRF_TRUSTED_ORIGINS"),
+    LEMONSQUEEZY_API_BASE=(str, "LEMONSQUEEZY_API_BASE"),
+    LEMONSQUEEZY_API_KEY=(str, "LEMONSQUEEZY_API_KEY"),
+    LEMONSQUEEZY_STORE_ID=(int, "LEMONSQUEEZY_STORE_ID"),
+    LEMONSQUEEZY_WEBHOOK_SECRET=(str, "LEMONSQUEEZY_WEBHOOK_SECRET"),
 )
 
 # Take environment variables from env file
@@ -62,31 +67,33 @@ CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS")
 CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS")
 
 # Application definition
-INSTALLED_APPS = [
+DEFAULT_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Third party
+]
+
+THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
     "drf_spectacular",
     "corsheaders",
     "django.contrib.sites",
-    # Authentication
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "dj_rest_auth",
     "dj_rest_auth.registration",
-    # Own Apps
-    "flows",
-    "nextjs_drf_auth",
 ]
+
+LOCAL_APPS = ["flows", "nextjs_drf_auth", "subscription_plans"]
+
+INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
@@ -237,6 +244,11 @@ REST_AUTH = {
     "JWT_AUTH_HTTPONLY": False,
 }
 
+# Billing configs
+LEMONSQUEEZY_API_BASE = env("LEMONSQUEEZY_API_BASE")
+LEMONSQUEEZY_API_KEY = env("LEMONSQUEEZY_API_KEY")
+LEMONSQUEEZY_STORE_ID = env("LEMONSQUEEZY_STORE_ID")
+LEMONSQUEEZY_WEBHOOK_SECRET = env("LEMONSQUEEZY_WEBHOOK_SECRET")
 
 # Testing
 # LOGGING = {
