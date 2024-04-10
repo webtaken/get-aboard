@@ -3,9 +3,10 @@
 import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
-import { setCredentialsToAPI, sleep } from "@/lib/utils";
+import { setCredentialsToAPI } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { FlowsService, PatchedFlow } from "@/client";
+import { unstable_noStore as noStore } from "next/cache";
 
 // This is temporary until @types/react-dom is updated
 export type State = {
@@ -189,6 +190,7 @@ export async function unshareFlow(id: number, field: "url" | "pin") {
 
 export async function getFlowShareOption(id: number) {
   try {
+    noStore();
     await setCredentialsToAPI();
     const shareOption = await FlowsService.flowsGetShareOptionsRetrieve({
       id: String(id),
