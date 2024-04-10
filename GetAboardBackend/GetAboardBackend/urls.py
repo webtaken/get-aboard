@@ -16,18 +16,17 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, include
-from flows.urls import router
+from django.urls import include, path
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
 
-
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("flows/", include((router.urls, "flows"))),
+    path("flows/", include("flows.urls")),
+    path("subscription-plans/", include("subscription_plans.urls")),
     path("api/auth/", include("nextjs_drf_auth.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     # Optional UI:

@@ -39,6 +39,12 @@ export default function NavBar() {
           demo
         </Link>
         <Link
+          href="/pricing"
+          className="text-muted-foreground text-base flex items-center gap-2"
+        >
+          pricing
+        </Link>
+        <Link
           href="https://github.com/webtaken/get-aboard"
           target="_blank"
           className="text-muted-foreground text-base flex items-center gap-2"

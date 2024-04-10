@@ -18,9 +18,11 @@ export type { PatchedUserDetails } from './models/PatchedUserDetails';
 export type { Register } from './models/Register';
 export type { RestAuthDetail } from './models/RestAuthDetail';
 export type { SocialLogin } from './models/SocialLogin';
+export type { SubscriptionPlan } from './models/SubscriptionPlan';
 export type { TokenRefresh } from './models/TokenRefresh';
 export type { TokenVerify } from './models/TokenVerify';
 export type { UserDetails } from './models/UserDetails';
 
 export { ApiService } from './services/ApiService';
 export { FlowsService } from './services/FlowsService';
+export { SubscriptionPlansService } from './services/SubscriptionPlansService';
