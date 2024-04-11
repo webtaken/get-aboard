@@ -1,10 +1,8 @@
-import json
-
 import requests
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from subscription_plans.models import SubscriptionPlan
+from billing.models import SubscriptionPlan
 
 
 class Command(BaseCommand):

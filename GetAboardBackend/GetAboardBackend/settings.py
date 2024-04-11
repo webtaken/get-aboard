@@ -91,7 +91,7 @@ THIRD_PARTY_APPS = [
     "dj_rest_auth.registration",
 ]
 
-LOCAL_APPS = ["flows", "nextjs_drf_auth", "subscription_plans"]
+LOCAL_APPS = ["flows", "nextjs_drf_auth", "billing"]
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 

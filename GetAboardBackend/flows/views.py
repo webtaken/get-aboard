@@ -1,15 +1,16 @@
-from .models import Node, Flow, ShareOption
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
-from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_200_OK
-from rest_framework.decorators import action
-from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
-from .serializers import FlowSerializer, NodeSerializer, FlowShareURLSerializer
+from rest_framework.response import Response
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
+
 from .mixins import UserMixin
+from .models import Flow, Node, ShareOption
+from .serializers import FlowSerializer, FlowShareURLSerializer, NodeSerializer
 
 
 class FlowViewSet(UserMixin, viewsets.ModelViewSet):
@@ -31,7 +32,6 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request: Request, *args, **kwargs):
-        print(self.get_queryset().count())
         if self.get_queryset().count() >= self.MAX_FLOWS:
             raise ValidationError("Max flows limit reached")
         return super().create(request, *args, **kwargs)
@@ -56,7 +56,7 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
         responses={HTTP_200_OK: FlowShareURLSerializer},
     )
     @action(detail=True, methods=["patch"], url_name="share_flow")
-    def share_flow(self, request: Request, pk=None):
+    def share_flow(self, request: Request, pk=None, **kwargs):
         # By default share is only for view
         option = request.query_params.get("option", "view")
         with_pin = request.query_params.get("with_pin", False)
@@ -92,7 +92,7 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
         responses={HTTP_200_OK: {}},
     )
     @action(detail=True, methods=["patch"], url_name="unshare_flow")
-    def unshare_flow(self, request: Request, pk=None):
+    def unshare_flow(self, request: Request, pk=None, **kwargs):
         # By default share is only for view
         field = request.query_params.get("field", None)
 
@@ -116,7 +116,7 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
         responses={HTTP_200_OK: FlowShareURLSerializer},
     )
     @action(detail=True, methods=["get"], url_name="get_share_options")
-    def get_share_options(self, request: Request, pk=None):
+    def get_share_options(self, request: Request, pk=None, **kwargs):
         flow: Flow = self.get_object()
         share_option = ShareOption.objects.filter(flow=flow).first()
         if not share_option:
@@ -151,7 +151,7 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
         responses={HTTP_200_OK: FlowSerializer},
     )
     @action(detail=True, methods=["get"], url_name="get_shared_flow")
-    def get_shared_flow(self, request: Request, pk=None):
+    def get_shared_flow(self, request: Request, pk=None, **kwargs):
         # By default share is only for view
         option = request.query_params.get("option", "view")
         pin = request.query_params.get("pin")

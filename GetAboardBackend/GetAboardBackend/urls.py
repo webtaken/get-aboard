@@ -26,7 +26,7 @@ from drf_spectacular.views import (
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("flows/", include("flows.urls")),
-    path("subscription-plans/", include("subscription_plans.urls")),
+    path("billing/", include("billing.urls")),
     path("api/auth/", include("nextjs_drf_auth.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     # Optional UI:
