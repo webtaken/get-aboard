@@ -2,9 +2,12 @@ import hashlib
 import hmac
 
 from django.conf import settings
-from drf_spectacular.utils import extend_schema
+from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework.decorators import action
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import APIException, NotFound
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -16,14 +19,15 @@ from rest_framework.viewsets import GenericViewSet
 from .models import Subscription, SubscriptionPlan
 from .serializers import (
     CheckoutURLSerializer,
+    CustomerPortalURLSerializer,
     GetCheckoutURLRequestSerializer,
     SubscriptionPlanSerializer,
     SubscriptionSerializer,
 )
-from .utils import lemonsqueezy_request, process_webhook
+from .utils import get_subscription, lemonsqueezy_request, process_webhook
 
 
-class SubscriptionPlanListViewSet(ListModelMixin, GenericViewSet):
+class SubscriptionPlanListViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     queryset = SubscriptionPlan.objects.all()
     serializer_class = SubscriptionPlanSerializer
 
@@ -32,6 +36,47 @@ class SubscriptionViewSet(RetrieveModelMixin, GenericViewSet):
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
     permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        request=None,
+        description="Retrieves the customer portal url of a subscription",
+        methods=["GET"],
+        responses={HTTP_200_OK: CustomerPortalURLSerializer},
+    )
+    @action(methods=["get"], detail=True, url_name="get_customer_portal")
+    def get_customer_portal(self, request, pk=None, **kwargs):
+        subscription = get_subscription(pk)
+
+        serializer = CustomerPortalURLSerializer(
+            data={"url": subscription["data"]["attributes"]["urls"]["customer_portal"]}
+        )
+        if serializer.is_valid(raise_exception=True):
+            return Response(serializer.validated_data, status=HTTP_200_OK)
+
+    @extend_schema(
+        request=None,
+        description="Retrieves the current subscription of the given user_id",
+        parameters=[
+            OpenApiParameter(
+                name="user_id",
+                description="The user id requesting his subscriptions",
+                required=True,
+                type=OpenApiTypes.INT,
+            ),
+        ],
+        methods=["GET"],
+        responses={HTTP_200_OK: SubscriptionSerializer},
+    )
+    @action(methods=["get"], detail=False, url_name="get_user_subscription")
+    def get_user_subscription(self, request, **kwargs):
+        user = get_object_or_404(
+            get_user_model(), pk=request.query_params.get("user_id")
+        )
+        subscription = Subscription.objects.filter(user=user).first()
+        if subscription is None:
+            raise NotFound("No subscriptions found for this user")
+        serializer = SubscriptionSerializer(subscription)
+        return Response(serializer.data)
 
     @extend_schema(
         request=GetCheckoutURLRequestSerializer,

@@ -14,7 +14,7 @@ export type Subscription = {
     renews_at: string;
     ends_at: string;
     trial_ends_at: string;
-    price: string;
+    price?: string;
     is_usage_based?: boolean;
     is_paused?: boolean;
     subscription_item_id?: number | null;

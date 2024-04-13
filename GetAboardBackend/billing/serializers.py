@@ -28,6 +28,10 @@ class CheckoutURLSerializer(Serializer):
     url = URLField()
 
 
+class CustomerPortalURLSerializer(CheckoutURLSerializer):
+    pass
+
+
 class GetCheckoutURLRequestSerializer(Serializer):
     receipt_button_text = CharField(max_length=100, default="Go to Dashboard")
     receipt_thank_you_note = CharField(

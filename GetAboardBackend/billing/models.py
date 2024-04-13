@@ -32,6 +32,7 @@ class SubscriptionPlan(models.Model):
 
 class Subscription(models.Model):
     class Meta:
+        ordering = ["-lemonsqueezy_id"]
         indexes = [
             models.Index(fields=["user"]),
             models.Index(fields=["plan"]),

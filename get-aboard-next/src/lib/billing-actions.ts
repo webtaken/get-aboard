@@ -13,6 +13,20 @@ export async function getSubscriptionPlans() {
   }
 }
 
+export async function getSubscriptionPlan(id: number) {
+  try {
+    const subscription_plan = await BillingService.billingPlansRetrieve({
+      id: id,
+    });
+    return subscription_plan;
+  } catch (error: any) {
+    if (error.status === 404) {
+      return undefined;
+    }
+    throw error;
+  }
+}
+
 export async function getCheckoutURL(subscriptionPlan: SubscriptionPlan) {
   try {
     await setCredentialsToAPI();
@@ -31,6 +45,35 @@ export async function getCheckoutURL(subscriptionPlan: SubscriptionPlan) {
       });
     return checkout.url;
   } catch (error) {
+    return undefined;
+  }
+}
+
+export async function getUserSubscription() {
+  try {
+    await setCredentialsToAPI();
+    const session: any = await getServerSession(authOptions);
+    const subscription =
+      await BillingService.billingSubscriptionGetUserSubscriptionRetrieve({
+        userId: session.django_data.user.pk,
+      });
+    return subscription;
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+}
+
+export async function getCustomerPortalURL(subscriptionId: number) {
+  try {
+    await setCredentialsToAPI();
+    const portal =
+      await BillingService.billingSubscriptionGetCustomerPortalRetrieve({
+        id: subscriptionId,
+      });
+    return portal["url"];
+  } catch (error) {
+    console.error(error);
     return undefined;
   }
 }

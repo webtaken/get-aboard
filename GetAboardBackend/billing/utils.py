@@ -39,6 +39,13 @@ def get_product(product_id: int):
     return product
 
 
+def get_subscription(subscription_id):
+    subscription = lemonsqueezy_request(
+        method="GET", endpoint=f"/subscriptions/{subscription_id}"
+    ).json()
+    return subscription
+
+
 def process_webhook(webhook: dict):
     if webhook["data"]:
         if webhook["meta"]["event_name"].startswith("subscription_payment_"):

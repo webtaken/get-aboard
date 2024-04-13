@@ -8,6 +8,7 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { CheckoutURL } from './models/CheckoutURL';
+export type { CustomerPortalURL } from './models/CustomerPortalURL';
 export type { Flow } from './models/Flow';
 export type { FlowShareURL } from './models/FlowShareURL';
 export type { GetCheckoutURLRequest } from './models/GetCheckoutURLRequest';

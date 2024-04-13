@@ -22,7 +22,7 @@ export default function ProfileActions({ session }: { session: Session }) {
         <Image
           width={100}
           height={100}
-          className="w-10 h-10 rounded-full"
+          className="w-12 h-12 rounded-full p-0.5 border-2"
           src={session.user?.image as string}
           alt="profile image"
         />
