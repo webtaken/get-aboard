@@ -1,3 +1,6 @@
+import hashlib
+import hmac
+
 from django.conf import settings
 from drf_spectacular.utils import extend_schema
 from rest_framework.decorators import action
@@ -6,7 +9,8 @@ from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK
+from rest_framework.status import HTTP_200_OK, HTTP_500_INTERNAL_SERVER_ERROR
+from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
 from .models import Subscription, SubscriptionPlan
@@ -16,7 +20,7 @@ from .serializers import (
     SubscriptionPlanSerializer,
     SubscriptionSerializer,
 )
-from .utils import lemonsqueezy_request
+from .utils import lemonsqueezy_request, process_webhook
 
 
 class SubscriptionPlanListViewSet(ListModelMixin, GenericViewSet):
@@ -100,3 +104,41 @@ class SubscriptionViewSet(RetrieveModelMixin, GenericViewSet):
 
         if serializer.is_valid(raise_exception=True):
             return Response(serializer.validated_data, status=HTTP_200_OK)
+
+
+class LemonSqueezyWebhook(APIView):
+    """
+    Handle events happening on lemonsqueezy (subscription created and updated).
+    """
+
+    def post(self, request: Request, format=None):
+        signature = request.META["HTTP_X_SIGNATURE"]
+        secret = settings.LEMONSQUEEZY_WEBHOOK_SECRET
+
+        digest = hmac.new(secret.encode(), request.body, hashlib.sha256).hexdigest()
+
+        if not hmac.compare_digest(digest, signature):
+            raise Exception("Invalid signature.")
+
+        webhook = request.data
+        if webhook["meta"]:
+            try:
+                process_webhook(webhook)
+            except Exception as e:
+                print("Error while processing webhook: ", e)
+                return Response(
+                    data={
+                        "status": HTTP_500_INTERNAL_SERVER_ERROR,
+                        "description": str(e),
+                    },
+                    status=HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+            return Response(data={"status": HTTP_200_OK}, status=HTTP_200_OK)
+
+        return Response(
+            data={
+                "status": HTTP_500_INTERNAL_SERVER_ERROR,
+                "description": "webhook doesn't have the 'meta' key",
+            },
+            status=HTTP_500_INTERNAL_SERVER_ERROR,
+        )

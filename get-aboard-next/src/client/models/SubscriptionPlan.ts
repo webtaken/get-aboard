@@ -7,6 +7,7 @@ export type SubscriptionPlan = {
     readonly id: number;
     product_id: number;
     product_name: string;
+    product_description?: string | null;
     variant_id: number;
     name: string;
     description: string;

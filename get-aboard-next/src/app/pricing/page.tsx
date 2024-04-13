@@ -5,13 +5,15 @@
  */
 import { authOptions } from "@/auth";
 import { SubscriptionPlan } from "@/client";
+import PlanButton from "@/components/Billing/PlanButton";
+import { Button } from "@/components/ui/button";
 import {
   CardHeader,
   CardContent,
   CardFooter,
   Card,
 } from "@/components/ui/card";
-import { getSubscriptionPlans } from "@/lib/subscription-plan-actions";
+import { getSubscriptionPlans } from "@/lib/billing-actions";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
 
@@ -53,14 +55,6 @@ export default async function Page() {
         <div className="mx-auto grid place-items-stretch mt-5 max-w-3xl gap-12 px-4 sm:max-w-4xl lg:max-w-5xl lg:grid-cols-2 lg:gap-16">
           {listGroupedMaps.map((plans) => {
             const isFreePlan = parseFloat(plans[0].price) === 0.0;
-            let checkoutURL =
-              session === null
-                ? `/login?next=${encodeURIComponent("/pricing")}`
-                : "#";
-            if (isFreePlan) {
-              checkoutURL = "/dashboard";
-            }
-
             return (
               <Card
                 key={plans[0].id}
@@ -68,9 +62,12 @@ export default async function Page() {
               >
                 <CardHeader className="rounded-t-md p-4 bg-gray-50 dark:bg-gray-950">
                   <h3 className="text-xl font-bold">{plans[0].product_name}</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {plans[0].name}
-                  </p>
+                  <div
+                    className="text-sm text-gray-500 dark:text-gray-400"
+                    dangerouslySetInnerHTML={{
+                      __html: plans[0].product_description ?? "Try it now",
+                    }}
+                  />
                 </CardHeader>
                 <CardContent
                   className="grid gap-4 p-4 text-sm"
@@ -92,7 +89,7 @@ export default async function Page() {
                           ${parseFloat(plans[1].price) / 100}
                         </div>
                         <div className="text-sm text-gray-500 dark:text-gray-400">
-                          Yearly price (per month)
+                          Yearly price
                         </div>
                       </section>
                     </div>
@@ -106,12 +103,13 @@ export default async function Page() {
                       </div>
                     </>
                   )}
-                  <Link
-                    className="inline-flex items-center justify-center rounded-md border border-gray-200 bg-white h-10 text-sm font-medium shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-900 dark:border-gray-800 dark:bg-gray-950 dark:hover:bg-gray-950 dark:hover:text-gray-50 dark:focus-visible:ring-gray-300"
-                    href={checkoutURL}
-                  >
-                    Get started
-                  </Link>
+                  {isFreePlan ? (
+                    <Button variant="outline" asChild>
+                      <Link href="/dashboard">Get started</Link>
+                    </Button>
+                  ) : (
+                    <PlanButton plans={plans} isLoggedIn={session !== null} />
+                  )}
                 </CardFooter>
               </Card>
             );

@@ -8,9 +8,12 @@ class SubscriptionPlan(models.Model):
 
     product_id = models.IntegerField(null=False, verbose_name="Product id")
     product_name = models.CharField(max_length=255, verbose_name="Product name")
+    product_description = models.CharField(
+        max_length=500, null=True, verbose_name="Product description"
+    )
     variant_id = models.IntegerField(null=False, unique=True, verbose_name="Variant id")
     name = models.CharField(max_length=255, null=False, verbose_name="Name")
-    description = models.TextField(verbose_name="Description")
+    description = models.TextField(verbose_name="Variant description")
     price = models.CharField(max_length=30, null=False, verbose_name="Price")
     is_usage_based = models.BooleanField(default=False, verbose_name="Is usage based")
     interval = models.CharField(max_length=10, verbose_name="Interval")
@@ -32,6 +35,7 @@ class Subscription(models.Model):
         indexes = [
             models.Index(fields=["user"]),
             models.Index(fields=["plan"]),
+            models.Index(fields=["lemonsqueezy_id"]),
         ]
 
     user = models.ForeignKey(
@@ -51,7 +55,9 @@ class Subscription(models.Model):
     renews_at = models.CharField(max_length=100, verbose_name="Renews At")
     ends_at = models.CharField(max_length=100, verbose_name="Ends At")
     trial_ends_at = models.CharField(max_length=100, verbose_name="Trial Ends At")
-    price = models.CharField(max_length=30, null=False, verbose_name="Price")
+    price = models.CharField(
+        max_length=30, blank=True, null=False, verbose_name="Price"
+    )
     is_usage_based = models.BooleanField(default=False, verbose_name="Is usage based")
     is_paused = models.BooleanField(default=False, verbose_name="Is paused")
     subscription_item_id = models.BigIntegerField(
@@ -59,4 +65,4 @@ class Subscription(models.Model):
     )
 
     def __str__(self) -> str:
-        return f"{self.user} - {self.name}"
+        return f"{self.user}: {self.name}, {self.email} #({self.lemonsqueezy_id})"

@@ -1,40 +1,30 @@
-import requests
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from billing.models import SubscriptionPlan
+from billing.utils import get_product, lemonsqueezy_request
 
 
 class Command(BaseCommand):
     help = "Sync subscription plans with lemonsqueezy"
-    HEADERS = {"Authorization": f"Bearer {settings.LEMONSQUEEZY_API_KEY}"}
 
     def add_arguments(self, parser):
         pass
 
-    def get_price(self, variant_id):
-        price = requests.get(
-            f"{settings.LEMONSQUEEZY_API_BASE}/prices",
-            params={"filter[variant_id]": variant_id},
-            headers=self.HEADERS,
+    def get_price_by_variant_id(self, variant_id):
+        price = lemonsqueezy_request(
+            method="GET", endpoint="/prices", params={"filter[variant_id]": variant_id}
         ).json()
         return price
 
-    def get_product(self, product_id: int):
-        product = requests.get(
-            f"{settings.LEMONSQUEEZY_API_BASE}/products/{product_id}",
-            headers=self.HEADERS,
-        ).json()
-        return product
-
     def handle(self, *args, **options):
-        products = requests.get(
-            f"{settings.LEMONSQUEEZY_API_BASE}/products",
+        products = lemonsqueezy_request(
+            method="GET",
+            endpoint="/products",
             params={
                 "filter[store_id]": settings.LEMONSQUEEZY_STORE_ID,
                 "include": "variants",
             },
-            headers=self.HEADERS,
         ).json()
 
         all_variants = products["included"]
@@ -49,11 +39,11 @@ class Command(BaseCommand):
             ):
                 continue
 
-            product_name = self.get_product(attrs["product_id"])["data"]["attributes"][
-                "name"
-            ]
+            product = get_product(attrs["product_id"])
+            product_name = product["data"]["attributes"]["name"]
+            product_description = product["data"]["attributes"]["description"]
 
-            variant_price_obj = self.get_price(variant["id"])
+            variant_price_obj = self.get_price_by_variant_id(variant["id"])
             current_price_obj = variant_price_obj["data"][0]
             # print(json.dumps(variant_price_obj, indent=2, default=str))
             # print(json.dumps(current_price_obj, indent=2, default=str))
@@ -73,7 +63,7 @@ class Command(BaseCommand):
                 if is_usage_based
                 else current_price_obj["attributes"]["unit_price"]
             )
-            price_string = str(price or "") if price is not None else ""
+            price_string = str(price) if price is not None else "0"
 
             is_subscription = (
                 current_price_obj["attributes"]["category"] == "subscription"
@@ -93,6 +83,7 @@ class Command(BaseCommand):
                     "is_usage_based": is_usage_based,
                     "product_id": attrs["product_id"],
                     "product_name": product_name,
+                    "product_description": product_description,
                     "variant_id": int(variant["id"]),
                     "trial_interval": trial_interval,
                     "trial_interval_count": trial_interval_count,
