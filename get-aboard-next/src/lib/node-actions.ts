@@ -1,8 +1,12 @@
 "use server";
 
-import { FlowsService, PatchedNode } from "@/client";
+import {
+  FlowsNodesCreateValidationError,
+  FlowsService,
+  PatchedNode,
+} from "@/client";
 import { Node } from "@/client";
-import { setCredentialsToAPI } from "./utils";
+import { ActionStandardError, setCredentialsToAPI } from "./utils";
 
 export async function getFlowNodes(id: number) {
   try {
@@ -37,15 +41,33 @@ export async function updateNodeById(id: number, data: PatchedNode) {
   }
 }
 
-export async function createNode(node: Node) {
+export async function createNode(
+  node: Node
+): Promise<[Node | null, ActionStandardError | null]> {
   try {
     await setCredentialsToAPI();
     const newNode = await FlowsService.flowsNodesCreate({
       requestBody: node,
     });
-    return newNode;
-  } catch (error) {
-    throw error;
+    return [newNode, null];
+  } catch (error: any) {
+    const apiError = error.body as FlowsNodesCreateValidationError;
+    if (apiError.errors && apiError.errors.length > 0) {
+      return [
+        null,
+        {
+          detail: apiError.errors[0].detail,
+          code: apiError.errors[0].code,
+        },
+      ];
+    }
+    return [
+      null,
+      {
+        detail: "Error while updating the node, please contact support.",
+        code: "unknown",
+      },
+    ];
   }
 }
 

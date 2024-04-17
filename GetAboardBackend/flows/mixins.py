@@ -9,5 +9,4 @@ class UserMixin:
         user = self.request.user
         if isinstance(user, get_user_model()):
             return user
-        else:
-            return get_user_model().objects.get(id=user.id)
+        return get_user_model().objects.get(id=user.id)

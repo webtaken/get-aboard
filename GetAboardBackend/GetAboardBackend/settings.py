@@ -89,6 +89,7 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount.providers.google",
     "dj_rest_auth",
     "dj_rest_auth.registration",
+    "drf_standardized_errors",
 ]
 
 LOCAL_APPS = ["flows", "nextjs_drf_auth", "billing"]
@@ -216,6 +217,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+    "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
 }
 
 # SPECTACULAR config
@@ -226,6 +228,19 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": True,
     # OTHER SETTINGS
     "SERVERS": [{"url": "http://127.0.0.1:8001", "description": "my local server"}],
+    "ENUM_NAME_OVERRIDES": {
+        "ValidationErrorEnum": "drf_standardized_errors.openapi_serializers.ValidationErrorEnum.choices",
+        "ClientErrorEnum": "drf_standardized_errors.openapi_serializers.ClientErrorEnum.choices",
+        "ServerErrorEnum": "drf_standardized_errors.openapi_serializers.ServerErrorEnum.choices",
+        "ErrorCode401Enum": "drf_standardized_errors.openapi_serializers.ErrorCode401Enum.choices",
+        "ErrorCode403Enum": "drf_standardized_errors.openapi_serializers.ErrorCode403Enum.choices",
+        "ErrorCode404Enum": "drf_standardized_errors.openapi_serializers.ErrorCode404Enum.choices",
+        "ErrorCode405Enum": "drf_standardized_errors.openapi_serializers.ErrorCode405Enum.choices",
+        "ErrorCode406Enum": "drf_standardized_errors.openapi_serializers.ErrorCode406Enum.choices",
+        "ErrorCode415Enum": "drf_standardized_errors.openapi_serializers.ErrorCode415Enum.choices",
+        "ErrorCode429Enum": "drf_standardized_errors.openapi_serializers.ErrorCode429Enum.choices",
+        "ErrorCode500Enum": "drf_standardized_errors.openapi_serializers.ErrorCode500Enum.choices",
+    },
 }
 
 SIMPLE_JWT = {
@@ -249,6 +264,8 @@ LEMONSQUEEZY_API_BASE = env("LEMONSQUEEZY_API_BASE")
 LEMONSQUEEZY_API_KEY = env("LEMONSQUEEZY_API_KEY")
 LEMONSQUEEZY_STORE_ID = env("LEMONSQUEEZY_STORE_ID")
 LEMONSQUEEZY_WEBHOOK_SECRET = env("LEMONSQUEEZY_WEBHOOK_SECRET")
+
+DRF_STANDARDIZED_ERRORS = {"ENABLE_IN_DEBUG_FOR_UNHANDLED_EXCEPTIONS": True}
 
 # Testing
 # LOGGING = {

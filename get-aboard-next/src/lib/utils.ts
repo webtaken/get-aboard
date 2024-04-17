@@ -3,6 +3,7 @@ import { type ClassValue, clsx } from "clsx";
 import { getServerSession } from "next-auth";
 import { OpenAPI } from "@/client";
 import { twMerge } from "tailwind-merge";
+import { toast as toastSooner } from "sonner";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -29,4 +30,9 @@ export function accessCodeHasExpired(timestamp: number) {
   const currentTimestamp = Date.now();
   const givenTimestamp = new Date(timestamp).getTime();
   return givenTimestamp < currentTimestamp;
+}
+
+export interface ActionStandardError {
+  detail: string;
+  code: string;
 }

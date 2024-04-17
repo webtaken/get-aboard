@@ -3,6 +3,7 @@ import { Inter, Noto_Sans } from "next/font/google";
 import NavBar from "@/components/Navigation/NavBar";
 import Providers from "./providers";
 import { Toaster } from "@/components/ui/toaster";
+import { Toaster as ToasterSooner } from "@/components/ui/sonner";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
@@ -26,12 +27,13 @@ export default function RootLayout({
       >
         <Providers
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
           <NavBar />
           <Toaster />
+          <ToasterSooner position="bottom-left" />
           {children}
         </Providers>
         <Analytics />

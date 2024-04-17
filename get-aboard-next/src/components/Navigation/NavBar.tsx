@@ -78,21 +78,24 @@ export default function NavBar() {
               subscriptionPlan={subscriptionPlan}
             />
           )}
+        {pathname.startsWith("/dashboard") && !subscription && (
+          <Badge className="px-3 py-2">Free plan</Badge>
+        )}
         {!pathname.startsWith("/dashboard") && (
           <>
-            <Link href="/demo" className="text-base highlighted-text">
+            <Link href="/demo" className="text-sm highlighted-text">
               demo
             </Link>
             <Link
               href="/pricing"
-              className="text-muted-foreground text-base flex items-center gap-2"
+              className="text-sm text-muted-foreground flex items-center gap-2"
             >
               pricing
             </Link>
             <Link
               href="https://github.com/webtaken/get-aboard"
               target="_blank"
-              className="text-muted-foreground text-base flex items-center gap-2"
+              className="text-sm text-muted-foreground flex items-center gap-2"
             >
               project <Github className="w-4 h-4" />
             </Link>

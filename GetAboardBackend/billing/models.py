@@ -40,7 +40,10 @@ class Subscription(models.Model):
         ]
 
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL
+        settings.AUTH_USER_MODEL,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="subscriptions",
     )
     plan = models.ForeignKey(SubscriptionPlan, null=True, on_delete=models.SET_NULL)
     lemonsqueezy_id = models.CharField(

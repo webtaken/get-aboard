@@ -3,10 +3,16 @@
 import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
-import { setCredentialsToAPI } from "@/lib/utils";
+import { ActionStandardError, setCredentialsToAPI } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
-import { FlowsService, PatchedFlow } from "@/client";
 import { unstable_noStore as noStore } from "next/cache";
+import {
+  Flow,
+  FlowsCreateValidationError,
+  FlowsPartialUpdateValidationError,
+  FlowsService,
+  PatchedFlow,
+} from "@/client";
 
 // This is temporary until @types/react-dom is updated
 export type State = {
@@ -14,6 +20,7 @@ export type State = {
     title?: string[];
     description?: string[];
     general?: string;
+    code?: string;
   };
   message?: string | null;
   status: "initial" | "success" | "error";
@@ -58,14 +65,20 @@ export async function createFlow(prevState: State, formData: FormData) {
     revalidatePath(`/dashboard`);
     return { message: "Flow created", status: "success" };
   } catch (error: any) {
-    const errorData = {
+    console.error(error);
+    const apiError = error.body as FlowsCreateValidationError;
+    const errorData: State = {
       errors: {
         general: undefined,
+        code: "unknown",
       },
       message: "An error ocurred while creating the flow, try again later.",
       status: "error",
     };
-    if (error.body) errorData.errors.general = error.body[0];
+    if (errorData.errors && apiError.errors.length > 0) {
+      errorData.errors.general = apiError.errors[0].detail;
+      errorData.errors.code = apiError.errors[0].code;
+    }
     return errorData;
   }
 }
@@ -90,7 +103,10 @@ export async function getFlowById(id: number) {
   }
 }
 
-export async function updateFlowById(id: number, data: PatchedFlow) {
+export async function updateFlowById(
+  id: number,
+  data: PatchedFlow
+): Promise<[Flow | null, ActionStandardError | null]> {
   try {
     await setCredentialsToAPI();
     const updatedFlow = await FlowsService.flowsPartialUpdate({
@@ -98,9 +114,27 @@ export async function updateFlowById(id: number, data: PatchedFlow) {
       requestBody: data,
     });
     revalidatePath(`/dashboard/flows/${id}`);
-    return updatedFlow;
-  } catch (error) {
-    return undefined;
+    return [updatedFlow, null];
+  } catch (error: any) {
+    const apiError = error.body as FlowsPartialUpdateValidationError;
+    if (apiError.errors && apiError.errors.length > 0) {
+      return [
+        null,
+        {
+          detail: apiError.errors[0].detail,
+          code: apiError.errors[0].code,
+        },
+      ];
+    }
+
+    return [
+      null,
+      {
+        detail:
+          "Error while saving the flow, please reload the page or contact support.",
+        code: "unknown",
+      },
+    ];
   }
 }
 
@@ -140,7 +174,6 @@ export async function updateFlowByForm(
       message: "An error ocurred while creating the flow, try again later.",
       status: "error",
     };
-  } finally {
   }
 }
 
