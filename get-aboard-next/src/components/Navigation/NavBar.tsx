@@ -18,6 +18,7 @@ import {
 import { Subscription, SubscriptionPlan } from "@/client";
 import BillingButton from "./BillingButton";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import clsx from "clsx";
 
 const notoSans = Noto_Sans({ subsets: ["latin"] });
 
@@ -30,6 +31,7 @@ export default function NavBar() {
   const [subscriptionPlan, setSubscriptionPlan] = useState<
     SubscriptionPlan | undefined
   >(undefined);
+  const [isFreePlan, setIsFreePlan] = useState(false);
 
   useEffect(() => {
     if (session) {
@@ -41,6 +43,7 @@ export default function NavBar() {
           setSubscriptionPlan(plan);
         } else {
           // Free plan
+          setIsFreePlan(true);
         }
       };
       getSubscription();
@@ -52,7 +55,12 @@ export default function NavBar() {
   }
 
   return (
-    <header className="min-w-80 flex justify-between py-5">
+    <header
+      className={clsx(
+        "min-w-80 bg-gradient-to-b from-slate-100 to-slate-100/70 dark:from-slate-900 dark:to-slate-900/70 flex justify-between py-5",
+        pathname === "/" && "top-0 sticky"
+      )}
+    >
       <div className="flex items-center gap-x-2">
         <Link
           href="/"
@@ -72,26 +80,22 @@ export default function NavBar() {
               subscriptionPlan={subscriptionPlan}
             />
           )}
-        {pathname.startsWith("/dashboard") && !subscription && (
+        {pathname.startsWith("/dashboard") && isFreePlan && (
           <Badge className="px-3 py-2">Free plan</Badge>
         )}
         {!pathname.startsWith("/dashboard") && (
           <>
-            <Link href="/demo" className="text-sm highlighted-text">
+            <Link
+              href="/demo"
+              className="text-sm font-semibold highlighted-text"
+            >
               demo
             </Link>
             <Link
               href="/pricing"
-              className="text-sm text-muted-foreground flex items-center gap-2"
+              className="text-sm font-semibold text-muted-foreground flex items-center gap-2"
             >
               pricing
-            </Link>
-            <Link
-              href="https://github.com/webtaken/get-aboard"
-              target="_blank"
-              className="text-sm text-muted-foreground flex items-center gap-2"
-            >
-              project <Github className="w-4 h-4" />
             </Link>
           </>
         )}

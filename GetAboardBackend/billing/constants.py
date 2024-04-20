@@ -1,5 +1,5 @@
 # Some constants for the billing plans
-MAX_FLOWS_FREE_PLAN = 2
+MAX_FLOWS_FREE_PLAN = 1
 MAX_NODES_FREE_PLAN = 15
 
 # Exception's special codes
