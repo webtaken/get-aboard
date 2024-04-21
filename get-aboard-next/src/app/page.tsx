@@ -85,7 +85,7 @@ export default function Home() {
             Improve
           </h1>
           <h1 className="text-center text-3xl font-extrabold tracking-tight lg:text-4xl">
-            your organization's processes
+            your organization&apos;s processes
           </h1>
           <p className="text-xl text-center my-5 text-muted-foreground">
             <span className="font-semibold">Start for free</span> and check if

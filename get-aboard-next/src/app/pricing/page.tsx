@@ -45,7 +45,7 @@ export default async function Page() {
             Pricing
           </div>
           <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-            Choose the plan that's right for your team
+            Choose the plan that&apos;s right for your team
           </h2>
           <p className="max-w-2xl text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
             All plans include workspaces, access controls, and collaboration
