@@ -22,7 +22,7 @@ export default async function Page() {
     getSubscriptionPlans(),
     getServerSession(authOptions),
   ]);
-
+  console.log(susbcriptionPlans, session);
   const groupedPlans = new Map<number, SubscriptionPlan[]>();
   susbcriptionPlans.forEach((plan) => {
     if (!groupedPlans.has(plan.product_id)) {
