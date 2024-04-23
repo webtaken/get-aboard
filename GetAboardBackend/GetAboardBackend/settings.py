@@ -92,7 +92,7 @@ THIRD_PARTY_APPS = [
     "drf_standardized_errors",
 ]
 
-LOCAL_APPS = ["flows", "nextjs_drf_auth", "billing"]
+LOCAL_APPS = ["core", "flows", "nextjs_drf_auth", "billing"]
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
