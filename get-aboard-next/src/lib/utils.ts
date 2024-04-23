@@ -22,6 +22,10 @@ export async function setCredentialsToAPI() {
   }
 }
 
+export async function setBasePathToAPI() {
+  OpenAPI.BASE = process.env.BASE_PATH_API!;
+}
+
 export async function copyTextToClipboard(text: string) {
   await navigator.clipboard.writeText(text);
 }

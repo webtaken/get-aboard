@@ -1,11 +1,12 @@
 "use server";
-import { setCredentialsToAPI } from "@/lib/utils";
+import { setCredentialsToAPI, setBasePathToAPI } from "@/lib/utils";
 import { BillingService, SubscriptionPlan } from "@/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 
 export async function getSubscriptionPlans() {
   try {
+    await setBasePathToAPI();
     const subscription_plans = await BillingService.billingPlansList();
     return subscription_plans;
   } catch (error) {
@@ -15,6 +16,7 @@ export async function getSubscriptionPlans() {
 
 export async function getSubscriptionPlan(id: number) {
   try {
+    await setBasePathToAPI();
     const subscription_plan = await BillingService.billingPlansRetrieve({
       id: id,
     });
