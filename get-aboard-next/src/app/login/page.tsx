@@ -9,7 +9,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function Page() {
+export default function Page({
+  searchParams,
+}: {
+  searchParams?: { next: string };
+}) {
   return (
     <main className="flex items-center justify-center md:h-screen">
       <Card className="w-96 px-10 py-6 rounded-lg">
@@ -18,7 +22,7 @@ export default function Page() {
           <CardDescription>Good to have you back!</CardDescription>
         </CardHeader>
         <CardContent>
-          <LoginForm />
+          <LoginForm callbackUrl={searchParams?.next} />
         </CardContent>
         <CardFooter>
           <p className="mx-auto text-sm text-muted-foreground">

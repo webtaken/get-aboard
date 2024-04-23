@@ -15,6 +15,8 @@ import EditorControls from "./EditorControls";
 import { useFlowMapStore } from "@/stores/FlowMapStore";
 import "./styles.css";
 import { useShallow } from "zustand/react/shallow";
+import { useRouter } from "next/navigation";
+import { toast as toastSooner } from "sonner";
 
 interface EditorProps {
   title: string;
@@ -23,6 +25,7 @@ interface EditorProps {
 
 export default function Editor({ title, content }: EditorProps) {
   const { toast } = useToast();
+  const router = useRouter();
   const { updateNodeMapData } = useFlowMapStore(
     useShallow((state) => ({
       updateNodeMapData: state.updateNodeMapData,
@@ -73,7 +76,7 @@ export default function Editor({ title, content }: EditorProps) {
               title: title,
               description: editor.getHTML(),
             };
-            const newNode = await createNode(newNodeData);
+            const [newNode, error] = await createNode(newNodeData);
             if (newNode) {
               setNode(newNode);
               setNodeId(newNode.node_id);
@@ -89,9 +92,20 @@ export default function Editor({ title, content }: EditorProps) {
             } else {
               toast({
                 variant: "destructive",
-                description:
-                  "Error while updating the node, please contact support.",
+                description: error?.detail,
               });
+              if (error?.code && error.code === "nodes_limit_reached") {
+                toastSooner("Upgrade your plan", {
+                  description:
+                    "Unlock all features and get unlimited access to our support team.",
+                  action: {
+                    label: "Upgrade",
+                    onClick: () => {
+                      router.push("/pricing");
+                    },
+                  },
+                });
+              }
             }
             return;
           }

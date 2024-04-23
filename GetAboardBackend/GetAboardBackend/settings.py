@@ -11,9 +11,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 import os
-import dj_database_url
-from pathlib import Path
 from datetime import timedelta
+from pathlib import Path
+
+import dj_database_url
 from environ import Env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -34,6 +35,10 @@ env = Env(
     ALLOWED_HOSTS=(list, "ALLOWED_HOSTS"),
     CORS_ALLOWED_ORIGINS=(list, "CORS_ALLOWED_ORIGINS"),
     CSRF_TRUSTED_ORIGINS=(list, "CSRF_TRUSTED_ORIGINS"),
+    LEMONSQUEEZY_API_BASE=(str, "LEMONSQUEEZY_API_BASE"),
+    LEMONSQUEEZY_API_KEY=(str, "LEMONSQUEEZY_API_KEY"),
+    LEMONSQUEEZY_STORE_ID=(int, "LEMONSQUEEZY_STORE_ID"),
+    LEMONSQUEEZY_WEBHOOK_SECRET=(str, "LEMONSQUEEZY_WEBHOOK_SECRET"),
 )
 
 # Take environment variables from env file
@@ -62,31 +67,34 @@ CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS")
 CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS")
 
 # Application definition
-INSTALLED_APPS = [
+DEFAULT_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Third party
+]
+
+THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
     "drf_spectacular",
     "corsheaders",
     "django.contrib.sites",
-    # Authentication
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "dj_rest_auth",
     "dj_rest_auth.registration",
-    # Own Apps
-    "flows",
-    "nextjs_drf_auth",
+    "drf_standardized_errors",
 ]
+
+LOCAL_APPS = ["core", "flows", "nextjs_drf_auth", "billing"]
+
+INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
@@ -209,6 +217,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+    "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
 }
 
 # SPECTACULAR config
@@ -219,6 +228,19 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": True,
     # OTHER SETTINGS
     "SERVERS": [{"url": "http://127.0.0.1:8001", "description": "my local server"}],
+    "ENUM_NAME_OVERRIDES": {
+        "ValidationErrorEnum": "drf_standardized_errors.openapi_serializers.ValidationErrorEnum.choices",
+        "ClientErrorEnum": "drf_standardized_errors.openapi_serializers.ClientErrorEnum.choices",
+        "ServerErrorEnum": "drf_standardized_errors.openapi_serializers.ServerErrorEnum.choices",
+        "ErrorCode401Enum": "drf_standardized_errors.openapi_serializers.ErrorCode401Enum.choices",
+        "ErrorCode403Enum": "drf_standardized_errors.openapi_serializers.ErrorCode403Enum.choices",
+        "ErrorCode404Enum": "drf_standardized_errors.openapi_serializers.ErrorCode404Enum.choices",
+        "ErrorCode405Enum": "drf_standardized_errors.openapi_serializers.ErrorCode405Enum.choices",
+        "ErrorCode406Enum": "drf_standardized_errors.openapi_serializers.ErrorCode406Enum.choices",
+        "ErrorCode415Enum": "drf_standardized_errors.openapi_serializers.ErrorCode415Enum.choices",
+        "ErrorCode429Enum": "drf_standardized_errors.openapi_serializers.ErrorCode429Enum.choices",
+        "ErrorCode500Enum": "drf_standardized_errors.openapi_serializers.ErrorCode500Enum.choices",
+    },
 }
 
 SIMPLE_JWT = {
@@ -237,6 +259,13 @@ REST_AUTH = {
     "JWT_AUTH_HTTPONLY": False,
 }
 
+# Billing configs
+LEMONSQUEEZY_API_BASE = env("LEMONSQUEEZY_API_BASE")
+LEMONSQUEEZY_API_KEY = env("LEMONSQUEEZY_API_KEY")
+LEMONSQUEEZY_STORE_ID = env("LEMONSQUEEZY_STORE_ID")
+LEMONSQUEEZY_WEBHOOK_SECRET = env("LEMONSQUEEZY_WEBHOOK_SECRET")
+
+DRF_STANDARDIZED_ERRORS = {"ENABLE_IN_DEBUG_FOR_UNHANDLED_EXCEPTIONS": True}
 
 # Testing
 # LOGGING = {

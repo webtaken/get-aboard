@@ -1,6 +1,8 @@
 import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
 import { NextAuthOptions } from "next-auth";
+import { ApiService, OpenAPI } from "./client";
+import { setCredentialsToAPI } from "./lib/utils";
 
 // These two values should be a bit less than actual token lifetimes
 // 6 days
@@ -97,6 +99,13 @@ export const authOptions: NextAuthOptions = {
         session.django_data = token.django_data;
       }
       return session;
+    },
+  },
+  events: {
+    async signOut({ session, token }) {
+      await setCredentialsToAPI();
+      await ApiService.apiAuthLogoutCreate();
+      OpenAPI.TOKEN = undefined;
     },
   },
 };

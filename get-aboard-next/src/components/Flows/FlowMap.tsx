@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  DragEventHandler,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { DragEventHandler, useCallback, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import ReactFlow, {
   Node,
@@ -18,6 +12,7 @@ import ReactFlow, {
   ReactFlowProvider,
   Edge,
 } from "reactflow";
+import { toast as toastSooner } from "sonner";
 import { Flow, FlowShareURL } from "@/client";
 import TicketNode, { DataTicketNode } from "@/components/Nodes/TicketNode";
 import FlowControls from "./FlowControls";
@@ -31,6 +26,7 @@ import { useFlowMapStore } from "@/stores/FlowMapStore";
 import FlowBasicEditor from "./FlowBasicEditor";
 import { toast } from "../ui/use-toast";
 import { updateFlowById } from "@/lib/flow-actions";
+import { useRouter } from "next/navigation";
 // Important! don't delete the styles css, otherwise the flow won't work.
 import "reactflow/dist/style.css";
 
@@ -88,6 +84,7 @@ const nodeTypes: NodeTypes = { ticket: TicketNode };
 const getId = () => uuidv4();
 
 function Flow() {
+  const router = useRouter();
   const { flowId, flow, setFlow } = useFlowStore();
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect, addNode } =
     useFlowMapStore(
@@ -115,8 +112,7 @@ function Flow() {
     const saveFlow = async () => {
       const nodesMap = buildFlowNodesMap(debouncedNodes);
       const edgesMap = buildFlowEdgesMap(debouncedEdges);
-
-      const updatedFlow = await updateFlowById(flowId!, {
+      const [updatedFlow, error] = await updateFlowById(flowId!, {
         nodes_map: nodesMap,
         edges_map: edgesMap,
       });
@@ -124,14 +120,26 @@ function Flow() {
       if (updatedFlow) {
         setFlow(updatedFlow);
         setStatusSaved("success");
-      } else {
-        toast({
-          variant: "destructive",
-          description:
-            "Error while saving the flow, please reload the page or contact support.",
-        });
-        setStatusSaved("error");
+        return;
       }
+
+      toast({
+        variant: "destructive",
+        description: error?.detail,
+      });
+      if (error?.code && error.code === "nodes_limit_reached") {
+        toastSooner("Upgrade your plan", {
+          description:
+            "Unlock all features and get unlimited access to our support team.",
+          action: {
+            label: "Upgrade",
+            onClick: () => {
+              router.push("/pricing");
+            },
+          },
+        });
+      }
+      setStatusSaved("error");
     };
 
     const flowMapsHaveChanged = () => {

@@ -1,21 +1,29 @@
-from .models import Node, Flow, ShareOption
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
-from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_200_OK
-from rest_framework.decorators import action
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from billing.constants import (
+    FLOWS_LIMIT_REACHED,
+    MAX_FLOWS_FREE_PLAN,
+    MAX_NODES_FREE_PLAN,
+    NODES_LIMIT_REACHED,
+)
 from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
+from drf_standardized_errors.openapi import AutoSchema
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
-from .serializers import FlowSerializer, NodeSerializer, FlowShareURLSerializer
+from rest_framework.response import Response
+from rest_framework.status import HTTP_200_OK
+
 from .mixins import UserMixin
+from .models import Flow, Node, ShareOption
+from .serializers import FlowSerializer, FlowShareURLSerializer, NodeSerializer
 
 
 class FlowViewSet(UserMixin, viewsets.ModelViewSet):
     serializer_class = FlowSerializer
     permission_classes = [IsAuthenticated]
-    MAX_FLOWS = 1
+    schema = AutoSchema()
 
     def get_queryset(self):
         return self.user.flows.all().order_by("-updated_at")
@@ -31,10 +39,27 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request: Request, *args, **kwargs):
-        print(self.get_queryset().count())
-        if self.get_queryset().count() >= self.MAX_FLOWS:
-            raise ValidationError("Max flows limit reached")
+        user_subscription = self.user.subscriptions.first()
+        if user_subscription is None:
+            # User has free account
+            # Check if limit has been reached
+            if self.get_queryset().count() >= MAX_FLOWS_FREE_PLAN:
+                raise ValidationError("Max flows limit reached", FLOWS_LIMIT_REACHED)
         return super().create(request, *args, **kwargs)
+
+    def partial_update(self, request: Request, *args, **kwargs):
+        user_subscription = self.user.subscriptions.first()
+        if user_subscription is None:
+            # User has free account
+            # Check if limit of nodes map has been reached
+            nodes_map = request.data["nodes_map"]
+            # Check if nodes map has reached the limit
+            if len(nodes_map) > MAX_NODES_FREE_PLAN:
+                raise ValidationError(
+                    "Max nodes limit reached, changes won't take effect",
+                    NODES_LIMIT_REACHED,
+                )
+        return super().partial_update(request, *args, **kwargs)
 
     @extend_schema(
         request=None,
@@ -56,7 +81,7 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
         responses={HTTP_200_OK: FlowShareURLSerializer},
     )
     @action(detail=True, methods=["patch"], url_name="share_flow")
-    def share_flow(self, request: Request, pk=None):
+    def share_flow(self, request: Request, pk=None, **kwargs):
         # By default share is only for view
         option = request.query_params.get("option", "view")
         with_pin = request.query_params.get("with_pin", False)
@@ -69,12 +94,12 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
         try:
             share_option = flow.share(option, with_pin)
         except ValueError as e:
-            return Response(data={"msg": str(e)}, status=HTTP_400_BAD_REQUEST)
+            raise ValidationError(str(e))
 
         url_serializer = FlowShareURLSerializer(data=share_option)
         if url_serializer.is_valid():
             return Response(url_serializer.data)
-        return Response(url_serializer.errors, status=HTTP_400_BAD_REQUEST)
+        raise ValidationError(str(url_serializer.errors))
 
     @extend_schema(
         request=None,
@@ -92,7 +117,7 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
         responses={HTTP_200_OK: {}},
     )
     @action(detail=True, methods=["patch"], url_name="unshare_flow")
-    def unshare_flow(self, request: Request, pk=None):
+    def unshare_flow(self, request: Request, pk=None, **kwargs):
         # By default share is only for view
         field = request.query_params.get("field", None)
 
@@ -101,7 +126,7 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
 
         share_option = ShareOption.objects.filter(pk=pk).first()
         if share_option is None:
-            return Response({}, status=HTTP_404_NOT_FOUND)
+            raise NotFound("")
 
         if share_option and field == "url":
             share_option.delete()
@@ -116,21 +141,18 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
         responses={HTTP_200_OK: FlowShareURLSerializer},
     )
     @action(detail=True, methods=["get"], url_name="get_share_options")
-    def get_share_options(self, request: Request, pk=None):
+    def get_share_options(self, request: Request, pk=None, **kwargs):
         flow: Flow = self.get_object()
         share_option = ShareOption.objects.filter(flow=flow).first()
         if not share_option:
-            return Response(
-                data={"error": "Flow doesn't have share options"},
-                status=HTTP_404_NOT_FOUND,
-            )
+            raise NotFound("Flow doesn't have share options")
 
         serializer = FlowShareURLSerializer(
             data={"url": share_option.view_url, "pin": share_option.access_pin}
         )
         if serializer.is_valid():
             return Response(serializer.data)
-        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+        raise ValidationError(str(serializer.errors))
 
     @extend_schema(
         parameters=[
@@ -151,46 +173,47 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
         responses={HTTP_200_OK: FlowSerializer},
     )
     @action(detail=True, methods=["get"], url_name="get_shared_flow")
-    def get_shared_flow(self, request: Request, pk=None):
+    def get_shared_flow(self, request: Request, pk=None, **kwargs):
         # By default share is only for view
         option = request.query_params.get("option", "view")
         pin = request.query_params.get("pin")
 
         if option not in {"view", "comment", "edit"}:
-            return Response(
-                data={"error": "Unsupported share option."}, status=HTTP_400_BAD_REQUEST
-            )
+            raise ValidationError("Unsupported share option.")
 
         flow: Flow = self.get_object()
         share_option = ShareOption.objects.filter(flow=flow).first()
         if not share_option:
-            return Response(
-                data={"error": "Flow doesn't have share options"},
-                status=HTTP_404_NOT_FOUND,
-            )
+            raise NotFound("Flow doesn't have share options")
 
         url = getattr(share_option, f"{option}_url")
         if not url:
-            return Response(
-                data={"error": "Flow doesn't have specified share option"},
-                status=HTTP_404_NOT_FOUND,
-            )
+            raise NotFound("Flow doesn't have specified share option")
 
         access_pin = share_option.access_pin
         if access_pin and access_pin != pin:
-            return Response(
-                data={"error": "Invalid access pin"},
-                status=HTTP_400_BAD_REQUEST,
-            )
+            raise ValidationError("Invalid access pin")
 
         serializer = FlowSerializer(flow)
         return Response(serializer.data)
 
 
-class NodeViewSet(viewsets.ModelViewSet):
+class NodeViewSet(UserMixin, viewsets.ModelViewSet):
     queryset = Node.objects.all()
     serializer_class = NodeSerializer
     permission_classes = [IsAuthenticated]
+    schema = AutoSchema()
+
+    def create(self, request: Request, *args, **kwargs):
+        user_subscription = self.user.subscriptions.first()
+        if user_subscription is None:
+            # User has free plan
+            flow_id = request.data["flow"]
+            flow = Flow.objects.get(pk=flow_id)
+            # Check if related flow reached the limit
+            if flow.nodes.count() >= MAX_NODES_FREE_PLAN:
+                raise ValidationError("Max nodes limit reached", NODES_LIMIT_REACHED)
+        return super().create(request, *args, **kwargs)
 
     @extend_schema(
         parameters=[

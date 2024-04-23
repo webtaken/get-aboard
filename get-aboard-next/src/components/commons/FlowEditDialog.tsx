@@ -16,6 +16,8 @@ import { State } from "@/lib/flow-actions";
 import { useFormState, useFormStatus } from "react-dom";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
+import { toast as toastSooner } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface FlowEditDialogProps {
   trigger: React.ReactNode;
@@ -48,8 +50,24 @@ export default function FlowEditDialog({
   submitText,
   action,
 }: FlowEditDialogProps) {
+  const router = useRouter();
   const initialState: State = { message: null, errors: {}, status: "initial" };
   const [state, dispatch] = useFormState<State>(action, initialState);
+
+  useEffect(() => {
+    if (state.errors && state.errors.code === "flows_limit_reached") {
+      toastSooner("Upgrade your plan", {
+        description:
+          "Unlock all features and get unlimited access to our support team.",
+        action: {
+          label: "Upgrade",
+          onClick: () => {
+            router.push("/pricing");
+          },
+        },
+      });
+    }
+  }, [state]);
 
   return (
     <Dialog>
