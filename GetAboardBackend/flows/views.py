@@ -49,7 +49,8 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
 
     def partial_update(self, request: Request, *args, **kwargs):
         user_subscription = self.user.subscriptions.first()
-        if user_subscription is None:
+        # We have to check as well if we are updating the nodes_map
+        if user_subscription is None and "nodes_map" in request.data:
             # User has free account
             # Check if limit of nodes map has been reached
             nodes_map = request.data["nodes_map"]
