@@ -13,9 +13,9 @@ import ReactFlow, {
   Edge,
 } from "reactflow";
 import { toast as toastSooner } from "sonner";
-import { Flow, FlowShareURL } from "@/client";
+import { Flow as FlowAPI, FlowShareURL } from "@/client";
 import TicketNode, { DataTicketNode } from "@/components/Nodes/TicketNode";
-import FlowControls from "./FlowControls";
+import FlowControls from "./Controls/FlowControls";
 import { useFlowStore } from "@/stores/FlowStore";
 import { useDebounce } from "@uidotdev/usehooks";
 import isEqual from "lodash.isequal";
@@ -85,7 +85,13 @@ const getId = () => uuidv4();
 
 function Flow() {
   const router = useRouter();
-  const { flowId, flow, setFlow } = useFlowStore();
+  const { flowId, flow, setFlow } = useFlowStore(
+    useShallow((state) => ({
+      flowId: state.flowId,
+      flow: state.flow,
+      setFlow: state.setFlow,
+    }))
+  );
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect, addNode } =
     useFlowMapStore(
       useShallow((state) => ({
@@ -246,7 +252,7 @@ function Flow() {
 }
 
 interface FlowMapProps {
-  flow: Flow;
+  flow: FlowAPI;
   shareOption?: FlowShareURL;
 }
 export default function FlowMap({ flow, shareOption }: FlowMapProps) {

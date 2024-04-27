@@ -10,6 +10,7 @@ export type Flow = {
     description: string;
     readonly created_at: string;
     readonly updated_at: string;
+    metadata?: any;
     edges_map?: any;
     nodes_map?: any;
 };

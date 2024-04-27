@@ -1,7 +1,8 @@
-from typing import Optional
-from django.db import models
 from random import randint
+from typing import Optional
+
 from django.conf import settings
+from django.db import models
 
 
 class Flow(models.Model):
@@ -11,6 +12,7 @@ class Flow(models.Model):
     )
     title = models.CharField(max_length=100)
     description = models.TextField()
+    metadata = models.JSONField(default=dict, blank=True)
     edges_map = models.JSONField(default=list, blank=True)
     nodes_map = models.JSONField(default=list, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
