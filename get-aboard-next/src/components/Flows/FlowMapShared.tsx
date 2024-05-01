@@ -9,7 +9,7 @@ import ReactFlow, {
   ReactFlowProvider,
   Panel,
 } from "reactflow";
-import { Flow } from "@/client";
+import { Flow as FlowAPI } from "@/client";
 import { useShallow } from "zustand/react/shallow";
 import { useFlowMapStore } from "@/stores/FlowMapStore";
 import FlowBasicEditor from "./FlowBasicEditor";
@@ -62,7 +62,7 @@ function Flow() {
 }
 
 interface FlowMapProps {
-  flow: Flow;
+  flow: FlowAPI;
 }
 export default function FlowMapShared({ flow }: FlowMapProps) {
   const { setNodes, setEdges } = useFlowMapStore();

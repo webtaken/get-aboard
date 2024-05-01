@@ -13,7 +13,6 @@ class FlowSerializer(serializers.ModelSerializer):
             "description",
             "created_at",
             "updated_at",
-            "metadata",
             "edges_map",
             "nodes_map",
         ]

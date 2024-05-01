@@ -60,7 +60,6 @@ export async function createFlow(prevState: State, formData: FormData) {
         description: description,
         nodes_map: [],
         edges_map: [],
-        metadata: {},
       },
     });
     revalidatePath(`/dashboard`);

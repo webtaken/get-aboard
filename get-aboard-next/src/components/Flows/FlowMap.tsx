@@ -110,9 +110,12 @@ function Flow() {
   >("initial");
   const { screenToFlowPosition, setViewport } = useReactFlow();
 
-  const startTransform = useCallback(() => {
-    setViewport({ x: 600, y: 50, zoom: 1 }, { duration: 800 });
-  }, [setViewport]);
+  const startTransform = useCallback(
+    (x: number, y: number) => {
+      setViewport({ x: x, y: y, zoom: 1 }, { duration: 800 });
+    },
+    [setViewport]
+  );
 
   useEffect(() => {
     const saveFlow = async () => {
@@ -242,7 +245,7 @@ function Flow() {
       <Background size={2} />
       <Controls />
       <Panel position="top-right">
-        <FlowControls />
+        <FlowControls startTransform={startTransform} />
       </Panel>
       <Panel position="top-left">
         <FlowStatus status={saveStatus} />
@@ -262,13 +265,19 @@ export default function FlowMap({ flow, shareOption }: FlowMapProps) {
     setFlow,
     setFlowShareOption,
     reset: resetFlow,
-  } = useFlowStore();
+  } = useFlowStore(
+    useShallow((state) => ({
+      setFlowId: state.setFlowId,
+      setFlow: state.setFlow,
+      setFlowShareOption: state.setFlowShareOption,
+      reset: state.reset,
+    }))
+  );
 
   useEffect(() => {
     setFlowId(flow.flow_id);
     setFlow(flow);
     setFlowShareOption(shareOption ? shareOption : null);
-
     const reactFlowEdges = buildFlowEdgesMap(flow.edges_map);
     const reactFlowNodes = buildFlowNodesMap(flow.nodes_map);
     setNodes(reactFlowNodes);
