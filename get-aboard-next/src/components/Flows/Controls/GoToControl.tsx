@@ -27,15 +27,16 @@ import { useEffect, useState } from "react";
 import { buildReactFlowNodesMap } from "../FlowMap";
 import { DataTicketNode } from "@/components/Nodes/TicketNode";
 import { useWindowSize } from "@uidotdev/usehooks";
+import clsx from "clsx";
+import { useFlowMapStore } from "@/stores/FlowMapStore";
 
-function getWidthOffset(width: number) {
-  console.log(width);
-  let offset = 70;
-  if (width >= 640) offset = 120;
-  if (width >= 768) offset = 120;
-  if (width >= 1024) offset = 250;
-  if (width >= 1280) offset = 370;
-  if (width >= 1536) offset = 490;
+export function getWidthOffset(width: number) {
+  let offset = 40;
+  if (width >= 640) offset = 130;
+  if (width >= 768) offset = 140;
+  if (width >= 1024) offset = 270;
+  if (width >= 1280) offset = 390;
+  if (width >= 1536) offset = 510;
   return offset;
 }
 
@@ -48,15 +49,15 @@ export default function GoToControl({ startTransform }: GoToControlProps) {
   const [open, setOpen] = useState(false);
   const [breakpoints, setBreakpoints] = useState<Node<DataTicketNode>[]>([]);
   const [nodeTitle, setNodeTitle] = useState("");
-  const { flow } = useFlowStore(
+  const { nodes } = useFlowMapStore(
     useShallow((state) => ({
-      flow: state.flow,
+      nodes: state.nodes,
     }))
   );
 
   useEffect(() => {
-    if (flow?.nodes_map) setBreakpoints(buildReactFlowNodesMap(flow.nodes_map));
-  }, [flow]);
+    setBreakpoints(nodes);
+  }, [nodes]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -69,46 +70,46 @@ export default function GoToControl({ startTransform }: GoToControlProps) {
           <Waypoints className="w-4 h-4" /> Go to node
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0 h-[200px]">
-        {breakpoints && (
-          <Command>
-            <CommandInput placeholder="Search..." />
-            <CommandEmpty>No breakpoints found.</CommandEmpty>
-            <CommandGroup className="overflow-y-auto">
-              {breakpoints.map((breakpoint) => (
-                <CommandItem
-                  key={breakpoint.id}
-                  value={breakpoint.data.title}
-                  onSelect={(currentValue) => {
-                    setNodeTitle(
-                      currentValue.toLowerCase() === nodeTitle.toLowerCase()
-                        ? ""
-                        : currentValue
-                    );
-                    startTransform(
-                      -breakpoint.position.x +
-                        192 +
-                        getWidthOffset(size.width ?? 540),
-                      -breakpoint.position.y + 50
-                    );
-                    setOpen(false);
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      nodeTitle.toLowerCase() ===
-                        breakpoint.data.title.toLowerCase()
-                        ? "opacity-100"
-                        : "opacity-0"
-                    )}
-                  />
-                  {breakpoint.data.title}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </Command>
-        )}
+      <PopoverContent
+        className={clsx("p-0", breakpoints.length > 0 ? "h-52" : "h-28")}
+      >
+        <Command>
+          <CommandInput placeholder="Search..." />
+          <CommandEmpty>No breakpoints found.</CommandEmpty>
+          <CommandGroup className="overflow-y-auto">
+            {breakpoints.map((breakpoint) => (
+              <CommandItem
+                key={breakpoint.id}
+                value={breakpoint.data.title}
+                onSelect={(currentValue) => {
+                  setNodeTitle(
+                    currentValue.toLowerCase() === nodeTitle.toLowerCase()
+                      ? ""
+                      : currentValue
+                  );
+                  startTransform(
+                    -breakpoint.position.x +
+                      192 +
+                      getWidthOffset(size.width ?? 540),
+                    -breakpoint.position.y + 50
+                  );
+                  setOpen(false);
+                }}
+              >
+                <Check
+                  className={cn(
+                    "mr-2 h-4 w-4",
+                    nodeTitle.toLowerCase() ===
+                      breakpoint.data.title.toLowerCase()
+                      ? "opacity-100"
+                      : "opacity-0"
+                  )}
+                />
+                {breakpoint.data.title}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </Command>
       </PopoverContent>
     </Popover>
   );
