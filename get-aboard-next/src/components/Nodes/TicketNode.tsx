@@ -6,25 +6,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Handle, NodeProps, Position } from "reactflow";
-import { Menu, MousePointerClick } from "lucide-react";
+import { Edit2, Trash2, Waypoints } from "lucide-react";
 import { Button } from "../ui/button";
-import { Delete } from "lucide-react";
 import { deleteNodeById } from "@/lib/node-actions";
 import { useFlowStore } from "@/stores/FlowStore";
 import { useEditorSheetStore } from "@/stores/SheetEditorStore";
 import { toast } from "../ui/use-toast";
 import { useFlowMapStore } from "@/stores/FlowMapStore";
 import { useShallow } from "zustand/react/shallow";
+import { Separator } from "../ui/separator";
 
 export interface DataTicketNode {
   title: string;
@@ -36,7 +28,9 @@ export interface DataTicketNode {
 export default function TicketNode(props: NodeProps<DataTicketNode>) {
   const { setNodeId, setNode, setNodeMapId } = useFlowStore();
   const { deleteNode } = useFlowMapStore(
-    useShallow((state) => ({ deleteNode: state.deleteNode }))
+    useShallow((state) => ({
+      deleteNode: state.deleteNode,
+    }))
   );
   const { setOpen } = useEditorSheetStore();
   const { id, data, isConnectable } = props;
@@ -47,54 +41,10 @@ export default function TicketNode(props: NodeProps<DataTicketNode>) {
         <CardHeader>
           <CardTitle className="tracking-tight flex items-center justify-between">
             {title}
-            <DropdownMenu>
-              <DropdownMenuTrigger>
-                <Menu className="w-6 h-6" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>Options</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={async () => {
-                    if (idOnDB) {
-                      const ok = await deleteNodeById(idOnDB);
-                      if (ok) {
-                        toast({
-                          description: "Node deleted successfully!",
-                          duration: 700,
-                        });
-                      } else {
-                        toast({
-                          variant: "destructive",
-                          description: "Could not delete the node",
-                        });
-                      }
-                    }
-                    deleteNode(id);
-                  }}
-                  className="flex items-center gap-x-2"
-                >
-                  <Delete className="w-4 h-4" /> Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </CardTitle>
         </CardHeader>
-        <CardContent className="flex items-center justify-between">
-          <Button
-            variant="link"
-            className="p-0"
-            onClick={() => {
-              setOpen(true);
-              setNodeId(idOnDB);
-              !idOnDB && setNode(null);
-              setNodeMapId(id);
-            }}
-          >
-            See description <MousePointerClick className="w-4 h-4" />
-          </Button>
-        </CardContent>
-        <CardFooter>
+        <CardContent>
+          <p className="text-muted-foreground">Choose an option below</p>
           {tags &&
             tags.map((tag, index) => (
               <Badge
@@ -105,9 +55,59 @@ export default function TicketNode(props: NodeProps<DataTicketNode>) {
                 {tag}
               </Badge>
             ))}
+        </CardContent>
+        <CardFooter className="grid grid-rows">
+          <Separator />
+          <div className="grid grid-cols-5 w-full mt-2">
+            <div className="w-full grid col-span-2">
+              <Button
+                title="See description"
+                size="icon"
+                variant="ghost"
+                className="mx-auto"
+                onClick={() => {
+                  setOpen(true);
+                  setNodeId(idOnDB);
+                  !idOnDB && setNode(null);
+                  setNodeMapId(id);
+                }}
+              >
+                <Edit2 className="w-3.5 h-3.5" />
+              </Button>
+            </div>
+            <div className="w-full col-span-1">
+              <Separator orientation="vertical" className="mx-auto" />
+            </div>
+            <div className="w-full grid col-span-2">
+              <Button
+                title="Delete Node"
+                size="icon"
+                variant="ghost"
+                className="mx-auto"
+                onClick={async () => {
+                  if (idOnDB) {
+                    const ok = await deleteNodeById(idOnDB);
+                    if (ok) {
+                      toast({
+                        description: "Node deleted successfully!",
+                        duration: 700,
+                      });
+                    } else {
+                      toast({
+                        variant: "destructive",
+                        description: "Could not delete the node",
+                      });
+                    }
+                  }
+                  deleteNode(id);
+                }}
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </Button>
+            </div>
+          </div>
         </CardFooter>
       </Card>
-
       {type == "normal" && (
         <Handle
           type="target"
@@ -119,6 +119,7 @@ export default function TicketNode(props: NodeProps<DataTicketNode>) {
         type="source"
         position={Position.Bottom}
         isConnectable={isConnectable}
+        className="w-10 h-10"
       />
     </>
   );

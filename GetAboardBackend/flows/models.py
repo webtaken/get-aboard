@@ -1,7 +1,8 @@
-from typing import Optional
-from django.db import models
 from random import randint
+from typing import Optional
+
 from django.conf import settings
+from django.db import models
 
 
 class Flow(models.Model):

@@ -1,5 +1,6 @@
-from .models import Flow, Node
 from rest_framework import serializers
+
+from .models import Flow, Node
 
 
 class FlowSerializer(serializers.ModelSerializer):

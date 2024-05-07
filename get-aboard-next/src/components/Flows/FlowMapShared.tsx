@@ -9,7 +9,7 @@ import ReactFlow, {
   ReactFlowProvider,
   Panel,
 } from "reactflow";
-import { Flow } from "@/client";
+import { Flow as FlowAPI } from "@/client";
 import { useShallow } from "zustand/react/shallow";
 import { useFlowMapStore } from "@/stores/FlowMapStore";
 import FlowBasicEditor from "./FlowBasicEditor";
@@ -19,6 +19,7 @@ import TicketEditorSheetShared from "../Tickets/TicketSheetEditorShared";
 // Important! don't delete the styles css, otherwise the flow won't work.
 import "reactflow/dist/style.css";
 import TicketNodeShared from "../Nodes/TicketNodeShared";
+import FlowControlsShared from "./Controls/FlowControlsShared";
 
 const nodeTypes: NodeTypes = { ticket: TicketNodeShared };
 
@@ -33,11 +34,14 @@ function Flow() {
         onConnect: state.onConnect,
       }))
     );
-  const { screenToFlowPosition, setViewport } = useReactFlow();
+  const { setViewport } = useReactFlow();
 
-  const startTransform = useCallback(() => {
-    setViewport({ x: 600, y: 50, zoom: 1 }, { duration: 800 });
-  }, [setViewport]);
+  const startTransform = useCallback(
+    (x: number, y: number) => {
+      setViewport({ x: x, y: y, zoom: 1 }, { duration: 800 });
+    },
+    [setViewport]
+  );
 
   return (
     <ReactFlow
@@ -54,6 +58,9 @@ function Flow() {
     >
       <Background size={2} />
       <Controls />
+      <Panel position="top-right">
+        <FlowControlsShared startTransform={startTransform} />
+      </Panel>
       <Panel position="top-left">
         <FlowStatus status="initial" />
       </Panel>
@@ -62,7 +69,7 @@ function Flow() {
 }
 
 interface FlowMapProps {
-  flow: Flow;
+  flow: FlowAPI;
 }
 export default function FlowMapShared({ flow }: FlowMapProps) {
   const { setNodes, setEdges } = useFlowMapStore();

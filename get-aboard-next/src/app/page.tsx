@@ -20,16 +20,14 @@ export default function Home() {
           Avoid tricky 🫠 on-boardings with{" "}
           <span className="font-semibold">Get-Aboard</span>
         </p>
-        <div className="mx-auto w-10/12 bg-orange-100 dark:bg-slate-800/50 rounded-md p-4">
-          <iframe
-            className="w-full h-[150px] sm:h-[250px] md:h-[350px] lg:h-[450px] rounded-lg"
-            src="https://www.youtube.com/embed/BaSrKyUeNxk?autoplay=1&mute=1&controls=0&loop=1"
-            title="Get-aboard Presentation"
-            allow="accelerometer; autoplay; mute; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; loop;"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          ></iframe>
-        </div>
+        <iframe
+          className="w-full h-[150px] sm:h-[250px] md:h-[350px] lg:h-[450px] rounded-lg"
+          src="https://www.youtube.com/embed/BaSrKyUeNxk?autoplay=1&mute=1&controls=0&loop=1"
+          title="Get-aboard Presentation"
+          allow="accelerometer; autoplay; mute; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; loop;"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
+        ></iframe>
 
         <h1 className="mt-20 mb-5 text-center text-4xl font-extrabold tracking-tight lg:text-5xl text-transparent gradient-text bg-gradient-to-r from-fuchsia-500 via-teal-600 to-fuchsia-500 bg-clip-text">
           Save time and get
