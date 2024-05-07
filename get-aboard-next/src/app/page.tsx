@@ -21,7 +21,7 @@ export default function Home() {
           <span className="font-semibold">Get-Aboard</span>
         </p>
         <iframe
-          className="w-full h-[150px] sm:h-[250px] md:h-[350px] lg:h-[450px] rounded-lg"
+          className="mx-auto w-11/12 h-[150px] sm:h-[250px] md:h-[350px] lg:h-[450px] rounded-lg"
           src="https://www.youtube.com/embed/BaSrKyUeNxk?autoplay=1&mute=1&controls=0&loop=1"
           title="Get-aboard Presentation"
           allow="accelerometer; autoplay; mute; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; loop;"
@@ -40,7 +40,7 @@ export default function Home() {
           <br /> deserve quality on-boardings
         </p>
 
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-2 my-2">
           <div className="w-full">
             <h1 className="mt-5 text-center text-2xl font-extrabold tracking-tight lg:text-3xl gradient-text bg-gradient-to-r">
               Improve collaboration
@@ -78,6 +78,27 @@ export default function Home() {
         </section>
 
         <section className="my-20 flex flex-col justify-center">
+          <h1 className="text-center text-4xl font-extrabold tracking-tight lg:text-5xl text-transparent gradient-text bg-gradient-to-r from-fuchsia-500 via-teal-600 to-fuchsia-500 bg-clip-text">
+            Interactive
+          </h1>
+          <h1 className="text-center text-3xl font-extrabold tracking-tight lg:text-4xl">
+            Roadmaps
+          </h1>
+          <p className="text-xl text-center my-5 text-muted-foreground">
+            Make on-boarding process an interactive and{" "}
+            <span className="font-semibold">easy-to-follow</span> journey
+          </p>
+          <iframe
+            className="mx-auto w-11/12 h-[150px] sm:h-[250px] md:h-[350px] lg:h-[450px] rounded-lg mt-5"
+            src="https://www.youtube.com/embed/_O4GaxQhr4E?autoplay=1&mute=1&controls=0&loop=1"
+            title="Share feature"
+            allow="accelerometer; autoplay; mute; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; loop;"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+          ></iframe>
+        </section>
+
+        <section className="my-20 flex flex-col justify-center">
           <GetAboardIcon className="w-10 h-10 mx-auto stroke-slate-900 dark:stroke-slate-200 stroke-2" />
           <h1 className="text-center text-4xl font-extrabold tracking-tight lg:text-5xl text-transparent gradient-text bg-gradient-to-r from-fuchsia-500 via-teal-600 to-fuchsia-500 bg-clip-text">
             Improve
@@ -87,7 +108,7 @@ export default function Home() {
           </h1>
           <p className="text-xl text-center my-5 text-muted-foreground">
             <span className="font-semibold">Start for free</span> and check if
-            it gives value to you
+            it gives value to you.
           </p>
           <div className="flex justify-center gap-x-2">
             <Button className="font-bold rounded-3xl" asChild>

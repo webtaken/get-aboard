@@ -86,7 +86,7 @@ export default function NavBar() {
         {!pathname.startsWith("/dashboard") && (
           <>
             <Link
-              href="/demo"
+              href={`${process.env.NEXT_PUBLIC_LOCALHOST}/share/4/view`}
               className="text-sm font-semibold highlighted-text"
             >
               demo
