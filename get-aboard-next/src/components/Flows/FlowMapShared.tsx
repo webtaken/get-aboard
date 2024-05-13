@@ -12,7 +12,6 @@ import ReactFlow, {
 import { Flow as FlowAPI } from "@/client";
 import { useShallow } from "zustand/react/shallow";
 import { useFlowMapStore } from "@/stores/FlowMapStore";
-import FlowBasicEditor from "./FlowBasicEditor";
 import { buildFlowEdgesMap, buildFlowNodesMap } from "./FlowMap";
 import FlowStatus from "./FlowStatus";
 import TicketEditorSheetShared from "../Tickets/TicketSheetEditorShared";
@@ -84,7 +83,6 @@ export default function FlowMapShared({ flow }: FlowMapProps) {
 
   return (
     <>
-      {/* <FlowBasicEditor flow={flow} shared /> */}
       <ReactFlowProvider>
         <Flow serverFlow={flow} />
       </ReactFlowProvider>

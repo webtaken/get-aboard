@@ -23,7 +23,6 @@ import TicketEditorSheet from "../Tickets/TicketSheetEditor";
 import FlowStatus from "./FlowStatus";
 import { useShallow } from "zustand/react/shallow";
 import { useFlowMapStore } from "@/stores/FlowMapStore";
-import FlowBasicEditor from "./FlowBasicEditor";
 import { toast } from "../ui/use-toast";
 import { updateFlowById } from "@/lib/flow-actions";
 import { useRouter } from "next/navigation";
@@ -32,6 +31,7 @@ import FlowMenu from "./FlowMenu";
 import "reactflow/dist/style.css";
 import { Button } from "../ui/button";
 import { Menu } from "lucide-react";
+import TutorialAlert from "./TutorialAlert";
 
 export const buildFlowNodesMap = (nodes: Node<DataTicketNode>[]) => {
   return nodes.map((node) => ({
@@ -307,7 +307,7 @@ export default function FlowMap({ flow, shareOption }: FlowMapProps) {
 
   return (
     <>
-      {/* <FlowBasicEditor flow={flow} /> */}
+      <TutorialAlert />
       <ReactFlowProvider>
         <Flow serverFlow={flow} />
       </ReactFlowProvider>
