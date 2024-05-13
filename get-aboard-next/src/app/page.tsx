@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <>
+    <div className="px-10">
       <main className="min-h-screen min-w-80 p-5 sm:p-10 md:p-14">
         <h1 className="text-center text-4xl font-extrabold tracking-tight lg:text-5xl">
           <span className="text-transparent gradient-text bg-gradient-to-r from-fuchsia-500 via-teal-600 to-fuchsia-500 bg-clip-text">
@@ -169,6 +169,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-    </>
+    </div>
   );
 }

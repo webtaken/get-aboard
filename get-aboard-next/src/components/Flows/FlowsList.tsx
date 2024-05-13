@@ -8,13 +8,16 @@ import {
 } from "@/components/ui/card";
 
 import GetAboardIcon from "../Icons/GetAboardIcon";
-import { getUserFlows } from "@/lib/flow-actions";
+import { getUserFlows, createFlow } from "@/lib/flow-actions";
 import { Skeleton } from "../ui/skeleton";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Badge } from "../ui/badge";
 import FlowOptions from "./FlowOptions";
 import { Pencil } from "lucide-react";
+import FlowEditDialog from "../commons/FlowEditDialog";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 dayjs.extend(relativeTime);
 
@@ -26,7 +29,23 @@ export async function FlowsList() {
   }
 
   if (flows.length === 0) {
-    return <div>You don&apos;t have flows yet, create a new one</div>;
+    return (
+      <div className="flex flex-col gap-5">
+        <h1 className="text-center font-bold text-2xl">You have no Roadmaps</h1>
+        <p className="text-center text-sm text-muted-foreground">
+          Start a new one
+        </p>
+        <div className="flex justify-center">
+          <FlowEditDialog
+            trigger={<Button>Create Roadmap</Button>}
+            title="Create your flow"
+            submitText="Create"
+            // @ts-expect-error
+            action={createFlow.bind(null)}
+          />
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -42,9 +61,18 @@ export async function FlowsList() {
                 <div className="grid grid-cols-6 place-content-center gap-x-2">
                   <div className="col-span-5 flex items-center gap-x-2">
                     <GetAboardIcon className="min-w-6 min-h-6 w-6 h-6 stroke-slate-900 dark:stroke-slate-200" />
-                    <p className="truncate align-middle" title={flow.title}>
-                      {flow.title}
-                    </p>
+                    <Button
+                      variant="link"
+                      className="text-xl truncate align-middle"
+                      asChild
+                    >
+                      <Link
+                        href={`/dashboard/flows/${flow.flow_id}`}
+                        title={flow.title}
+                      >
+                        {flow.title}
+                      </Link>
+                    </Button>
                   </div>
                   <div className="col-span-1 mx-auto">
                     <FlowOptions flow={flow} />
@@ -78,7 +106,7 @@ export async function FlowsList() {
 export function FlowsListFallback() {
   return (
     <div className="grid grid-cols-1 justify-items-center">
-      <Card className="min-w-[200px] transition ease-in-out delay-100 duration-200 hover:shadow-xl hover:cursor-pointer">
+      <Card className="min-w-[200px] transition ease-in-out delay-100 duration-200 hover:shadow-2xl hover:cursor-pointer">
         <CardHeader className="space-y-2">
           <CardTitle className="flex items-center gap-x-2">
             <GetAboardIcon className="w-6 h-6 stroke-slate-900 dark:stroke-slate-200" />{" "}

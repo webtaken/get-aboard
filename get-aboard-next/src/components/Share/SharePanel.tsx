@@ -27,10 +27,8 @@ export default function SharePanel({ flow, withPin }: SharePanelProps) {
   }
 
   return (
-    <div className="my-4">
-      <div className="w-full h-[500px]">
-        <FlowMapShared flow={flow} />
-      </div>
+    <div className="w-full h-screen">
+      <FlowMapShared flow={flow} />
     </div>
   );
 }

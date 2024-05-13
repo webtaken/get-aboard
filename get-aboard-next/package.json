@@ -37,7 +37,7 @@
     "htmx.org": "^1.9.12",
     "input-otp": "^1.2.4",
     "lodash.isequal": "^4.5.0",
-    "lucide-react": "^0.302.0",
+    "lucide-react": "^0.378.0",
     "next": "14.2.3",
     "next-auth": "^4.24.7",
     "next-themes": "^0.2.1",

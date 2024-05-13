@@ -22,9 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={`${notoSans.className} bg-slate-100 dark:bg-slate-900 px-10`}
-      >
+      <body className={`${notoSans.className} bg-slate-100 dark:bg-slate-900`}>
         <Providers
           attribute="class"
           defaultTheme="light"

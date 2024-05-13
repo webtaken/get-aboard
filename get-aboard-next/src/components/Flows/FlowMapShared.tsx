@@ -20,10 +20,11 @@ import TicketEditorSheetShared from "../Tickets/TicketSheetEditorShared";
 import "reactflow/dist/style.css";
 import TicketNodeShared from "../Nodes/TicketNodeShared";
 import FlowControlsShared from "./Controls/FlowControlsShared";
+import FlowMenuShared from "./FlowMenuShared";
 
 const nodeTypes: NodeTypes = { ticket: TicketNodeShared };
 
-function Flow() {
+function Flow({ serverFlow }: { serverFlow: FlowAPI }) {
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect } =
     useFlowMapStore(
       useShallow((state) => ({
@@ -62,7 +63,7 @@ function Flow() {
         <FlowControlsShared startTransform={startTransform} />
       </Panel>
       <Panel position="top-left">
-        <FlowStatus status="initial" />
+        <FlowMenuShared flow={serverFlow} />
       </Panel>
     </ReactFlow>
   );
@@ -83,9 +84,9 @@ export default function FlowMapShared({ flow }: FlowMapProps) {
 
   return (
     <>
-      <FlowBasicEditor flow={flow} shared />
+      {/* <FlowBasicEditor flow={flow} shared /> */}
       <ReactFlowProvider>
-        <Flow />
+        <Flow serverFlow={flow} />
       </ReactFlowProvider>
       <TicketEditorSheetShared />
     </>

@@ -19,12 +19,10 @@ import {
   CommandInput,
   CommandItem,
 } from "@/components/ui/command";
-import { Node, useReactFlow } from "reactflow";
+import { Node, useReactFlow, useStoreApi } from "reactflow";
 import { cn } from "@/lib/utils";
 import { useShallow } from "zustand/react/shallow";
-import { useFlowStore } from "@/stores/FlowStore";
 import { useEffect, useState } from "react";
-import { buildReactFlowNodesMap } from "../FlowMap";
 import { DataTicketNode } from "@/components/Nodes/TicketNode";
 import { useWindowSize } from "@uidotdev/usehooks";
 import clsx from "clsx";
@@ -46,6 +44,8 @@ interface GoToControlProps {
 
 export default function GoToControl({ startTransform }: GoToControlProps) {
   const size = useWindowSize();
+  // const store = useStoreApi();
+  // const { setCenter } = useReactFlow();
   const [open, setOpen] = useState(false);
   const [breakpoints, setBreakpoints] = useState<Node<DataTicketNode>[]>([]);
   const [nodeTitle, setNodeTitle] = useState("");
@@ -54,6 +54,23 @@ export default function GoToControl({ startTransform }: GoToControlProps) {
       nodes: state.nodes,
     }))
   );
+
+  // NOTE: Need to think more about it
+  // const focusNode = (id: string) => {
+  //   const { nodeInternals } = store.getState();
+  //   const nodes = Array.from(nodeInternals).map(([, node]) => node);
+
+  //   if (nodes.length > 0) {
+  //     const node = nodes.find((node) => node.id === id);
+  //     if (!node) return;
+  //     console.log(node.position, node.height, node.width);
+  //     const x = node.position.x + node.width! / 3;
+  //     const y = node.position.y + node.height! / 3;
+  //     const zoom = 1;
+
+  //     setCenter(x, y, { zoom, duration: 800 });
+  //   }
+  // };
 
   useEffect(() => {
     setBreakpoints(nodes);
@@ -87,11 +104,12 @@ export default function GoToControl({ startTransform }: GoToControlProps) {
                       ? ""
                       : currentValue
                   );
+                  // focusNode(breakpoint.id);
                   startTransform(
                     -breakpoint.position.x +
                       192 +
                       getWidthOffset(size.width ?? 540),
-                    -breakpoint.position.y + 50
+                    -breakpoint.position.y + 80
                   );
                   setOpen(false);
                 }}

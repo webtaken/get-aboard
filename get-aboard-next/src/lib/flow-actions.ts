@@ -166,6 +166,7 @@ export async function updateFlowByForm(
         description: description,
       },
     });
+    console.log(id);
     revalidatePath(`/dashboard/flows/${id}`);
     revalidatePath("/dashboard");
     return { message: "Flow updated", status: "success" };
