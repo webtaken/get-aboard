@@ -22,6 +22,16 @@ import clsx from "clsx";
 
 const notoSans = Noto_Sans({ subsets: ["latin"] });
 
+function pathnameIsInFlowPage(str: string) {
+  const pattern = /^\/dashboard\/flows\/[0-9]+$/;
+  return pattern.test(str);
+}
+
+function pathnameIsInSharePage(str: string) {
+  const pattern = /^\/share\/[0-9]+\/view$/;
+  return pattern.test(str);
+}
+
 export default function NavBar() {
   const pathname = usePathname();
   const { status, data: session } = useSession();
@@ -50,14 +60,19 @@ export default function NavBar() {
     }
   }, [session]);
 
-  if (pathname == "/login" || pathname == "/register") {
+  if (
+    pathname == "/login" ||
+    pathname == "/register" ||
+    pathnameIsInFlowPage(pathname) ||
+    pathnameIsInSharePage(pathname)
+  ) {
     return null;
   }
 
   return (
     <header
       className={clsx(
-        "min-w-80 bg-gradient-to-b from-slate-100 to-slate-100/70 dark:from-slate-900 dark:to-slate-900/70 flex justify-between py-5",
+        "px-10 min-w-80 bg-gradient-to-b from-slate-100 to-slate-100/70 dark:from-slate-900 dark:to-slate-900/70 flex justify-between py-5",
         pathname === "/" && "top-0 sticky"
       )}
     >

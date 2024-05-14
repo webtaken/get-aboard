@@ -17,7 +17,7 @@ interface FlowControlsProps {
 export default function FlowControls({ startTransform }: FlowControlsProps) {
   return (
     <div className="flex items-center gap-x-1">
-      <TooltipProvider>
+      <TooltipProvider delayDuration={100}>
         <Tooltip>
           <TooltipTrigger asChild>
             <Button

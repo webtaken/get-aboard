@@ -18,6 +18,8 @@ import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { toast as toastSooner } from "sonner";
 import { useRouter } from "next/navigation";
+import { useFlowStore } from "@/stores/FlowStore";
+import { useShallow } from "zustand/react/shallow";
 
 interface FlowEditDialogProps {
   trigger: React.ReactNode;

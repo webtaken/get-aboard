@@ -23,12 +23,15 @@ import TicketEditorSheet from "../Tickets/TicketSheetEditor";
 import FlowStatus from "./FlowStatus";
 import { useShallow } from "zustand/react/shallow";
 import { useFlowMapStore } from "@/stores/FlowMapStore";
-import FlowBasicEditor from "./FlowBasicEditor";
 import { toast } from "../ui/use-toast";
 import { updateFlowById } from "@/lib/flow-actions";
 import { useRouter } from "next/navigation";
+import FlowMenu from "./FlowMenu";
 // Important! don't delete the styles css, otherwise the flow won't work.
 import "reactflow/dist/style.css";
+import { Button } from "../ui/button";
+import { Menu } from "lucide-react";
+import TutorialAlert from "./TutorialAlert";
 
 export const buildFlowNodesMap = (nodes: Node<DataTicketNode>[]) => {
   return nodes.map((node) => ({
@@ -83,7 +86,11 @@ export const buildReactFlowEdgesMap = (edges_map: any[]) => {
 const nodeTypes: NodeTypes = { ticket: TicketNode };
 const getId = () => uuidv4();
 
-function Flow() {
+interface FlowProps {
+  serverFlow: FlowAPI;
+}
+
+function Flow({ serverFlow }: FlowProps) {
   const router = useRouter();
   const { flowId, flow, setFlow } = useFlowStore(
     useShallow((state) => ({
@@ -248,6 +255,15 @@ function Flow() {
         <FlowControls startTransform={startTransform} />
       </Panel>
       <Panel position="top-left">
+        {flow ? (
+          <FlowMenu flow={serverFlow} />
+        ) : (
+          <Button size="icon">
+            <Menu className="w-4 h-4" />
+          </Button>
+        )}
+      </Panel>
+      <Panel position="bottom-right">
         <FlowStatus status={saveStatus} />
       </Panel>
     </ReactFlow>
@@ -291,9 +307,9 @@ export default function FlowMap({ flow, shareOption }: FlowMapProps) {
 
   return (
     <>
-      <FlowBasicEditor flow={flow} />
+      <TutorialAlert />
       <ReactFlowProvider>
-        <Flow />
+        <Flow serverFlow={flow} />
       </ReactFlowProvider>
       <TicketEditorSheet />
     </>

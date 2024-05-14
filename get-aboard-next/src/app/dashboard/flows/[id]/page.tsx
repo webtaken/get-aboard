@@ -14,10 +14,8 @@ export default async function Page({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="my-4">
-      <div className="w-full h-[500px]">
-        <FlowMap flow={flow} shareOption={shareOption} />
-      </div>
+    <div className="w-full h-screen">
+      <FlowMap flow={flow} shareOption={shareOption} />
     </div>
   );
 }

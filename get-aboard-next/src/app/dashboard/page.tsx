@@ -6,13 +6,13 @@ import { createFlow } from "@/lib/flow-actions";
 
 export default function Page() {
   return (
-    <>
+    <div className="px-10">
       <div className="flex justify-between items-center my-5 border-y-2 py-10">
         <h2 className="text-left px-2 text-2xl font-semibold tracking-tight">
           My flows
         </h2>
         <FlowEditDialog
-          trigger={<Button>Create Flow</Button>}
+          trigger={<Button>Create Roadmap</Button>}
           title="Create your flow"
           submitText="Create"
           // @ts-expect-error
@@ -22,6 +22,6 @@ export default function Page() {
       <Suspense fallback={<FlowsListFallback />}>
         <FlowsList />
       </Suspense>
-    </>
+    </div>
   );
 }

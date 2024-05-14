@@ -15,17 +15,28 @@ import { Loader2 } from "lucide-react";
 export default function BillingButton({
   subscription,
   subscriptionPlan,
+  variant,
 }: {
   subscription: Subscription;
   subscriptionPlan: SubscriptionPlan;
+  variant?:
+    | "link"
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | null
+    | undefined;
 }) {
   const [loading, setLoading] = useState(false);
 
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={200}>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
+            variant={variant}
             className="rounded-xl flex items-center gap-x-2"
             onClick={async () => {
               setLoading(true);
