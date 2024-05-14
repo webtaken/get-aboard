@@ -17,12 +17,12 @@ export default function Home() {
           doesn&apos;t have to be painful
         </h1>
         <p className="text-xl text-center my-5 text-muted-foreground">
-          Avoid tricky 🫠 on-boardings with{" "}
-          <span className="font-semibold">Get-Aboard</span>
+          Avoid tricky 🫠 on-boardings on your tech company with{" "}
+          <span className="font-bold">Get-Aboard</span>
         </p>
         <iframe
           className="mx-auto w-11/12 h-[150px] sm:h-[250px] md:h-[350px] lg:h-[450px] rounded-lg"
-          src="https://www.youtube.com/embed/BaSrKyUeNxk?autoplay=1&mute=1&controls=0&loop=1"
+          src="https://www.youtube.com/embed/xqWuGNOsJPM?autoplay=1&mute=1&controls=0&loop=1"
           title="Get-aboard Presentation"
           allow="accelerometer; autoplay; mute; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; loop;"
           referrerPolicy="strict-origin-when-cross-origin"
@@ -90,8 +90,8 @@ export default function Home() {
           </p>
           <iframe
             className="mx-auto w-11/12 h-[150px] sm:h-[250px] md:h-[350px] lg:h-[450px] rounded-lg mt-5"
-            src="https://www.youtube.com/embed/_O4GaxQhr4E?autoplay=1&mute=1&controls=0&loop=1"
-            title="Share feature"
+            src="https://www.youtube.com/embed/57QTBgV0Yqc?autoplay=1&mute=1&controls=0&loop=1"
+            title="Navigation feature"
             allow="accelerometer; autoplay; mute; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; loop;"
             referrerPolicy="strict-origin-when-cross-origin"
             allowFullScreen

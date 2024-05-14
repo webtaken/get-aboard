@@ -15,6 +15,7 @@ import {
 import { updateFlowByForm } from "@/lib/flow-actions";
 import { Button } from "../ui/button";
 import {
+  BookOpenText,
   LayoutDashboardIcon,
   LogOut,
   Menu,
@@ -97,9 +98,18 @@ export default function FlowMenu({ flow }: FlowMenuProps) {
             //@ts-expect-error
             action={updateFlowByForm.bind(null, flow.flow_id)}
           />
-          <Button variant="ghost" className="justify-start text-sm">
+          <Button variant="ghost" className="justify-start text-sm" asChild>
             <Link href="/dashboard" className="flex items-center gap-x-2">
               <LayoutDashboardIcon className="w-3.5 h-3.5" /> Go to dashboard
+            </Link>
+          </Button>
+          <Button variant="ghost" className="justify-start text-sm" asChild>
+            <Link
+              href="https://gray-lettuce-c86.notion.site/Get-Aboard-Guide-c8b49121676e4c4099b09f13a1b1b83e?pvs=4"
+              target="_blank"
+              className="flex items-center gap-x-2"
+            >
+              <BookOpenText className="w-3.5 h-3.5" /> Quick tutorial
             </Link>
           </Button>
           <Button

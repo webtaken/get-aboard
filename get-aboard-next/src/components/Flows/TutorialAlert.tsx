@@ -62,6 +62,10 @@ function Alert() {
               setOpen(false);
               if (tutorial.dontShowAgain)
                 setTutorial({ ...tutorial, state: false });
+              window.open(
+                "https://gray-lettuce-c86.notion.site/Get-Aboard-Guide-c8b49121676e4c4099b09f13a1b1b83e?pvs=4",
+                "_blank"
+              );
             }}
           >
             Continue
