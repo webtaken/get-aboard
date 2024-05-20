@@ -12,6 +12,7 @@ import {
   FlowsPartialUpdateValidationError,
   FlowsService,
   PatchedFlow,
+  TemplatingService,
 } from "@/client";
 
 // This is temporary until @types/react-dom is updated
@@ -230,6 +231,19 @@ export async function getFlowShareOption(id: number) {
       id: String(id),
     });
     return shareOption;
+  } catch (error) {
+    return undefined;
+  }
+}
+
+export async function getFlowTemplateOption(id: number) {
+  try {
+    noStore();
+    await setCredentialsToAPI();
+    const templateOption = await TemplatingService.templatingRetrieve({
+      id: String(id),
+    });
+    return templateOption;
   } catch (error) {
     return undefined;
   }

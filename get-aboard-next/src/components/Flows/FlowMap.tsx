@@ -13,7 +13,7 @@ import ReactFlow, {
   Edge,
 } from "reactflow";
 import { toast as toastSooner } from "sonner";
-import { Flow as FlowAPI, FlowShareURL } from "@/client";
+import { Flow as FlowAPI, FlowShareURL, FlowTemplate } from "@/client";
 import TicketNode, { DataTicketNode } from "@/components/Nodes/TicketNode";
 import FlowControls from "./Controls/FlowControls";
 import { useFlowStore } from "@/stores/FlowStore";
@@ -273,19 +273,26 @@ function Flow({ serverFlow }: FlowProps) {
 interface FlowMapProps {
   flow: FlowAPI;
   shareOption?: FlowShareURL;
+  templateOption?: FlowTemplate;
 }
-export default function FlowMap({ flow, shareOption }: FlowMapProps) {
+export default function FlowMap({
+  flow,
+  shareOption,
+  templateOption,
+}: FlowMapProps) {
   const { setNodes, setEdges, reset: resetFlowMap } = useFlowMapStore();
   const {
     setFlowId,
     setFlow,
     setFlowShareOption,
+    setFlowTemplateOption,
     reset: resetFlow,
   } = useFlowStore(
     useShallow((state) => ({
       setFlowId: state.setFlowId,
       setFlow: state.setFlow,
       setFlowShareOption: state.setFlowShareOption,
+      setFlowTemplateOption: state.setFlowTemplateOption,
       reset: state.reset,
     }))
   );
@@ -294,6 +301,7 @@ export default function FlowMap({ flow, shareOption }: FlowMapProps) {
     setFlowId(flow.flow_id);
     setFlow(flow);
     setFlowShareOption(shareOption ? shareOption : null);
+    setFlowTemplateOption(templateOption ? templateOption : null);
     const reactFlowEdges = buildFlowEdgesMap(flow.edges_map);
     const reactFlowNodes = buildFlowNodesMap(flow.nodes_map);
     setNodes(reactFlowNodes);

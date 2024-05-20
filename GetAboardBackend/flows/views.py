@@ -39,8 +39,7 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request: Request, *args, **kwargs):
-        user_subscription = self.user.subscriptions.first()
-        if user_subscription is None:
+        if not self.user.is_staff and self.user_has_free_plan:
             # User has free account
             # Check if limit has been reached
             if self.get_queryset().count() >= MAX_FLOWS_FREE_PLAN:
@@ -48,9 +47,15 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
         return super().create(request, *args, **kwargs)
 
     def partial_update(self, request: Request, *args, **kwargs):
-        user_subscription = self.user.subscriptions.first()
-        # We have to check as well if we are updating the nodes_map
-        if user_subscription is None and "nodes_map" in request.data:
+        # Check
+        # - User doesn't have a Subcription associated
+        # - User is updating nodes_map field
+        # - User is not staff user
+        if (
+            not self.user.is_staff
+            and self.user_has_free_plan
+            and "nodes_map" in request.data
+        ):
             # User has free account
             # Check if limit of nodes map has been reached
             nodes_map = request.data["nodes_map"]
@@ -206,8 +211,7 @@ class NodeViewSet(UserMixin, viewsets.ModelViewSet):
     schema = AutoSchema()
 
     def create(self, request: Request, *args, **kwargs):
-        user_subscription = self.user.subscriptions.first()
-        if user_subscription is None:
+        if not self.user.is_staff and self.user_has_free_plan:
             # User has free plan
             flow_id = request.data["flow"]
             flow = Flow.objects.get(pk=flow_id)

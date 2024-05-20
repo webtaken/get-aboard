@@ -6,6 +6,9 @@ from django.db import models
 
 
 class Flow(models.Model):
+    class Meta:
+        db_table = "flows"
+
     flow_id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="flows"
@@ -59,9 +62,6 @@ class Flow(models.Model):
             "pin": None if not with_pin else get_or_create_pin(access_pin_field),
         }
 
-    class Meta:
-        db_table = "flows"
-
 
 class ShareOption(models.Model):
     flow = models.OneToOneField(Flow, on_delete=models.CASCADE, primary_key=True)
@@ -75,6 +75,9 @@ class ShareOption(models.Model):
 
 
 class Node(models.Model):
+    class Meta:
+        db_table = "nodes"
+
     node_id = models.BigAutoField(primary_key=True)
     flow = models.ForeignKey(Flow, on_delete=models.CASCADE, related_name="nodes")
     title = models.CharField(max_length=100)
@@ -84,6 +87,3 @@ class Node(models.Model):
 
     def __str__(self):
         return self.title
-
-    class Meta:
-        db_table = "nodes"
