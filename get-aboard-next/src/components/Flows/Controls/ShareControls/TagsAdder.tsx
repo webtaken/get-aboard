@@ -64,7 +64,7 @@ export default function TagsAdder({
           <CommandInput placeholder="Search tag..." onValueChange={setValue} />
           <CommandEmpty className="py-0">
             <Button variant="ghost" className="w-full">
-              Create tag "{value}"
+              Create tag &quot;{value}&quot;
             </Button>
           </CommandEmpty>
           <CommandGroup>

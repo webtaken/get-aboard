@@ -5,6 +5,7 @@ export async function createTag(tag: Name) {
   try {
     await setCredentialsToAPI();
     const newTag = await TemplatingService.templatingTagsCreate({
+      //@ts-expect-error
       requestBody: {
         name: tag.name,
       },

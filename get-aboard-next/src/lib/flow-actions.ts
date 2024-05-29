@@ -241,7 +241,7 @@ export async function getFlowTemplateOption(id: number) {
     noStore();
     await setCredentialsToAPI();
     const templateOption = await TemplatingService.templatingRetrieve({
-      id: String(id),
+      flow: id,
     });
     return templateOption;
   } catch (error) {
