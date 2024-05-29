@@ -17,6 +17,7 @@ import { toast } from "../ui/use-toast";
 import { useFlowMapStore } from "@/stores/FlowMapStore";
 import { useShallow } from "zustand/react/shallow";
 import { Separator } from "../ui/separator";
+import "./styles.css";
 
 export interface DataTicketNode {
   title: string;
@@ -119,7 +120,6 @@ export default function TicketNode(props: NodeProps<DataTicketNode>) {
         type="source"
         position={Position.Bottom}
         isConnectable={isConnectable}
-        className="w-10 h-10"
       />
     </>
   );

@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Flow, ShareOption, Node
+from templating.models import FlowTemplate
+
+from .models import Flow, Node, ShareOption
 
 
 class ShareOptionInline(admin.StackedInline):
@@ -7,8 +9,16 @@ class ShareOptionInline(admin.StackedInline):
     extra = 1
 
 
+class TemplateConfigurationInline(admin.StackedInline):
+    model = FlowTemplate
+    extra = 1
+
+
 class FlowAdmin(admin.ModelAdmin):
-    inlines = [ShareOptionInline]
+    inlines = (
+        ShareOptionInline,
+        TemplateConfigurationInline,
+    )
 
 
 admin.site.register(Flow, FlowAdmin)

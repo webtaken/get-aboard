@@ -55,8 +55,9 @@ export const useFlowMapStore = create<FlowMapState & FlowMapActions>(
           {
             ...connection,
             animated: true,
+            type: "smoothstep",
             style: {
-              strokeWidth: "0.125rem",
+              strokeWidth: "0.150rem",
             },
           },
           get().edges

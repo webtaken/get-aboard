@@ -10,3 +10,8 @@ class UserMixin:
         if isinstance(user, get_user_model()):
             return user
         return get_user_model().objects.get(id=user.id)
+
+    @property
+    def user_has_free_plan(self):
+        user_subscription = self.request.user.subscriptions.first()
+        return user_subscription is None

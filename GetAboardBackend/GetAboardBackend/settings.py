@@ -39,6 +39,12 @@ env = Env(
     LEMONSQUEEZY_API_KEY=(str, "LEMONSQUEEZY_API_KEY"),
     LEMONSQUEEZY_STORE_ID=(int, "LEMONSQUEEZY_STORE_ID"),
     LEMONSQUEEZY_WEBHOOK_SECRET=(str, "LEMONSQUEEZY_WEBHOOK_SECRET"),
+    EMAIL_HOST=(str, "EMAIL_HOST"),
+    EMAIL_PORT=(int, "EMAIL_PORT"),
+    EMAIL_HOST_USER=(str, "EMAIL_HOST_USER"),
+    EMAIL_HOST_PASSWORD=(str, "EMAIL_HOST_PASSWORD"),
+    FORWARD_EMAIL_API_BASE=(str, "FORWARD_EMAIL_API_BASE"),
+    FORWARD_EMAIL_API_KEY=(str, "FORWARD_EMAIL_API_KEY"),
 )
 
 # Take environment variables from env file
@@ -77,6 +83,7 @@ DEFAULT_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
+    "django_filters",
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
@@ -92,11 +99,9 @@ THIRD_PARTY_APPS = [
     "drf_standardized_errors",
 ]
 
-LOCAL_APPS = ["core", "flows", "nextjs_drf_auth", "billing"]
+LOCAL_APPS = ["core", "flows", "nextjs_drf_auth", "billing", "templating"]
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + LOCAL_APPS
-
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
@@ -118,9 +123,23 @@ SOCIALACCOUNT_PROVIDERS = {
 
 SITE_ID = 1  # https://dj-rest-auth.readthedocs.io/en/latest/installation.html#registration-optional
 
+# For REGULAR ACCOUNTS
+ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = False
+
+# For SOCIAL ACCOUNT
 # we are turning off email verification for now
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    "django.contrib.auth.backends.ModelBackend",
+    # `allauth` specific authentication methods, such as login by email
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -218,6 +237,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
 }
 
 # SPECTACULAR config
@@ -266,6 +286,18 @@ LEMONSQUEEZY_STORE_ID = env("LEMONSQUEEZY_STORE_ID")
 LEMONSQUEEZY_WEBHOOK_SECRET = env("LEMONSQUEEZY_WEBHOOK_SECRET")
 
 DRF_STANDARDIZED_ERRORS = {"ENABLE_IN_DEBUG_FOR_UNHANDLED_EXCEPTIONS": True}
+
+# Email backend
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+DEFAULT_FROM_EMAIL = env("EMAIL_HOST_USER")
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_USE_TLS = True
+EMAIL_PORT = env("EMAIL_PORT")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+# Forward email
+FORWARD_EMAIL_API_BASE = env("FORWARD_EMAIL_API_BASE")
+FORWARD_EMAIL_API_KEY = env("FORWARD_EMAIL_API_KEY")
 
 # Testing
 # LOGGING = {

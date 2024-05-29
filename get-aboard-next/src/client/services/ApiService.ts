@@ -11,6 +11,7 @@ import type { SocialLogin } from '../models/SocialLogin';
 import type { TokenRefresh } from '../models/TokenRefresh';
 import type { TokenVerify } from '../models/TokenVerify';
 import type { UserDetails } from '../models/UserDetails';
+import type { VerifyEmail } from '../models/VerifyEmail';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -106,6 +107,23 @@ export class ApiService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/auth/register/',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+
+    /**
+     * @returns RestAuthDetail
+     * @throws ApiError
+     */
+    public static apiAuthRegisterVerifyEmailCreate({
+        requestBody,
+    }: {
+        requestBody: VerifyEmail,
+    }): CancelablePromise<RestAuthDetail> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/auth/register/verify-email',
             body: requestBody,
             mediaType: 'application/json',
         });

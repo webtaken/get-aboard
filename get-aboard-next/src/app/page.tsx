@@ -1,6 +1,7 @@
+import AllToolsIcon from "@/components/Icons/AllToolsIcon";
 import GetAboardIcon from "@/components/Icons/GetAboardIcon";
 import { Button } from "@/components/ui/button";
-import { Github, Twitter } from "lucide-react";
+import { Github, Twitter, Zap } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
@@ -8,17 +9,20 @@ export default function Home() {
     <div className="px-10">
       <main className="min-h-screen min-w-80 p-5 sm:p-10 md:p-14">
         <h1 className="text-center text-4xl font-extrabold tracking-tight lg:text-5xl">
+          Transform your
+          <br />
           <span className="text-transparent gradient-text bg-gradient-to-r from-fuchsia-500 via-teal-600 to-fuchsia-500 bg-clip-text">
-            On-Boarding
-          </span>{" "}
-          process
-        </h1>
-        <h1 className="text-center text-4xl font-extrabold tracking-tight lg:text-5xl">
-          doesn&apos;t have to be painful
+            Onboarding process
+          </span>
+          <br />
+          into interactive{" "}
+          <span className="text-transparent gradient-text bg-gradient-to-r from-fuchsia-500 via-teal-600 to-fuchsia-500 bg-clip-text">
+            roadmaps
+          </span>
         </h1>
         <p className="text-xl text-center my-5 text-muted-foreground">
-          Avoid tricky 🫠 on-boardings on your tech company with{" "}
-          <span className="font-bold">Get-Aboard</span>
+          Avoid unorganized instruction docs onboardings 🫠 <br />
+          in your development team. Make it roadmaps.
         </p>
         <iframe
           className="mx-auto w-11/12 h-[150px] sm:h-[250px] md:h-[350px] lg:h-[450px] rounded-lg"
@@ -29,6 +33,28 @@ export default function Home() {
           allowFullScreen
         ></iframe>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 my-10">
+          <div className="space-y-4">
+            <h1 className="mt-20 mb-5 text-left text-4xl font-extrabold tracking-tight lg:text-5xl text-transparent gradient-text bg-gradient-to-r from-fuchsia-500 via-teal-600 to-fuchsia-500 bg-clip-text">
+              All the onboarding
+              <br />
+              in one place
+            </h1>
+            <p className="font-semibold">
+              Organize all important information to new team members in one easy
+              to follow roadmap: tools, tech stack, communication software,
+              repositories, benefits info, career path, etc.
+            </p>
+            <Button className="flex items-center gap-x-2">
+              <Zap className="w-4 h-4" />
+              Get started
+            </Button>
+          </div>
+          <div>
+            <AllToolsIcon className="w-100 h-100" />
+          </div>
+        </div>
+
         <h1 className="mt-20 mb-5 text-center text-4xl font-extrabold tracking-tight lg:text-5xl text-transparent gradient-text bg-gradient-to-r from-fuchsia-500 via-teal-600 to-fuchsia-500 bg-clip-text">
           Save time and get
           <br />
@@ -36,8 +62,8 @@ export default function Home() {
         </h1>
 
         <p className="text-center mt-5 mb-20 text-muted-foreground font-semibold">
-          Developers, Designers, Sales vendors, etc
-          <br /> deserve quality on-boardings
+          Developers, UX/UI designers, QA...
+          <br /> deserve quality onboardings
         </p>
 
         <section className="grid grid-cols-1 md:grid-cols-2 gap-2 my-2">
@@ -45,22 +71,22 @@ export default function Home() {
             <h1 className="mt-5 text-center text-2xl font-extrabold tracking-tight lg:text-3xl gradient-text bg-gradient-to-r">
               Improve collaboration
             </h1>
-            <p className="text-center my-5">
+            <p className="text-center my-5 font-semibold">
               Improve the quality of your team integration process
               <br /> by collaborating and providing a better vision of
               <br /> your organization.
             </p>
             <div className="flex items-center justify-center gap-2">
-              <Button variant="outline" className="rounded-lg">
+              <Button variant="default" className="rounded-lg">
                 Intuitive
               </Button>
-              <Button variant="outline" className="rounded-lg">
+              <Button variant="secondary" className="rounded-lg">
                 Automatic
               </Button>
-              <Button variant="outline" className="rounded-lg">
+              <Button variant="default" className="rounded-lg">
                 Organized
               </Button>
-              <Button variant="outline" className="rounded-lg">
+              <Button variant="secondary" className="rounded-lg">
                 Shareable
               </Button>
             </div>
@@ -78,10 +104,10 @@ export default function Home() {
         </section>
 
         <section className="my-20 flex flex-col justify-center">
-          <h1 className="text-center text-4xl font-extrabold tracking-tight lg:text-5xl text-transparent gradient-text bg-gradient-to-r from-fuchsia-500 via-teal-600 to-fuchsia-500 bg-clip-text">
+          <h1 className="text-center text-3xl font-extrabold tracking-tight lg:text-5xl text-transparent gradient-text bg-gradient-to-r from-fuchsia-500 via-teal-600 to-fuchsia-500 bg-clip-text">
             Interactive
           </h1>
-          <h1 className="text-center text-3xl font-extrabold tracking-tight lg:text-4xl">
+          <h1 className="text-center text-3xl font-extrabold tracking-tight lg:text-5xl">
             Roadmaps
           </h1>
           <p className="text-xl text-center my-5 text-muted-foreground">
