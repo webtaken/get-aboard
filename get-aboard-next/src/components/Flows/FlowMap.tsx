@@ -60,8 +60,9 @@ export const buildFlowEdgesMap = (edges: Edge[]) => {
     source: edge.source,
     target: edge.target,
     animated: true,
+    type: "smoothstep",
     style: {
-      strokeWidth: "0.125rem",
+      strokeWidth: "0.150rem",
     },
   }));
 };
@@ -240,7 +241,7 @@ function Flow({ serverFlow }: FlowProps) {
       nodes={nodes}
       edges={edges}
       onNodesChange={onNodesChange}
-      deleteKeyCode={null}
+      // deleteKeyCode={null}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
       onDrop={onDrop}

@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from .filters import TagNameFilter
 from .models import FlowTemplate, Tag
-from .serializers import FlowTemplateSerializer
+from .serializers import FlowTemplateSerializer, TagSerializer
 
 
 class FlowTemplateViewSet(UserMixin, viewsets.ModelViewSet):
@@ -28,6 +28,6 @@ class TagListAPIView(ListAPIView):
 
 
 class TagViewSet(viewsets.ModelViewSet):
-    serializer_class = FlowTemplateSerializer
+    serializer_class = TagSerializer
     permission_classes = [IsAuthenticated]
     schema = AutoSchema()

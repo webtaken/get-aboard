@@ -11,8 +11,11 @@ const inter = Inter({ subsets: ["latin"] });
 const notoSans = Noto_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Get aboard",
-  description: "Help junior devs on your onboarding",
+  title: "get-aboard",
+  description: "Transform onboarding process into interactive roadmaps",
+  alternates: {
+    canonical: `${process.env.NEXT_PUBLIC_LOCALHOST!}`,
+  },
 };
 
 export default function RootLayout({

@@ -3,11 +3,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Code70aEnum } from './Code70aEnum';
+import type { Code6aeEnum } from './Code6aeEnum';
 
-export type TemplatingTagsUpdateTagsErrorComponent = {
-    attr: 'tags';
-    code: Code70aEnum;
+export type TemplatingTagsPartialUpdateNameErrorComponent = {
+    attr: 'name';
+    code: Code6aeEnum;
     detail: string;
 };
 

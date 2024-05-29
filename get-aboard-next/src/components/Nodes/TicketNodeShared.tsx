@@ -13,6 +13,7 @@ import { Button } from "../ui/button";
 import { useFlowStore } from "@/stores/FlowStore";
 import { useEditorSheetStore } from "@/stores/SheetEditorStore";
 import { DataTicketNode } from "./TicketNode";
+import "./styles.css";
 
 export default function TicketNodeShared(props: NodeProps<DataTicketNode>) {
   const { setNodeId, setNode, setNodeMapId } = useFlowStore();

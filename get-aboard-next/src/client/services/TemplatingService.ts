@@ -5,6 +5,8 @@
 import type { FlowTemplate } from '../models/FlowTemplate';
 import type { Name } from '../models/Name';
 import type { PatchedFlowTemplate } from '../models/PatchedFlowTemplate';
+import type { PatchedTag } from '../models/PatchedTag';
+import type { Tag } from '../models/Tag';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -45,15 +47,18 @@ export class TemplatingService {
      * @throws ApiError
      */
     public static templatingRetrieve({
-        id,
+        flow,
     }: {
-        id: string,
+        /**
+         * A unique value identifying this flow template.
+         */
+        flow: number,
     }): CancelablePromise<FlowTemplate> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/templating/{id}/',
+            url: '/templating/{flow}/',
             path: {
-                'id': id,
+                'flow': flow,
             },
         });
     }
@@ -63,17 +68,20 @@ export class TemplatingService {
      * @throws ApiError
      */
     public static templatingUpdate({
-        id,
+        flow,
         requestBody,
     }: {
-        id: string,
+        /**
+         * A unique value identifying this flow template.
+         */
+        flow: number,
         requestBody: FlowTemplate,
     }): CancelablePromise<FlowTemplate> {
         return __request(OpenAPI, {
             method: 'PUT',
-            url: '/templating/{id}/',
+            url: '/templating/{flow}/',
             path: {
-                'id': id,
+                'flow': flow,
             },
             body: requestBody,
             mediaType: 'application/json',
@@ -85,17 +93,20 @@ export class TemplatingService {
      * @throws ApiError
      */
     public static templatingPartialUpdate({
-        id,
+        flow,
         requestBody,
     }: {
-        id: string,
+        /**
+         * A unique value identifying this flow template.
+         */
+        flow: number,
         requestBody?: PatchedFlowTemplate,
     }): CancelablePromise<FlowTemplate> {
         return __request(OpenAPI, {
             method: 'PATCH',
-            url: '/templating/{id}/',
+            url: '/templating/{flow}/',
             path: {
-                'id': id,
+                'flow': flow,
             },
             body: requestBody,
             mediaType: 'application/json',
@@ -107,24 +118,27 @@ export class TemplatingService {
      * @throws ApiError
      */
     public static templatingDestroy({
-        id,
+        flow,
     }: {
-        id: string,
+        /**
+         * A unique value identifying this flow template.
+         */
+        flow: number,
     }): CancelablePromise<void> {
         return __request(OpenAPI, {
             method: 'DELETE',
-            url: '/templating/{id}/',
+            url: '/templating/{flow}/',
             path: {
-                'id': id,
+                'flow': flow,
             },
         });
     }
 
     /**
-     * @returns FlowTemplate
+     * @returns Tag
      * @throws ApiError
      */
-    public static templatingTagsList(): CancelablePromise<Array<FlowTemplate>> {
+    public static templatingTagsList(): CancelablePromise<Array<Tag>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/templating/tags/',
@@ -132,14 +146,14 @@ export class TemplatingService {
     }
 
     /**
-     * @returns FlowTemplate
+     * @returns Tag
      * @throws ApiError
      */
     public static templatingTagsCreate({
         requestBody,
     }: {
-        requestBody: FlowTemplate,
-    }): CancelablePromise<FlowTemplate> {
+        requestBody: Tag,
+    }): CancelablePromise<Tag> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/templating/tags/',
@@ -149,14 +163,14 @@ export class TemplatingService {
     }
 
     /**
-     * @returns FlowTemplate
+     * @returns Tag
      * @throws ApiError
      */
     public static templatingTagsRetrieve({
         id,
     }: {
         id: string,
-    }): CancelablePromise<FlowTemplate> {
+    }): CancelablePromise<Tag> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/templating/tags/{id}/',
@@ -167,7 +181,7 @@ export class TemplatingService {
     }
 
     /**
-     * @returns FlowTemplate
+     * @returns Tag
      * @throws ApiError
      */
     public static templatingTagsUpdate({
@@ -175,8 +189,8 @@ export class TemplatingService {
         requestBody,
     }: {
         id: string,
-        requestBody: FlowTemplate,
-    }): CancelablePromise<FlowTemplate> {
+        requestBody: Tag,
+    }): CancelablePromise<Tag> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/templating/tags/{id}/',
@@ -189,7 +203,7 @@ export class TemplatingService {
     }
 
     /**
-     * @returns FlowTemplate
+     * @returns Tag
      * @throws ApiError
      */
     public static templatingTagsPartialUpdate({
@@ -197,8 +211,8 @@ export class TemplatingService {
         requestBody,
     }: {
         id: string,
-        requestBody?: PatchedFlowTemplate,
-    }): CancelablePromise<FlowTemplate> {
+        requestBody?: PatchedTag,
+    }): CancelablePromise<Tag> {
         return __request(OpenAPI, {
             method: 'PATCH',
             url: '/templating/tags/{id}/',

@@ -3,11 +3,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Code238Enum } from './Code238Enum';
+import type { Code6aeEnum } from './Code6aeEnum';
 
-export type TemplatingTagsPartialUpdateTitleErrorComponent = {
-    attr: 'title';
-    code: Code238Enum;
+export type TemplatingTagsUpdateNameErrorComponent = {
+    attr: 'name';
+    code: Code6aeEnum;
     detail: string;
 };
 

@@ -3,11 +3,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Code9ddEnum } from './Code9ddEnum';
+import type { Code6aeEnum } from './Code6aeEnum';
 
-export type TemplatingTagsPartialUpdateFlowErrorComponent = {
-    attr: 'flow';
-    code: Code9ddEnum;
+export type TemplatingTagsCreateNameErrorComponent = {
+    attr: 'name';
+    code: Code6aeEnum;
     detail: string;
 };
 

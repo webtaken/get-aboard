@@ -7,12 +7,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFlowStore } from "@/stores/FlowStore";
 import { useShallow } from "zustand/react/shallow";
 import NewFeatureRadar from "@/components/commons/NewFeatureRadar";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import TagsAdder from "./TagsAdder";
+import { useState } from "react";
+import { Name } from "@/client";
 
 export default function ShareTemplateDialog() {
   const { flowTemplateOption, setFlowTemplateOption } = useFlowStore(
@@ -21,6 +28,14 @@ export default function ShareTemplateDialog() {
       setFlowTemplateOption: state.setFlowTemplateOption,
     }))
   );
+  const [tags, setTags] = useState<Name[]>([]);
+
+  const addTag = async (tag: string) => {
+    const tagAlreadyExists =
+      tags.filter((dbTag) => dbTag.name === tag).length !== 0;
+    if (!tagAlreadyExists) {
+    }
+  };
 
   return (
     <NewFeatureRadar>
@@ -38,8 +53,40 @@ export default function ShareTemplateDialog() {
               On-Boarding.
             </DialogDescription>
           </DialogHeader>
-          <p>Content</p>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Name
+              </Label>
+              <Input
+                id="name"
+                placeholder="Onboarding for backend dev"
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="username" className="text-right">
+                Username
+              </Label>
+              <Textarea
+                id="username"
+                placeholder="Onboarding template for backend junior dev at Accenture"
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="tags" className="text-right">
+                Tags
+              </Label>
+              <TagsAdder addTag={addTag} />
+            </div>
+          </div>
           <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                Cancel
+              </Button>
+            </DialogClose>
             <Button type="submit">Share</Button>
           </DialogFooter>
         </DialogContent>
