@@ -7,20 +7,38 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className="px-10">
-      <main className="min-h-screen min-w-80 p-5 sm:p-10 md:p-14">
-        <h1 className="text-center text-4xl font-extrabold tracking-tight lg:text-5xl">
-          Transform your
-          <br />
-          <span className="text-transparent gradient-text bg-gradient-to-r from-fuchsia-500 via-teal-600 to-fuchsia-500 bg-clip-text">
-            Onboarding process
-          </span>
-          <br />
-          into interactive{" "}
-          <span className="text-transparent gradient-text bg-gradient-to-r from-fuchsia-500 via-teal-600 to-fuchsia-500 bg-clip-text">
-            roadmaps
-          </span>
-        </h1>
-        <p className="text-xl text-center my-5 text-muted-foreground">
+      <main className="min-h-screen min-w-80 px-5 sm:px-10 md:px-14">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 mb-10">
+          <div className="space-y-4">
+            {/* <h1 className="mt-20 mb-5 text-left text-5xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-transparent gradient-text bg-gradient-to-r from-fuchsia-500 via-teal-600 to-fuchsia-500 bg-clip-text">
+              Convert onboardings
+              <br />
+              into easy roadmaps
+            </h1> */}
+            <h1 className="mt-20 mb-5 text-left text-5xl md:text-5xl lg:text-5xl font-extrabold tracking-tight">
+              Convert <span className="text-primary">onboardings</span>
+            </h1>
+            <h1 className="mt-20 mb-5 text-left text-5xl md:text-5xl lg:text-5xl font-extrabold tracking-tight">
+              into <span className="text-primary">easy roadmaps</span>
+            </h1>
+            <p className="font-semibold">
+              Organize all important information to new team members in one easy
+              to follow roadmap: tools, tech stack, communication software,
+              repositories, benefits info, career path, etc.
+            </p>
+            <Button asChild>
+              <Link href="/pricing" className="flex items-center gap-x-2">
+                <Zap className="w-4 h-4" />
+                Get started
+              </Link>
+            </Button>
+          </div>
+          <div>
+            <AllToolsIcon className="w-100 h-100" />
+          </div>
+        </div>
+
+        <p className="text-xl text-center mt-20 mb-5 text-muted-foreground">
           Avoid unorganized instruction docs onboardings 🫠 <br />
           in your development team. Make it roadmaps.
         </p>
@@ -32,28 +50,6 @@ export default function Home() {
           referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen
         ></iframe>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 my-10">
-          <div className="space-y-4">
-            <h1 className="mt-20 mb-5 text-left text-4xl font-extrabold tracking-tight lg:text-5xl text-transparent gradient-text bg-gradient-to-r from-fuchsia-500 via-teal-600 to-fuchsia-500 bg-clip-text">
-              All the onboarding
-              <br />
-              in one place
-            </h1>
-            <p className="font-semibold">
-              Organize all important information to new team members in one easy
-              to follow roadmap: tools, tech stack, communication software,
-              repositories, benefits info, career path, etc.
-            </p>
-            <Button className="flex items-center gap-x-2">
-              <Zap className="w-4 h-4" />
-              Get started
-            </Button>
-          </div>
-          <div>
-            <AllToolsIcon className="w-100 h-100" />
-          </div>
-        </div>
 
         <h1 className="mt-20 mb-5 text-center text-4xl font-extrabold tracking-tight lg:text-5xl text-transparent gradient-text bg-gradient-to-r from-fuchsia-500 via-teal-600 to-fuchsia-500 bg-clip-text">
           Save time and get
