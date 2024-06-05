@@ -114,7 +114,8 @@ export default function NavBar() {
             </Link>
           </>
         )}
-        <ThemeToggler />
+        {/* NOTE: This doesn't have a special meaning on the navbar */}
+        {/* <ThemeToggler /> */}
         {pathname.startsWith("/share/") ? (
           <Button asChild className="rounded-xl">
             <Link href={session?.user ? "/dashboard" : "/login"}>Log in</Link>
