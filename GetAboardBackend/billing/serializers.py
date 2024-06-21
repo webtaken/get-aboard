@@ -36,6 +36,10 @@ class OrderSerializer(ModelSerializer):
         fields = "__all__"
 
 
+class HasAccessSerializer(Serializer):
+    has_access = BooleanField()
+
+
 class CheckoutURLSerializer(Serializer):
     url = URLField()
 

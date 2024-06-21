@@ -3,14 +3,13 @@ import { FlowsList, FlowsListFallback } from "@/components/Flows/FlowsList";
 import FlowEditDialog from "@/components/commons/FlowEditDialog";
 import { Button } from "@/components/ui/button";
 import { createFlow } from "@/lib/flow-actions";
-import { getUserOrder } from "@/lib/billing-actions";
+import { getUserHasAccess, getUserOrder } from "@/lib/billing-actions";
 import { Lock } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
-  const order = await getUserOrder();
-  const isFreePlan = order === undefined;
+  const hasAccess = await getUserHasAccess();
 
   return (
     <div className="px-10">
@@ -20,8 +19,8 @@ export default async function Page() {
         </h2>
         <FlowEditDialog
           trigger={
-            <Button disabled={isFreePlan} className="flex items-center gap-x-2">
-              {isFreePlan && <Lock className="w-4 h-4" />}
+            <Button disabled={!hasAccess} className="flex items-center gap-x-2">
+              {!hasAccess && <Lock className="w-4 h-4" />}
               Create Roadmap
             </Button>
           }
@@ -32,7 +31,7 @@ export default async function Page() {
         />
       </div>
       <Suspense fallback={<FlowsListFallback />}>
-        <FlowsList isFreePlan={isFreePlan} />
+        <FlowsList isFreePlan={!hasAccess} />
       </Suspense>
     </div>
   );

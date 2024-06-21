@@ -122,13 +122,24 @@ export async function getUserOrder() {
   try {
     await setCredentialsToAPI();
     const session: any = await getServerSession(authOptions);
-    const order = await BillingService.billingSubscriptionGetUserOrderRetrieve({
+    const order = await BillingService.billingOrderGetUserOrderRetrieve({
       userId: session.django_data.user.pk,
     });
     return order;
   } catch (error) {
     console.error(error);
     return undefined;
+  }
+}
+
+export async function getUserHasAccess() {
+  try {
+    await setCredentialsToAPI();
+    const access = await BillingService.billingOrderUserHasAccessRetrieve();
+    return access.has_access;
+  } catch (error) {
+    console.error(error);
+    return false;
   }
 }
 
@@ -149,10 +160,11 @@ export async function getCustomerPortalURL(subscriptionId: number) {
 export async function getCustomerReceiptURL(orderId: number) {
   try {
     await setCredentialsToAPI();
-    const receipt =
-      await BillingService.billingSubscriptionGetCustomerReceiptRetrieve({
+    const receipt = await BillingService.billingOrderGetCustomerReceiptRetrieve(
+      {
         id: orderId,
-      });
+      }
+    );
     return receipt["url"];
   } catch (error) {
     console.error(error);

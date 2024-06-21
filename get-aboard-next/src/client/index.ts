@@ -108,6 +108,7 @@ export type { FlowsUpdateUserErrorComponent } from './models/FlowsUpdateUserErro
 export type { FlowsUpdateValidationError } from './models/FlowsUpdateValidationError';
 export type { FlowTemplate } from './models/FlowTemplate';
 export type { GetCheckoutURLRequest } from './models/GetCheckoutURLRequest';
+export type { HasAccess } from './models/HasAccess';
 export type { JWT } from './models/JWT';
 export type { Login } from './models/Login';
 export type { Name } from './models/Name';

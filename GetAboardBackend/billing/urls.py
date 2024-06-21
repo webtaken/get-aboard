@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     LemonSqueezyWebhook,
     OneTimePaymentProductListViewSet,
+    OrderViewSet,
     SubscriptionPlanListViewSet,
     SubscriptionViewSet,
 )
@@ -18,6 +19,7 @@ router.register(
     basename="one_time_payment_products",
 )
 router.register(r"subscription", SubscriptionViewSet, basename="subscriptions")
+router.register(r"order", OrderViewSet, basename="orders")
 
 urlpatterns = router.urls + [
     path("webhook", LemonSqueezyWebhook.as_view(), name="webhook")
