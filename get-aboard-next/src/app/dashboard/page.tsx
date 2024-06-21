@@ -6,6 +6,8 @@ import { createFlow } from "@/lib/flow-actions";
 import { getUserOrder } from "@/lib/billing-actions";
 import { Lock } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function Page() {
   const order = await getUserOrder();
   const isFreePlan = order === undefined;
