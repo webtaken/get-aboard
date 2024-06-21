@@ -169,10 +169,7 @@ export class TemplatingService {
     public static templatingTagsRetrieve({
         id,
     }: {
-        /**
-         * A unique integer value identifying this tag.
-         */
-        id: number,
+        id: string,
     }): CancelablePromise<Tag> {
         return __request(OpenAPI, {
             method: 'GET',
@@ -191,10 +188,7 @@ export class TemplatingService {
         id,
         requestBody,
     }: {
-        /**
-         * A unique integer value identifying this tag.
-         */
-        id: number,
+        id: string,
         requestBody: Tag,
     }): CancelablePromise<Tag> {
         return __request(OpenAPI, {
@@ -216,10 +210,7 @@ export class TemplatingService {
         id,
         requestBody,
     }: {
-        /**
-         * A unique integer value identifying this tag.
-         */
-        id: number,
+        id: string,
         requestBody?: PatchedTag,
     }): CancelablePromise<Tag> {
         return __request(OpenAPI, {
@@ -240,10 +231,7 @@ export class TemplatingService {
     public static templatingTagsDestroy({
         id,
     }: {
-        /**
-         * A unique integer value identifying this tag.
-         */
-        id: number,
+        id: string,
     }): CancelablePromise<void> {
         return __request(OpenAPI, {
             method: 'DELETE',

@@ -1,6 +1,10 @@
 "use server";
 import { setCredentialsToAPI, setBasePathToAPI } from "@/lib/utils";
-import { BillingService, SubscriptionPlan } from "@/client";
+import {
+  BillingService,
+  OneTimePaymentProduct,
+  SubscriptionPlan,
+} from "@/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 
@@ -14,6 +18,16 @@ export async function getSubscriptionPlans() {
   }
 }
 
+export async function getOneTimePaymentProducts() {
+  try {
+    await setBasePathToAPI();
+    const products = await BillingService.billingOneTimePaymentProductsList();
+    return products;
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function getSubscriptionPlan(id: number) {
   try {
     await setBasePathToAPI();
@@ -21,6 +35,22 @@ export async function getSubscriptionPlan(id: number) {
       id: id,
     });
     return subscription_plan;
+  } catch (error: any) {
+    if (error.status === 404) {
+      return undefined;
+    }
+    throw error;
+  }
+}
+
+export async function getOneTimePaymentProduct(id: number) {
+  try {
+    await setBasePathToAPI();
+    const one_time_payment_product =
+      await BillingService.billingOneTimePaymentProductsRetrieve({
+        id: id,
+      });
+    return one_time_payment_product;
   } catch (error: any) {
     if (error.status === 404) {
       return undefined;
@@ -51,6 +81,28 @@ export async function getCheckoutURL(subscriptionPlan: SubscriptionPlan) {
   }
 }
 
+export async function getCheckoutURLProduct(product: OneTimePaymentProduct) {
+  try {
+    await setCredentialsToAPI();
+    const session: any = await getServerSession(authOptions);
+    const checkout =
+      await BillingService.billingSubscriptionGetCheckoutUrlCreate({
+        requestBody: {
+          receipt_button_text: "Go to Dashboard",
+          receipt_thank_you_note: "Thank you for choosing get aboard",
+          redirect_url: `${process.env.NEXT_PUBLIC_LOCALHOST}/dashboard`,
+          embed: false,
+          email: session.django_data.user.email,
+          user_id: session.django_data.user.pk,
+          variant_id: product.variant_id,
+        },
+      });
+    return checkout.url;
+  } catch (error) {
+    return undefined;
+  }
+}
+
 export async function getUserSubscription() {
   try {
     await setCredentialsToAPI();
@@ -66,6 +118,20 @@ export async function getUserSubscription() {
   }
 }
 
+export async function getUserOrder() {
+  try {
+    await setCredentialsToAPI();
+    const session: any = await getServerSession(authOptions);
+    const order = await BillingService.billingSubscriptionGetUserOrderRetrieve({
+      userId: session.django_data.user.pk,
+    });
+    return order;
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+}
+
 export async function getCustomerPortalURL(subscriptionId: number) {
   try {
     await setCredentialsToAPI();
@@ -74,6 +140,20 @@ export async function getCustomerPortalURL(subscriptionId: number) {
         id: subscriptionId,
       });
     return portal["url"];
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+}
+
+export async function getCustomerReceiptURL(orderId: number) {
+  try {
+    await setCredentialsToAPI();
+    const receipt =
+      await BillingService.billingSubscriptionGetCustomerReceiptRetrieve({
+        id: orderId,
+      });
+    return receipt["url"];
   } catch (error) {
     console.error(error);
     return undefined;

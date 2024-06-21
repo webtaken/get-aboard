@@ -112,6 +112,8 @@ export type { JWT } from './models/JWT';
 export type { Login } from './models/Login';
 export type { Name } from './models/Name';
 export type { Node } from './models/Node';
+export type { OneTimePaymentProduct } from './models/OneTimePaymentProduct';
+export type { Order } from './models/Order';
 export type { ParseError } from './models/ParseError';
 export type { ParseErrorCodeEnum } from './models/ParseErrorCodeEnum';
 export type { ParseErrorResponse } from './models/ParseErrorResponse';

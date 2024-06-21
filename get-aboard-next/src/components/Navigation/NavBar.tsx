@@ -10,15 +10,11 @@ import { ThemeToggler } from "../Theming/ThemeToggler";
 import { useSession } from "next-auth/react";
 import ProfileActions from "./ProfileActions";
 import { Badge } from "@/components/ui/badge";
-import { useEffect, useState } from "react";
-import {
-  getSubscriptionPlan,
-  getUserSubscription,
-} from "@/lib/billing-actions";
-import { Subscription, SubscriptionPlan } from "@/client";
 import BillingButton from "./BillingButton";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import clsx from "clsx";
+import useGetBillingInfo from "@/hooks/useGetBillingInfo";
+import ProductButton from "../Billing/ProductButton";
 
 const notoSans = Noto_Sans({ subsets: ["latin"] });
 
@@ -34,31 +30,8 @@ function pathnameIsInSharePage(str: string) {
 
 export default function NavBar() {
   const pathname = usePathname();
-  const { status, data: session } = useSession();
-  const [subscription, setSubscription] = useState<Subscription | undefined>(
-    undefined
-  );
-  const [subscriptionPlan, setSubscriptionPlan] = useState<
-    SubscriptionPlan | undefined
-  >(undefined);
-  const [isFreePlan, setIsFreePlan] = useState(false);
-
-  useEffect(() => {
-    if (session) {
-      const getSubscription = async () => {
-        const sub = await getUserSubscription();
-        setSubscription(sub);
-        if (sub) {
-          const plan = await getSubscriptionPlan(sub.plan!);
-          setSubscriptionPlan(plan);
-        } else {
-          // Free plan
-          setIsFreePlan(true);
-        }
-      };
-      getSubscription();
-    }
-  }, [session]);
+  const { status, session, isFreePlan, oneTimePaymentProduct, order } =
+    useGetBillingInfo();
 
   if (
     pathname == "/login" ||
@@ -88,15 +61,17 @@ export default function NavBar() {
 
       <div className="hidden flex-col gap-6 md:flex md:flex-row md:items-center md:gap-10 lg:gap-6">
         {pathname.startsWith("/dashboard") &&
-          subscription &&
-          subscriptionPlan && (
+          order &&
+          oneTimePaymentProduct && (
             <BillingButton
-              subscription={subscription}
-              subscriptionPlan={subscriptionPlan}
+              subscription={order}
+              subscriptionPlan={oneTimePaymentProduct}
             />
           )}
         {pathname.startsWith("/dashboard") && isFreePlan && (
-          <Badge className="px-3 py-2">Free plan</Badge>
+          <Button className="px-3 py-2" asChild>
+            <Link href="/">Get get-aboard</Link>
+          </Button>
         )}
         {!pathname.startsWith("/dashboard") && (
           <>
@@ -140,11 +115,11 @@ export default function NavBar() {
         <SheetContent side="right">
           <div className="grid items-end text-center gap-6 px-4 mt-5">
             {pathname.startsWith("/dashboard") &&
-              subscription &&
-              subscriptionPlan && (
+              order &&
+              oneTimePaymentProduct && (
                 <BillingButton
-                  subscription={subscription}
-                  subscriptionPlan={subscriptionPlan}
+                  subscription={order}
+                  subscriptionPlan={oneTimePaymentProduct}
                 />
               )}
             <Link href="/demo" className="text-sm highlighted-text">

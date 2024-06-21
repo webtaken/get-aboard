@@ -13,5 +13,5 @@ class UserMixin:
 
     @property
     def user_has_free_plan(self):
-        user_subscription = self.request.user.subscriptions.first()
+        user_subscription = self.request.user.orders.first()
         return user_subscription is None

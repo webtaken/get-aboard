@@ -16,20 +16,29 @@ from rest_framework.status import HTTP_200_OK, HTTP_500_INTERNAL_SERVER_ERROR
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
-from .models import Subscription, SubscriptionPlan
+from .models import OneTimePaymentProduct, Order, Subscription, SubscriptionPlan
 from .serializers import (
     CheckoutURLSerializer,
     CustomerPortalURLSerializer,
     GetCheckoutURLRequestSerializer,
+    OneTimePaymentProductSerializer,
+    OrderSerializer,
     SubscriptionPlanSerializer,
     SubscriptionSerializer,
 )
-from .utils import get_subscription, lemonsqueezy_request, process_webhook
+from .utils import get_order, get_subscription, lemonsqueezy_request, process_webhook
 
 
 class SubscriptionPlanListViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     queryset = SubscriptionPlan.objects.all()
     serializer_class = SubscriptionPlanSerializer
+
+
+class OneTimePaymentProductListViewSet(
+    ListModelMixin, RetrieveModelMixin, GenericViewSet
+):
+    queryset = OneTimePaymentProduct.objects.all()
+    serializer_class = OneTimePaymentProductSerializer
 
 
 class SubscriptionViewSet(RetrieveModelMixin, GenericViewSet):
@@ -49,6 +58,22 @@ class SubscriptionViewSet(RetrieveModelMixin, GenericViewSet):
 
         serializer = CustomerPortalURLSerializer(
             data={"url": subscription["data"]["attributes"]["urls"]["customer_portal"]}
+        )
+        if serializer.is_valid(raise_exception=True):
+            return Response(serializer.validated_data, status=HTTP_200_OK)
+
+    @extend_schema(
+        request=None,
+        description="Retrieves the customer receipt url of an order",
+        methods=["GET"],
+        responses={HTTP_200_OK: CustomerPortalURLSerializer},
+    )
+    @action(methods=["get"], detail=True, url_name="get_customer_receipt")
+    def get_customer_receipt(self, request, pk=None, **kwargs):
+        order = get_order(pk)
+
+        serializer = CustomerPortalURLSerializer(
+            data={"url": order["data"]["attributes"]["urls"]["receipt"]}
         )
         if serializer.is_valid(raise_exception=True):
             return Response(serializer.validated_data, status=HTTP_200_OK)
@@ -76,6 +101,31 @@ class SubscriptionViewSet(RetrieveModelMixin, GenericViewSet):
         if subscription is None:
             raise NotFound("No subscriptions found for this user")
         serializer = SubscriptionSerializer(subscription)
+        return Response(serializer.data)
+
+    @extend_schema(
+        request=None,
+        description="Retrieves the current purchase of the given user_id",
+        parameters=[
+            OpenApiParameter(
+                name="user_id",
+                description="The user id requesting his subscriptions",
+                required=True,
+                type=OpenApiTypes.INT,
+            ),
+        ],
+        methods=["GET"],
+        responses={HTTP_200_OK: OrderSerializer},
+    )
+    @action(methods=["get"], detail=False, url_name="get_user_order")
+    def get_user_order(self, request, **kwargs):
+        user = get_object_or_404(
+            get_user_model(), pk=request.query_params.get("user_id")
+        )
+        purchase = Order.objects.filter(user=user).first()
+        if purchase is None:
+            raise NotFound("No purchase found for this user")
+        serializer = OrderSerializer(purchase)
         return Response(serializer.data)
 
     @extend_schema(

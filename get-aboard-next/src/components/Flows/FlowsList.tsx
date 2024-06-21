@@ -14,14 +14,14 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Badge } from "../ui/badge";
 import FlowOptions from "./FlowOptions";
-import { Pencil } from "lucide-react";
+import { Pencil, Lock } from "lucide-react";
 import FlowEditDialog from "../commons/FlowEditDialog";
 import { Button } from "../ui/button";
 import Link from "next/link";
 
 dayjs.extend(relativeTime);
 
-export async function FlowsList() {
+export async function FlowsList({ isFreePlan }: { isFreePlan: boolean }) {
   const flows = await getUserFlows();
 
   if (flows === undefined) {
@@ -31,13 +31,24 @@ export async function FlowsList() {
   if (flows.length === 0) {
     return (
       <div className="flex flex-col gap-5">
-        <h1 className="text-center font-bold text-2xl">You have no Roadmaps</h1>
+        <h1 className="text-center font-bold text-2xl">
+          You have no Roadmaps
+          {isFreePlan && ", buy get-aboard to create a new one"}
+        </h1>
         <p className="text-center text-sm text-muted-foreground">
           Start a new one
         </p>
         <div className="flex justify-center">
           <FlowEditDialog
-            trigger={<Button>Create Roadmap</Button>}
+            trigger={
+              <Button
+                disabled={isFreePlan}
+                className="flex items-center gap-x-2"
+              >
+                {isFreePlan && <Lock className="w-4 h-4" />}
+                Create Roadmap
+              </Button>
+            }
             title="Create your flow"
             submitText="Create"
             // @ts-expect-error

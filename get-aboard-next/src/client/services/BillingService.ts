@@ -5,6 +5,8 @@
 import type { CheckoutURL } from '../models/CheckoutURL';
 import type { CustomerPortalURL } from '../models/CustomerPortalURL';
 import type { GetCheckoutURLRequest } from '../models/GetCheckoutURLRequest';
+import type { OneTimePaymentProduct } from '../models/OneTimePaymentProduct';
+import type { Order } from '../models/Order';
 import type { Subscription } from '../models/Subscription';
 import type { SubscriptionPlan } from '../models/SubscriptionPlan';
 
@@ -13,6 +15,38 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 
 export class BillingService {
+
+    /**
+     * @returns OneTimePaymentProduct
+     * @throws ApiError
+     */
+    public static billingOneTimePaymentProductsList(): CancelablePromise<Array<OneTimePaymentProduct>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/billing/one-time-payment-products/',
+        });
+    }
+
+    /**
+     * @returns OneTimePaymentProduct
+     * @throws ApiError
+     */
+    public static billingOneTimePaymentProductsRetrieve({
+        id,
+    }: {
+        /**
+         * A unique integer value identifying this one time payment product.
+         */
+        id: number,
+    }): CancelablePromise<OneTimePaymentProduct> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/billing/one-time-payment-products/{id}/',
+            path: {
+                'id': id,
+            },
+        });
+    }
 
     /**
      * @returns SubscriptionPlan
@@ -90,6 +124,28 @@ export class BillingService {
     }
 
     /**
+     * Retrieves the customer receipt url of an order
+     * @returns CustomerPortalURL
+     * @throws ApiError
+     */
+    public static billingSubscriptionGetCustomerReceiptRetrieve({
+        id,
+    }: {
+        /**
+         * A unique integer value identifying this subscription.
+         */
+        id: number,
+    }): CancelablePromise<CustomerPortalURL> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/billing/subscription/{id}/get_customer_receipt/',
+            path: {
+                'id': id,
+            },
+        });
+    }
+
+    /**
      * @returns CheckoutURL
      * @throws ApiError
      */
@@ -103,6 +159,28 @@ export class BillingService {
             url: '/billing/subscription/get_checkout_url/',
             body: requestBody,
             mediaType: 'application/json',
+        });
+    }
+
+    /**
+     * Retrieves the current purchase of the given user_id
+     * @returns Order
+     * @throws ApiError
+     */
+    public static billingSubscriptionGetUserOrderRetrieve({
+        userId,
+    }: {
+        /**
+         * The user id requesting his subscriptions
+         */
+        userId: number,
+    }): CancelablePromise<Order> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/billing/subscription/get_user_order/',
+            query: {
+                'user_id': userId,
+            },
         });
     }
 

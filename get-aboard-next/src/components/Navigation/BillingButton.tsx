@@ -1,5 +1,10 @@
 "use client";
-import { Subscription, SubscriptionPlan } from "@/client";
+import {
+  OneTimePaymentProduct,
+  Order,
+  Subscription,
+  SubscriptionPlan,
+} from "@/client";
 import {
   Tooltip,
   TooltipContent,
@@ -7,7 +12,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "../ui/button";
-import { getCustomerPortalURL } from "@/lib/billing-actions";
+import {
+  getCustomerPortalURL,
+  getCustomerReceiptURL,
+} from "@/lib/billing-actions";
 import { toast } from "../ui/use-toast";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
@@ -17,8 +25,8 @@ export default function BillingButton({
   subscriptionPlan,
   variant,
 }: {
-  subscription: Subscription;
-  subscriptionPlan: SubscriptionPlan;
+  subscription: Subscription | Order;
+  subscriptionPlan: SubscriptionPlan | OneTimePaymentProduct;
   variant?:
     | "link"
     | "default"
@@ -31,6 +39,14 @@ export default function BillingButton({
 }) {
   const [loading, setLoading] = useState(false);
 
+  let statusIcon = "🎉";
+  if (
+    "subscription_item_id" in subscription &&
+    subscription.status !== "active"
+  ) {
+    statusIcon = "❓";
+  }
+
   return (
     <TooltipProvider delayDuration={200}>
       <Tooltip>
@@ -40,9 +56,14 @@ export default function BillingButton({
             className="rounded-xl flex items-center gap-x-2"
             onClick={async () => {
               setLoading(true);
-              const url = await getCustomerPortalURL(
-                +subscription.lemonsqueezy_id
-              );
+              let url: string | undefined;
+              if ("subscription_item_id" in subscription) {
+                url = await getCustomerPortalURL(+subscription.lemonsqueezy_id);
+              } else {
+                url = await getCustomerReceiptURL(
+                  +subscription.lemonsqueezy_id
+                );
+              }
               setLoading(false);
               if (url) {
                 window.open(url, "_blank");
@@ -57,8 +78,7 @@ export default function BillingButton({
             disabled={loading}
           >
             {loading && <Loader2 className="animate-spin w-4 h-4" />}
-            {subscriptionPlan.product_name}{" "}
-            {subscription.status === "active" ? "🎉" : "❓"}
+            {subscriptionPlan.product_name} {statusIcon}
           </Button>
         </TooltipTrigger>
         <TooltipContent>

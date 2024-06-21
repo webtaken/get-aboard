@@ -1,10 +1,27 @@
 import AllToolsIcon from "@/components/Icons/AllToolsIcon";
 import GetAboardIcon from "@/components/Icons/GetAboardIcon";
 import { Button } from "@/components/ui/button";
+import { getOneTimePaymentProducts } from "@/lib/billing-actions";
 import { Github, Twitter, Zap } from "lucide-react";
 import Link from "next/link";
+import {
+  CardHeader,
+  CardContent,
+  CardFooter,
+  Card,
+} from "@/components/ui/card";
+import PlanButton from "@/components/Billing/PlanButton";
+import ProductButton from "@/components/Billing/ProductButton";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
 
-export default function Home() {
+export default async function Home() {
+  const [products, session] = await Promise.all([
+    getOneTimePaymentProducts(),
+    getServerSession(authOptions),
+  ]);
+  const product = products[0];
+
   return (
     <div className="px-10">
       <main className="min-h-screen min-w-80 px-5 sm:px-10 md:px-14">
@@ -120,7 +137,7 @@ export default function Home() {
           ></iframe>
         </section>
 
-        <section className="my-20 flex flex-col justify-center">
+        <section className="mt-20 flex flex-col justify-center">
           <GetAboardIcon className="w-10 h-10 mx-auto stroke-slate-900 dark:stroke-slate-200 stroke-2" />
           <h1 className="text-center text-4xl font-extrabold tracking-tight lg:text-5xl text-transparent gradient-text bg-gradient-to-r from-fuchsia-500 via-teal-600 to-fuchsia-500 bg-clip-text">
             Improve
@@ -129,15 +146,38 @@ export default function Home() {
             your organization&apos;s processes
           </h1>
           <p className="text-xl text-center my-5 text-muted-foreground">
-            <span className="font-semibold">Start for free</span> and check if
-            it gives value to you.
+            <span className="font-semibold">Start your journey</span>
           </p>
-          <div className="flex justify-center gap-x-2">
-            <Button className="font-bold rounded-3xl" asChild>
-              <Link href="/login">Start for free</Link>
-            </Button>
-          </div>
         </section>
+        <div className="flex justify-center">
+          <Card className="border-gray-200 dark:border-gray-800">
+            <CardHeader className="rounded-t-md p-4 bg-gray-50 dark:bg-gray-950">
+              <h3 className="text-xl font-bold">{product.product_name}</h3>
+              <div
+                className="text-sm text-gray-500 dark:text-gray-400"
+                dangerouslySetInnerHTML={{
+                  __html: product.product_description ?? "Try it now",
+                }}
+              />
+            </CardHeader>
+            <CardContent
+              className="grid gap-4 p-4 text-sm"
+              dangerouslySetInnerHTML={{ __html: product.description }}
+            />
+            <CardFooter className="p-4 flex flex-col items-stretch gap-2">
+              <div className="text-2xl font-bold">
+                ${parseFloat(product.price) / 100}
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                One Time Payment
+              </div>
+              <ProductButton
+                products={products}
+                isLoggedIn={session !== null}
+              />
+            </CardFooter>
+          </Card>
+        </div>
       </main>
       <footer className="w-full grid grid-cols-2 py-10">
         <div className="flex flex-col">

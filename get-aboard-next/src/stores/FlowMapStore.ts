@@ -28,6 +28,7 @@ export interface FlowMapActions {
   addNode: (nodes: Node<DataTicketNode>) => void;
   deleteNode: (nodeId: string) => void;
   updateNodeMapData: (nodeId: string, dbData: DataTicketNode) => void;
+  getNodeMapData: (nodeId: string) => DataTicketNode | null;
   reset: () => void;
 }
 
@@ -87,6 +88,11 @@ export const useFlowMapStore = create<FlowMapState & FlowMapActions>(
           return node;
         }),
       }));
+    },
+    getNodeMapData: (nodeId: string) => {
+      const nodeData = get().nodes.find((node) => node.id === nodeId);
+      if (nodeData) return nodeData.data;
+      return null;
     },
     reset: () => set(initialState),
   })

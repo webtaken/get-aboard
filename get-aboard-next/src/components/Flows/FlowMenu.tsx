@@ -28,15 +28,9 @@ import Link from "next/link";
 import FlowEditDialog from "../commons/FlowEditDialog";
 import { useTheme } from "next-themes";
 import { Flow } from "@/client";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import {
-  getSubscriptionPlan,
-  getUserSubscription,
-} from "@/lib/billing-actions";
-import { Subscription, SubscriptionPlan } from "@/client";
 import BillingButton from "@/components/Navigation/BillingButton";
 import NewFeatureRadar from "../commons/NewFeatureRadar";
+import useGetBillingInfo from "@/hooks/useGetBillingInfo";
 
 interface FlowMenuProps {
   flow: Flow;
@@ -44,32 +38,10 @@ interface FlowMenuProps {
 
 export default function FlowMenu({ flow }: FlowMenuProps) {
   const { setTheme } = useTheme();
-  const router = useRouter();
-  const { data: session } = useSession();
-  const [subscription, setSubscription] = useState<Subscription | undefined>(
-    undefined
-  );
-  const [subscriptionPlan, setSubscriptionPlan] = useState<
-    SubscriptionPlan | undefined
-  >(undefined);
-  const [isFreePlan, setIsFreePlan] = useState(false);
+  const { status, session, isFreePlan, oneTimePaymentProduct, order } =
+    useGetBillingInfo();
 
-  useEffect(() => {
-    if (session) {
-      const getSubscription = async () => {
-        const sub = await getUserSubscription();
-        setSubscription(sub);
-        if (sub) {
-          const plan = await getSubscriptionPlan(sub.plan!);
-          setSubscriptionPlan(plan);
-        } else {
-          // Free plan
-          setIsFreePlan(true);
-        }
-      };
-      getSubscription();
-    }
-  }, [session]);
+  const router = useRouter();
 
   return (
     <NewFeatureRadar>
@@ -163,11 +135,11 @@ export default function FlowMenu({ flow }: FlowMenuProps) {
             <Separator className="my-2" />
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium">Your plan</p>
-              {subscription && subscriptionPlan && (
+              {order && oneTimePaymentProduct && (
                 <BillingButton
                   variant="ghost"
-                  subscription={subscription}
-                  subscriptionPlan={subscriptionPlan}
+                  subscription={order}
+                  subscriptionPlan={oneTimePaymentProduct}
                 />
               )}
               {isFreePlan && (

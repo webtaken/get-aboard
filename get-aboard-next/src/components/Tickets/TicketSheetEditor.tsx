@@ -13,13 +13,25 @@ import { useFlowStore } from "@/stores/FlowStore";
 import { toast } from "../ui/use-toast";
 import { useEditorSheetStore } from "@/stores/SheetEditorStore";
 import { Input } from "../ui/input";
+import { useShallow } from "zustand/react/shallow";
+import { useFlowMapStore } from "@/stores/FlowMapStore";
 
 interface TicketSheetEditorProps {}
 
 export default function TicketEditorSheet({}: TicketSheetEditorProps) {
   const { open, setOpen } = useEditorSheetStore();
-  const { nodeId, node, nodeMapId, setNode } = useFlowStore();
-  const [title, setTitle] = useState(node?.title || "New Node");
+  const { getNodeMapData } = useFlowMapStore(
+    useShallow((state) => ({ getNodeMapData: state.getNodeMapData }))
+  );
+  const { nodeId, node, nodeMapId, setNode } = useFlowStore(
+    useShallow((state) => ({
+      nodeId: state.nodeId,
+      node: state.node,
+      nodeMapId: state.nodeMapId,
+      setNode: state.setNode,
+    }))
+  );
+  const [title, setTitle] = useState(node?.title || "");
 
   useEffect(() => {
     const fetchNodeData = async (fetchingNodeId: number) => {
@@ -33,8 +45,13 @@ export default function TicketEditorSheet({}: TicketSheetEditorProps) {
         });
       }
     };
+
     if (nodeId && open) {
       fetchNodeData(nodeId);
+    }
+    if (nodeMapId && open) {
+      const newTitle = getNodeMapData(nodeMapId)?.title;
+      setTitle(newTitle || "");
     }
   }, [nodeId, nodeMapId, open]);
 
@@ -45,7 +62,7 @@ export default function TicketEditorSheet({}: TicketSheetEditorProps) {
   }, [open]);
 
   useEffect(() => {
-    setTitle(node?.title || "New Node");
+    setTitle(node?.title || "");
   }, [node]);
 
   const changeTitleHandler = (e: ChangeEvent<HTMLInputElement>) => {

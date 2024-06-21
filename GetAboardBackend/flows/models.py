@@ -1,5 +1,6 @@
 from random import randint
 from typing import Optional
+from uuid import uuid4
 
 from django.conf import settings
 from django.db import models
@@ -62,6 +63,100 @@ class Flow(models.Model):
             "pin": None if not with_pin else get_or_create_pin(access_pin_field),
         }
 
+    def save(self, *args, **kwargs):
+        if self.flow_id is None:  # Creating the flow
+            ids = {
+                "welcome": str(uuid4()),
+                "access_tools": str(uuid4()),
+                "processes_policies": str(uuid4()),
+                "codebase_documentation": str(uuid4()),
+                "tasks_fixes": str(uuid4()),
+            }
+            self.nodes_map = [
+                {
+                    "id": ids["welcome"],
+                    "type": "ticket",
+                    "position": {"x": 0, "y": 0},
+                    "data": {"title": "Welcome!", "type": "normal", "idOnDB": None},
+                },
+                {
+                    "id": ids["access_tools"],
+                    "type": "ticket",
+                    "position": {"x": -300, "y": 300},
+                    "data": {
+                        "title": "Access & Tools",
+                        "type": "normal",
+                        "idOnDB": None,
+                    },
+                },
+                {
+                    "id": ids["processes_policies"],
+                    "type": "ticket",
+                    "position": {"x": 300, "y": 300},
+                    "data": {
+                        "title": "Company Processes and Tools",
+                        "type": "normal",
+                        "idOnDB": None,
+                    },
+                },
+                {
+                    "id": ids["codebase_documentation"],
+                    "type": "ticket",
+                    "position": {"x": 0, "y": 600},
+                    "data": {
+                        "title": "Codebase and Documentation",
+                        "type": "normal",
+                        "idOnDB": None,
+                    },
+                },
+                {
+                    "id": ids["tasks_fixes"],
+                    "type": "ticket",
+                    "position": {"x": 0, "y": 900},
+                    "data": {
+                        "title": "Initial tasks and small fixes",
+                        "type": "normal",
+                        "idOnDB": None,
+                    },
+                },
+            ]
+            self.edges_map = [
+                {
+                    "id": str(uuid4()),
+                    "source": ids["welcome"],
+                    "target": ids["access_tools"],
+                    "animated": True,
+                    "type": "smoothstep",
+                    "style": {"strokeWidth": "0.150rem"},
+                },
+                {
+                    "id": str(uuid4()),
+                    "source": ids["access_tools"],
+                    "target": ids["processes_policies"],
+                    "animated": True,
+                    "type": "smoothstep",
+                    "style": {"strokeWidth": "0.150rem"},
+                },
+                {
+                    "id": str(uuid4()),
+                    "source": ids["processes_policies"],
+                    "target": ids["codebase_documentation"],
+                    "animated": True,
+                    "type": "smoothstep",
+                    "style": {"strokeWidth": "0.150rem"},
+                },
+                {
+                    "id": str(uuid4()),
+                    "source": ids["codebase_documentation"],
+                    "target": ids["tasks_fixes"],
+                    "animated": True,
+                    "type": "smoothstep",
+                    "style": {"strokeWidth": "0.150rem"},
+                },
+            ]
+
+        super().save(*args, **kwargs)
+
 
 class ShareOption(models.Model):
     flow = models.OneToOneField(Flow, on_delete=models.CASCADE, primary_key=True)
@@ -86,4 +181,4 @@ class Node(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.title
+        return f"#{self.node_id} - {self.title} [flow: {self.flow.title}]"

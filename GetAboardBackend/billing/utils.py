@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from requests import request
 
-from .models import Subscription, SubscriptionPlan
+from .models import OneTimePaymentProduct, Order, Subscription, SubscriptionPlan
 
 
 def lemonsqueezy_request(method: str, endpoint: str, **kwargs):
@@ -44,6 +44,11 @@ def get_subscription(subscription_id):
         method="GET", endpoint=f"/subscriptions/{subscription_id}"
     ).json()
     return subscription
+
+
+def get_order(order_id):
+    order = lemonsqueezy_request(method="GET", endpoint=f"/orders/{order_id}").json()
+    return order
 
 
 def process_webhook(webhook: dict):
@@ -113,9 +118,46 @@ def process_webhook(webhook: dict):
                 else f"Subscription plan {subscription} updated"
             )
 
-    elif webhook["meta"]["event_name"].startswith("order_"):
-        # Save orders; eventBody is a "Order"
-        pass
-    elif webhook["meta"]["event_name"].startswith("license_"):
-        # Save license keys; eventBody is a "License key"
-        pass
+        elif webhook["meta"]["event_name"].startswith("order_"):
+            # Save orders; eventBody is a "Order"
+            attributes = webhook["data"]["attributes"]
+            variant_id = str(attributes["first_order_item"]["variant_id"])
+            # We assume that the plan table is up to date
+            one_time_payment_product = OneTimePaymentProduct.objects.filter(
+                variant_id=variant_id
+            ).first()
+
+            if one_time_payment_product is None:
+                raise Exception(
+                    f"no single payment product found with with the variant id {variant_id}"
+                )
+
+            price = attributes["first_order_item"]["price"]
+
+            order, created = Order.objects.update_or_create(
+                lemonsqueezy_id=str(webhook["data"]["id"]),
+                defaults={
+                    "lemonsqueezy_id": str(webhook["data"]["id"]),
+                    "order_number": int(attributes["order_number"]),
+                    "order_id": int(attributes["first_order_item"]["order_id"]),
+                    "name": str(attributes["user_name"]),
+                    "email": str(attributes["user_email"]),
+                    "status": str(attributes["status"]),
+                    "status_formatted": str(attributes["status_formatted"]),
+                    "refunded": str(attributes["refunded"]),
+                    "refunded_at": str(attributes["refunded_at"]),
+                    "price": str(price) if price else "",
+                    "receipt": str(attributes["urls"]["receipt"]),
+                    "order_item_id": attributes["first_order_item"]["id"],
+                    "user": get_user_model()
+                    .objects.filter(pk=webhook["meta"]["custom_data"]["user_id"])
+                    .first(),
+                    "one_time_payment_product": one_time_payment_product,
+                },
+            )
+
+            print(f"Order {order} created" if created else f"Order {order} updated")
+
+        elif webhook["meta"]["event_name"].startswith("license_"):
+            # Save license keys; eventBody is a "License key"
+            pass

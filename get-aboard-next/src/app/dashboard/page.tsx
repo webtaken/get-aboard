@@ -3,8 +3,13 @@ import { FlowsList, FlowsListFallback } from "@/components/Flows/FlowsList";
 import FlowEditDialog from "@/components/commons/FlowEditDialog";
 import { Button } from "@/components/ui/button";
 import { createFlow } from "@/lib/flow-actions";
+import { getUserOrder } from "@/lib/billing-actions";
+import { Lock } from "lucide-react";
 
-export default function Page() {
+export default async function Page() {
+  const order = await getUserOrder();
+  const isFreePlan = order === undefined;
+
   return (
     <div className="px-10">
       <div className="flex justify-between items-center my-5 border-y-2 py-10">
@@ -12,7 +17,12 @@ export default function Page() {
           My flows
         </h2>
         <FlowEditDialog
-          trigger={<Button>Create Roadmap</Button>}
+          trigger={
+            <Button disabled={isFreePlan} className="flex items-center gap-x-2">
+              {isFreePlan && <Lock className="w-4 h-4" />}
+              Create Roadmap
+            </Button>
+          }
           title="Create your flow"
           submitText="Create"
           // @ts-expect-error
@@ -20,7 +30,7 @@ export default function Page() {
         />
       </div>
       <Suspense fallback={<FlowsListFallback />}>
-        <FlowsList />
+        <FlowsList isFreePlan={isFreePlan} />
       </Suspense>
     </div>
   );

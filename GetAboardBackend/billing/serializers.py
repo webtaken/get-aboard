@@ -9,7 +9,7 @@ from rest_framework.serializers import (
     ValidationError,
 )
 
-from .models import Subscription, SubscriptionPlan
+from .models import OneTimePaymentProduct, Order, Subscription, SubscriptionPlan
 
 
 class SubscriptionPlanSerializer(ModelSerializer):
@@ -18,9 +18,21 @@ class SubscriptionPlanSerializer(ModelSerializer):
         fields = "__all__"
 
 
+class OneTimePaymentProductSerializer(ModelSerializer):
+    class Meta:
+        model = OneTimePaymentProduct
+        fields = "__all__"
+
+
 class SubscriptionSerializer(ModelSerializer):
     class Meta:
         model = Subscription
+        fields = "__all__"
+
+
+class OrderSerializer(ModelSerializer):
+    class Meta:
+        model = Order
         fields = "__all__"
 
 
