@@ -22,7 +22,7 @@ class Flow(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.title
+        return f"{self.title} - #{self.flow_id}"
 
     def share(self, option: str, with_pin: bool) -> dict:
         allowed_options = {"view", "comment", "edit"}
