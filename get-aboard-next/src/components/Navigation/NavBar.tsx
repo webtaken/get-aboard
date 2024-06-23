@@ -82,7 +82,7 @@ export default function NavBar() {
               demo
             </Link>
             <Link
-              href="/pricing"
+              href="/#pricing_card"
               className="text-sm font-semibold text-muted-foreground flex items-center gap-2"
             >
               pricing
@@ -125,7 +125,10 @@ export default function NavBar() {
             <Link href="/demo" className="text-sm highlighted-text">
               demo
             </Link>
-            <Link href="/pricing" className="text-sm text-muted-foreground">
+            <Link
+              href="/#pricing_card"
+              className="text-sm text-muted-foreground"
+            >
               pricing
             </Link>
             <Link

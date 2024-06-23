@@ -149,7 +149,7 @@ export default async function Home() {
             <span className="font-semibold">Start your journey</span>
           </p>
         </section>
-        <div className="flex justify-center">
+        <div className="flex justify-center" id="pricing_card">
           <Card className="border-gray-200 dark:border-gray-800">
             <CardHeader className="rounded-t-md p-4 bg-gray-50 dark:bg-gray-950">
               <h3 className="text-xl font-bold">{product.product_name}</h3>
