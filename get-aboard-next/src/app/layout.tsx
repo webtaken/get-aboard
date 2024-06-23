@@ -11,8 +11,23 @@ const inter = Inter({ subsets: ["latin"] });
 const notoSans = Noto_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "get-aboard",
-  description: "Transform onboarding process into interactive roadmaps",
+  description: "Convert onboarding process into interactive roadmaps",
+  metadataBase: new URL(`${process.env.NEXT_PUBLIC_LOCALHOST!}`),
+  keywords: [
+    "onboarding tool",
+    "onboarding process",
+    "developers onboarding",
+    "productivity for teams",
+  ],
+  title: {
+    default: "get-aboard",
+    template: `%s | get-aboard`,
+  },
+  openGraph: {
+    description:
+      "Get-aboard, a tool to improve the onboarding process for software development teams.",
+    images: [`${process.env.NEXT_PUBLIC_LOCALHOST!}/shareMain.png`],
+  },
   alternates: {
     canonical: `${process.env.NEXT_PUBLIC_LOCALHOST!}`,
   },
