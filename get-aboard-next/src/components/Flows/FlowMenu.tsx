@@ -147,7 +147,7 @@ export default function FlowMenu({ flow }: FlowMenuProps) {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Link
-                        href="/pricing"
+                        href="/#pricing_card"
                         className="text-sm border-2 rounded-xl px-2 py-1 hover:bg-muted-foreground hover:text-muted"
                       >
                         Free plan

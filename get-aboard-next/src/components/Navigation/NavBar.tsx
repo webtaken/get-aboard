@@ -70,7 +70,7 @@ export default function NavBar() {
           )}
         {pathname.startsWith("/dashboard") && isFreePlan && (
           <Button className="px-3 py-2" asChild>
-            <Link href="/">Get get-aboard</Link>
+            <Link href="/#pricing_card">Get get-aboard</Link>
           </Button>
         )}
         {!pathname.startsWith("/dashboard") && (

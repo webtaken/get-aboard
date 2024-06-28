@@ -44,7 +44,7 @@ export default async function Home() {
               repositories, benefits info, career path, etc.
             </p>
             <Button asChild>
-              <Link href="/pricing" className="flex items-center gap-x-2">
+              <Link href="/#pricing_card" className="flex items-center gap-x-2">
                 <Zap className="w-4 h-4" />
                 Get started
               </Link>
