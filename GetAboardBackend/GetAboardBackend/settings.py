@@ -277,6 +277,7 @@ SIMPLE_JWT = {
 REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTPONLY": False,
+    "USER_DETAILS_SERIALIZER": "nextjs_drf_auth.serializers.CustomUserDetailsSerializer",
 }
 
 # Billing configs

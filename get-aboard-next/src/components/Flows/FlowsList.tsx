@@ -35,6 +35,14 @@ export async function FlowsList({ isFreePlan }: { isFreePlan: boolean }) {
           You have no Roadmaps
           {isFreePlan && ", buy get-aboard to create a new one"}
         </h1>
+        {isFreePlan && (
+          <h2 className="text-center font-semibold text-xl">
+            If you are a new user please contact{" "}
+            <span className="font-bold">@node_srojas1</span> on x.com
+            <br />
+            To claim your free trial.
+          </h2>
+        )}
         <p className="text-center text-sm text-muted-foreground">
           Start a new one
         </p>

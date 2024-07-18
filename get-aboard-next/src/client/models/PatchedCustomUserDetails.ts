@@ -6,8 +6,12 @@
 /**
  * User model w/o password
  */
-export type PatchedUserDetails = {
+export type PatchedCustomUserDetails = {
     readonly pk?: number;
+    /**
+     * Designates whether the user can log into this admin site.
+     */
+    is_staff?: boolean;
     /**
      * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
      */

@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { UserDetails } from './UserDetails';
+import type { CustomUserDetails } from './CustomUserDetails';
 
 /**
  * Serializer for JWT authentication.
@@ -11,6 +11,6 @@ import type { UserDetails } from './UserDetails';
 export type JWT = {
     access: string;
     refresh: string;
-    user: UserDetails;
+    user: CustomUserDetails;
 };
 

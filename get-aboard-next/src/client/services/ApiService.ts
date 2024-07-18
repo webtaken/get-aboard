@@ -2,15 +2,15 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { CustomUserDetails } from '../models/CustomUserDetails';
 import type { JWT } from '../models/JWT';
 import type { Login } from '../models/Login';
-import type { PatchedUserDetails } from '../models/PatchedUserDetails';
+import type { PatchedCustomUserDetails } from '../models/PatchedCustomUserDetails';
 import type { Register } from '../models/Register';
 import type { RestAuthDetail } from '../models/RestAuthDetail';
 import type { SocialLogin } from '../models/SocialLogin';
 import type { TokenRefresh } from '../models/TokenRefresh';
 import type { TokenVerify } from '../models/TokenVerify';
-import type { UserDetails } from '../models/UserDetails';
 import type { VerifyEmail } from '../models/VerifyEmail';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -176,10 +176,10 @@ export class ApiService {
      * Read-only fields: pk, email
      *
      * Returns UserModel fields.
-     * @returns UserDetails
+     * @returns CustomUserDetails
      * @throws ApiError
      */
-    public static apiAuthUserRetrieve(): CancelablePromise<UserDetails> {
+    public static apiAuthUserRetrieve(): CancelablePromise<CustomUserDetails> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/auth/user/',
@@ -195,14 +195,14 @@ export class ApiService {
      * Read-only fields: pk, email
      *
      * Returns UserModel fields.
-     * @returns UserDetails
+     * @returns CustomUserDetails
      * @throws ApiError
      */
     public static apiAuthUserUpdate({
         requestBody,
     }: {
-        requestBody: UserDetails,
-    }): CancelablePromise<UserDetails> {
+        requestBody: CustomUserDetails,
+    }): CancelablePromise<CustomUserDetails> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/auth/user/',
@@ -220,14 +220,14 @@ export class ApiService {
      * Read-only fields: pk, email
      *
      * Returns UserModel fields.
-     * @returns UserDetails
+     * @returns CustomUserDetails
      * @throws ApiError
      */
     public static apiAuthUserPartialUpdate({
         requestBody,
     }: {
-        requestBody?: PatchedUserDetails,
-    }): CancelablePromise<UserDetails> {
+        requestBody?: PatchedCustomUserDetails,
+    }): CancelablePromise<CustomUserDetails> {
         return __request(OpenAPI, {
             method: 'PATCH',
             url: '/api/auth/user/',

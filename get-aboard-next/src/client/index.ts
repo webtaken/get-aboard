@@ -28,6 +28,7 @@ export type { Code9ddEnum } from './models/Code9ddEnum';
 export type { CodeA3cEnum } from './models/CodeA3cEnum';
 export type { CodeE7cEnum } from './models/CodeE7cEnum';
 export type { CustomerPortalURL } from './models/CustomerPortalURL';
+export type { CustomUserDetails } from './models/CustomUserDetails';
 export type { Error401 } from './models/Error401';
 export type { Error404 } from './models/Error404';
 export type { Error405 } from './models/Error405';
@@ -118,11 +119,11 @@ export type { Order } from './models/Order';
 export type { ParseError } from './models/ParseError';
 export type { ParseErrorCodeEnum } from './models/ParseErrorCodeEnum';
 export type { ParseErrorResponse } from './models/ParseErrorResponse';
+export type { PatchedCustomUserDetails } from './models/PatchedCustomUserDetails';
 export type { PatchedFlow } from './models/PatchedFlow';
 export type { PatchedFlowTemplate } from './models/PatchedFlowTemplate';
 export type { PatchedNode } from './models/PatchedNode';
 export type { PatchedTag } from './models/PatchedTag';
-export type { PatchedUserDetails } from './models/PatchedUserDetails';
 export type { Register } from './models/Register';
 export type { RestAuthDetail } from './models/RestAuthDetail';
 export type { ServerErrorEnum } from './models/ServerErrorEnum';
@@ -177,7 +178,6 @@ export type { TemplatingUpdateTitleErrorComponent } from './models/TemplatingUpd
 export type { TemplatingUpdateValidationError } from './models/TemplatingUpdateValidationError';
 export type { TokenRefresh } from './models/TokenRefresh';
 export type { TokenVerify } from './models/TokenVerify';
-export type { UserDetails } from './models/UserDetails';
 export type { ValidationErrorEnum } from './models/ValidationErrorEnum';
 export type { VerifyEmail } from './models/VerifyEmail';
 
