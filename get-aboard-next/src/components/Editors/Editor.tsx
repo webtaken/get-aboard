@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "@tiptap/extension-link";
-import { Save } from "lucide-react";
+import { Loader2Icon, Save } from "lucide-react";
 import { Content, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { PatchedNode } from "@/client";
 import { createNode, updateNodeById } from "@/lib/node-actions";
@@ -24,6 +24,7 @@ interface EditorProps {
 }
 
 export default function Editor({ title, content }: EditorProps) {
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
   const { updateNodeMapData } = useFlowMapStore(
@@ -67,7 +68,9 @@ export default function Editor({ title, content }: EditorProps) {
       <EditorControls editor={editor} />
       <Button
         className="flex items-center gap-x-2"
+        disabled={loading}
         onClick={async () => {
+          setLoading(true);
           // Node doesn't exist, we'll create a new one
           if (!nodeId) {
             //@ts-expect-error
@@ -107,6 +110,7 @@ export default function Editor({ title, content }: EditorProps) {
                 });
               }
             }
+            setLoading(false);
             return;
           }
 
@@ -134,9 +138,15 @@ export default function Editor({ title, content }: EditorProps) {
                 "Error while updating the node, please contact support.",
             });
           }
+          setLoading(false);
         }}
       >
-        <Save className="w-4 h-4" /> Save
+        {loading ? (
+          <Loader2Icon className="w-4 h-4 animate-spin" />
+        ) : (
+          <Save className="w-4 h-4" />
+        )}{" "}
+        Save
       </Button>
     </>
   );
