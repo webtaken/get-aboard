@@ -29,7 +29,8 @@ export default function ProfileActions({
 }) {
   const router = useRouter();
   const imageSrc: string =
-    session.user?.image ||
+    // @ts-expect-error
+    session.picture ||
     profileImagesOptions[
       Math.floor(Math.random() * profileImagesOptions.length)
     ];
