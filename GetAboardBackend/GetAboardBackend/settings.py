@@ -124,8 +124,9 @@ SOCIALACCOUNT_PROVIDERS = {
 SITE_ID = 1  # https://dj-rest-auth.readthedocs.io/en/latest/installation.html#registration-optional
 
 # For REGULAR ACCOUNTS
+ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_REQUIRED = True
-# ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = False
 
@@ -278,6 +279,7 @@ REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTPONLY": False,
     "USER_DETAILS_SERIALIZER": "nextjs_drf_auth.serializers.CustomUserDetailsSerializer",
+    "REGISTER_SERIALIZER": "nextjs_drf_auth.serializers.CustomRegisterSerializer",
 }
 
 # Billing configs

@@ -16,47 +16,83 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 import { useState } from "react";
+import { signUp } from "@/lib/auth-actions";
 
-const FormSchema = z.object({
-  email: z.string().min(1, {
-    message: "Email must not be empty.",
-  }),
-  password: z.string().min(1, {
-    message: "Password must not be empty.",
-  }),
-});
+const FormSchema = z
+  .object({
+    email: z
+      .string()
+      .min(1, {
+        message: "Email must not be empty.",
+      })
+      .email("Invalid email address."),
+    password1: z.string().min(1, {
+      message: "Password must not be empty.",
+    }),
+    password2: z.string().min(1, {
+      message: "Password must not be empty.",
+    }),
+  })
+  .refine((data) => data.password1 === data.password2, {
+    message: "Passwords do not match",
+    path: ["password2"], // This specifies which field the error is associated with
+  });
 
-export default function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
+export default function RegisterForm({
+  callbackUrl,
+}: {
+  callbackUrl?: string;
+}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       email: "",
-      password: "",
+      password1: "",
+      password2: "",
     },
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setIsSubmitting(true);
-    const res = await signIn("credentials", {
-      email: data.email,
-      password: data.password,
-      redirect: false,
-    });
-    setIsSubmitting(false);
-    if (res?.ok) {
-      await signIn("credentials", {
+    try {
+      const response = await signUp({
         email: data.email,
-        password: data.password,
-        callbackUrl: "/dashboard",
+        password1: data.password1,
+        password2: data.password2,
       });
-    } else {
+      if (typeof response !== "boolean") {
+        toast({
+          title: "An error ocurred try again later.",
+          variant: "destructive",
+          description: (
+            <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+              <code className="text-white">
+                {JSON.stringify(
+                  response ?? { message: "Contact support." },
+                  null,
+                  1
+                )}
+              </code>
+            </pre>
+          ),
+        });
+      } else {
+        signIn("credentials", {
+          email: data.email,
+          password: data.password1,
+          callbackUrl: "/",
+        });
+      }
+    } catch (error) {
+      console.error("Sign up error:", error);
       toast({
+        title: "An unexpected error occurred. Please try again.",
         variant: "destructive",
-        title: "Authentication Error",
-        description: "Send the correct credentials",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -82,7 +118,7 @@ export default function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
         />
         <FormField
           control={form.control}
-          name="password"
+          name="password1"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Password</FormLabel>
@@ -98,8 +134,26 @@ export default function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="password2"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Repeat Password</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Repeat password"
+                  aria-label="repeat password"
+                  type="password"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Button type="submit" className="mx-auto" disabled={isSubmitting}>
-          {isSubmitting ? "Login In..." : "Login"}
+          {isSubmitting ? "Registering..." : "Register"}
         </Button>
         <Button
           className="flex items-center gap-2 mx-auto"

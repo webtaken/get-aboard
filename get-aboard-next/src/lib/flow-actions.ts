@@ -49,14 +49,12 @@ export async function createFlow(prevState: State, formData: FormData) {
 
   try {
     await setCredentialsToAPI();
-    const session = await getServerSession(authOptions);
-    // eslint-disable-next-line
-    // @ts-ignore
-    const django_user = session.django_data.user;
+    const session: any = await getServerSession(authOptions);
+    const django_user = session.user;
     await FlowsService.flowsCreate({
       // @ts-expect-error
       requestBody: {
-        user: +django_user.pk,
+        user: django_user.pk,
         title: title,
         description: description,
         nodes_map: [],
@@ -167,7 +165,6 @@ export async function updateFlowByForm(
         description: description,
       },
     });
-    console.log(id);
     revalidatePath(`/dashboard/flows/${id}`);
     revalidatePath("/dashboard");
     return { message: "Flow updated", status: "success" };

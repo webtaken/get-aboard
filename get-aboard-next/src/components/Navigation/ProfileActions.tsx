@@ -14,6 +14,12 @@ import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import clsx from "clsx";
 
+const profileImagesOptions = [
+  "/images/profiles/ghost1.png",
+  "/images/profiles/ghost2.png",
+  "/images/profiles/ghost3.png",
+];
+
 export default function ProfileActions({
   session,
   size,
@@ -22,7 +28,11 @@ export default function ProfileActions({
   size?: "small" | "medium" | "large";
 }) {
   const router = useRouter();
-
+  const imageSrc: string =
+    session.user?.image ||
+    profileImagesOptions[
+      Math.floor(Math.random() * profileImagesOptions.length)
+    ];
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -35,7 +45,7 @@ export default function ProfileActions({
             size === "small" && "w-7 h-7",
             size === "large" && "w-20 h-20"
           )}
-          src={session.user?.image as string}
+          src={imageSrc}
           alt="profile image"
         />
       </DropdownMenuTrigger>

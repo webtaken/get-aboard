@@ -1,4 +1,4 @@
-import LoginForm from "@/components/Authentication/LoginForm";
+import RegisterForm from "@/components/Authentication/RegisterForm";
 import {
   Card,
   CardContent,
@@ -18,7 +18,7 @@ export default function Page() {
           <CardDescription>No credit card required!</CardDescription>
         </CardHeader>
         <CardContent>
-          <LoginForm />
+          <RegisterForm />
         </CardContent>
         <CardFooter>
           <p className="mx-auto text-sm text-muted-foreground">

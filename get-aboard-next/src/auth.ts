@@ -1,8 +1,9 @@
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
 import { NextAuthOptions } from "next-auth";
 import { ApiService, OpenAPI } from "./client";
-import { setCredentialsToAPI } from "./lib/utils";
+import { setBasePathToAPI, setCredentialsToAPI } from "./lib/utils";
 
 // These two values should be a bit less than actual token lifetimes
 // 6 days
@@ -32,6 +33,32 @@ export const authOptions: NextAuthOptions = {
         },
       },
     }),
+    CredentialsProvider({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      // The data returned from this function is passed forward as the
+      // `user` variable to the signIn() and jwt() callback
+      // @ts-expect-error
+      async authorize(credentials, req) {
+        try {
+          setBasePathToAPI();
+          const response = await ApiService.apiAuthLoginCreate({
+            requestBody: {
+              email: credentials?.email,
+              password: credentials?.password || "",
+            },
+          });
+          const data = response;
+          if (data) return data;
+        } catch (error: any) {
+          console.log("error", JSON.stringify(error, null, 2));
+        }
+        return null;
+      },
+    }),
   ],
   session: {
     strategy: "jwt", // JSON web tokens as session strategy
@@ -51,21 +78,33 @@ export const authOptions: NextAuthOptions = {
                 id_token: account["id_token"],
               },
             });
-            account["django_data"] = response.data;
+            account["meta"] = response.data;
             return true;
           } catch (error) {
             return false;
           }
+        } else if (account.provider === "credentials") {
+          return true;
         }
       }
       return false;
     },
-    async jwt({ token, account }) {
-      if (account) {
-        // eslint-disable-next-line
-        // @ts-ignore
-        token.django_data = { ...account.django_data };
-        token.ref = getCurrentEpochTime() + BACKEND_ACCESS_TOKEN_LIFETIME;
+    async jwt({
+      user,
+      token,
+      account,
+    }: {
+      user: any;
+      token: any;
+      account: any;
+    }) {
+      if (user && account) {
+        let backendResponse: any =
+          account.provider === "credentials" ? user : account.meta;
+        token["user"] = backendResponse.user;
+        token["access_token"] = backendResponse.access;
+        token["refresh_token"] = backendResponse.refresh;
+        token["ref"] = getCurrentEpochTime() + BACKEND_ACCESS_TOKEN_LIFETIME;
         return token;
       }
 
@@ -73,32 +112,25 @@ export const authOptions: NextAuthOptions = {
       // eslint-disable-next-line
       // @ts-ignore
       if (getCurrentEpochTime() > token["ref"]) {
-        const response = await axios({
-          method: "post",
-          url: `${process.env.NEXTAUTH_BACKEND_URL}/api/auth/token/refresh/`,
-          data: {
-            // eslint-disable-next-line
-            // @ts-ignore
-            refresh: token.django_data["refresh"],
-          },
-        });
-        // eslint-disable-next-line
-        // @ts-ignore
-        token.django_data["access"] = response.data.access;
-        // eslint-disable-next-line
-        // @ts-ignore
-        // token.django_data["refresh"] = response.data.refresh;
-        token["ref"] = getCurrentEpochTime() + BACKEND_ACCESS_TOKEN_LIFETIME;
+        try {
+          setBasePathToAPI();
+          const response = await ApiService.apiAuthTokenRefreshCreate({
+            // @ts-expect-error
+            requestBody: { refresh: token["refresh_token"] },
+          });
+          token["access"] = response.access;
+          token["ref"] = getCurrentEpochTime() + BACKEND_ACCESS_TOKEN_LIFETIME;
+        } catch (error: any) {
+          console.error(
+            "Error while refreshing the access token",
+            JSON.stringify(error, null, 2)
+          );
+        }
       }
       return token;
     },
-    async session({ token, session }) {
-      if (token?.django_data) {
-        // eslint-disable-next-line
-        // @ts-ignore
-        session.django_data = token.django_data;
-      }
-      return session;
+    async session({ token }: { token: any }) {
+      return token;
     },
   },
   events: {

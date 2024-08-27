@@ -1,5 +1,7 @@
+from dj_rest_auth.registration.serializers import RegisterSerializer
 from dj_rest_auth.serializers import UserDetailsSerializer
 from django.contrib.auth import get_user_model
+from rest_framework import serializers
 
 # Get the UserModel
 UserModel = get_user_model()
@@ -23,3 +25,13 @@ class CustomUserDetailsSerializer(UserDetailsSerializer):
         model = UserModel
         fields = ("pk", *extra_fields)
         read_only_fields = ("email",)
+
+
+class CustomRegisterSerializer(RegisterSerializer):
+    def validate_email(self, email):
+        email = super().validate_email(email)
+        if UserModel.objects.filter(email=email).exists():
+            raise serializers.ValidationError(
+                "A user is already registered with this e-mail address."
+            )
+        return email

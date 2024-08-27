@@ -2,11 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { CustomRegister } from '../models/CustomRegister';
 import type { CustomUserDetails } from '../models/CustomUserDetails';
 import type { JWT } from '../models/JWT';
 import type { Login } from '../models/Login';
 import type { PatchedCustomUserDetails } from '../models/PatchedCustomUserDetails';
-import type { Register } from '../models/Register';
 import type { RestAuthDetail } from '../models/RestAuthDetail';
 import type { SocialLogin } from '../models/SocialLogin';
 import type { TokenRefresh } from '../models/TokenRefresh';
@@ -102,7 +102,7 @@ export class ApiService {
     public static apiAuthRegisterCreate({
         requestBody,
     }: {
-        requestBody: Register,
+        requestBody: CustomRegister,
     }): CancelablePromise<JWT> {
         return __request(OpenAPI, {
             method: 'POST',

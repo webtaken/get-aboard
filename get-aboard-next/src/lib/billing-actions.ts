@@ -70,8 +70,8 @@ export async function getCheckoutURL(subscriptionPlan: SubscriptionPlan) {
           receipt_thank_you_note: "Thank you for choosing get aboard",
           redirect_url: `${process.env.NEXT_PUBLIC_LOCALHOST}/dashboard`,
           embed: false,
-          email: session.django_data.user.email,
-          user_id: session.django_data.user.pk,
+          email: session.user.email,
+          user_id: session.user.pk,
           variant_id: subscriptionPlan.variant_id,
         },
       });
@@ -92,8 +92,8 @@ export async function getCheckoutURLProduct(product: OneTimePaymentProduct) {
           receipt_thank_you_note: "Thank you for choosing get aboard",
           redirect_url: `${process.env.NEXT_PUBLIC_LOCALHOST}/dashboard`,
           embed: false,
-          email: session.django_data.user.email,
-          user_id: session.django_data.user.pk,
+          email: session.user.email,
+          user_id: session.user.pk,
           variant_id: product.variant_id,
         },
       });
@@ -109,7 +109,7 @@ export async function getUserSubscription() {
     const session: any = await getServerSession(authOptions);
     const subscription =
       await BillingService.billingSubscriptionGetUserSubscriptionRetrieve({
-        userId: session.django_data.user.pk,
+        userId: session.user.pk,
       });
     return subscription;
   } catch (error) {
@@ -123,7 +123,7 @@ export async function getUserOrder() {
     await setCredentialsToAPI();
     const session: any = await getServerSession(authOptions);
     const order = await BillingService.billingOrderGetUserOrderRetrieve({
-      userId: session.django_data.user.pk,
+      userId: session.user.pk,
     });
     return order;
   } catch (error) {
