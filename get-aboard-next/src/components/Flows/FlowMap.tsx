@@ -22,7 +22,7 @@ import isEqual from "lodash.isequal";
 import TicketEditorSheet from "../Tickets/TicketSheetEditor";
 import FlowStatus from "./FlowStatus";
 import { useShallow } from "zustand/react/shallow";
-import { useFlowMapStore } from "@/stores/FlowMapStore";
+import { edgesClass, useFlowMapStore } from "@/stores/FlowMapStore";
 import { toast } from "../ui/use-toast";
 import { updateFlowById } from "@/lib/flow-actions";
 import { useRouter } from "next/navigation";
@@ -61,9 +61,7 @@ export const buildFlowEdgesMap = (edges: Edge[]) => {
     target: edge.target,
     animated: true,
     type: "smoothstep",
-    style: {
-      strokeWidth: "0.150rem",
-    },
+    style: edgesClass,
   }));
 };
 
@@ -73,9 +71,7 @@ export const buildReactFlowEdgesMap = (edges_map: any[]) => {
       id: edge.id,
       source: edge.source,
       target: edge.target,
-      style: {
-        strokeWidth: "0.125rem",
-      },
+      style: edgesClass,
       animated: true,
     };
   });

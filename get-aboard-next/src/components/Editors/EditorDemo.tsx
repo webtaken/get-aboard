@@ -11,7 +11,6 @@ import {
   List,
   ListOrdered,
   Redo,
-  Save,
   SquareCode,
   Strikethrough,
   Text,
@@ -22,7 +21,6 @@ import StarterKit from "@tiptap/starter-kit";
 import React, { useCallback } from "react";
 import "./styles.css";
 import { Button } from "../ui/button";
-import { useToast } from "../ui/use-toast";
 
 interface EditorDemoProps {
   content?: Content;

@@ -13,7 +13,6 @@ import { Flow as FlowAPI } from "@/client";
 import { useShallow } from "zustand/react/shallow";
 import { useFlowMapStore } from "@/stores/FlowMapStore";
 import { buildFlowEdgesMap, buildFlowNodesMap } from "./FlowMap";
-import FlowStatus from "./FlowStatus";
 import TicketEditorSheetShared from "../Tickets/TicketSheetEditorShared";
 // Important! don't delete the styles css, otherwise the flow won't work.
 import "reactflow/dist/style.css";

@@ -18,6 +18,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from "@/components/ui/command";
 import { Node, useReactFlow, useStoreApi } from "reactflow";
 import { cn } from "@/lib/utils";
@@ -81,6 +82,7 @@ export default function GoToControl({ startTransform }: GoToControlProps) {
       <PopoverTrigger asChild>
         <Button
           role="combobox"
+          type="button"
           aria-expanded={open}
           className="flex items-center gap-x-1"
         >
@@ -92,41 +94,44 @@ export default function GoToControl({ startTransform }: GoToControlProps) {
       >
         <Command>
           <CommandInput placeholder="Search..." />
-          <CommandEmpty>No breakpoints found.</CommandEmpty>
-          <CommandGroup className="overflow-y-auto">
-            {breakpoints.map((breakpoint) => (
-              <CommandItem
-                key={breakpoint.id}
-                value={breakpoint.data.title}
-                onSelect={(currentValue) => {
-                  setNodeTitle(
-                    currentValue.toLowerCase() === nodeTitle.toLowerCase()
-                      ? ""
-                      : currentValue
-                  );
-                  // focusNode(breakpoint.id);
-                  startTransform(
-                    -breakpoint.position.x +
-                      192 +
-                      getWidthOffset(size.width ?? 540),
-                    -breakpoint.position.y + 80
-                  );
-                  setOpen(false);
-                }}
-              >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    nodeTitle.toLowerCase() ===
-                      breakpoint.data.title.toLowerCase()
-                      ? "opacity-100"
-                      : "opacity-0"
-                  )}
-                />
-                {breakpoint.data.title}
-              </CommandItem>
-            ))}
-          </CommandGroup>
+          <CommandList>
+            <CommandEmpty>No breakpoints found.</CommandEmpty>
+            <CommandGroup className="overflow-y-auto" heading="Nodes">
+              {breakpoints.map((breakpoint) => (
+                <CommandItem
+                  key={breakpoint.id}
+                  value={breakpoint.data.title}
+                  className="data-[disabled='true']"
+                  onSelect={(currentValue) => {
+                    setNodeTitle(
+                      currentValue.toLowerCase() === nodeTitle.toLowerCase()
+                        ? ""
+                        : currentValue
+                    );
+                    // focusNode(breakpoint.id);
+                    startTransform(
+                      -breakpoint.position.x +
+                        192 +
+                        getWidthOffset(size.width ?? 540),
+                      -breakpoint.position.y + 80
+                    );
+                    setOpen(false);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      nodeTitle.toLowerCase() ===
+                        breakpoint.data.title.toLowerCase()
+                        ? "opacity-100"
+                        : "opacity-0"
+                    )}
+                  />
+                  {breakpoint.data.title}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
         </Command>
       </PopoverContent>
     </Popover>

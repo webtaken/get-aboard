@@ -13,6 +13,12 @@ import {
   applyEdgeChanges,
 } from "reactflow";
 import { DataTicketNode } from "@/components/Nodes/TicketNode";
+import { CSSProperties } from "react";
+
+export const edgesClass: CSSProperties = {
+  strokeWidth: "0.3rem",
+  stroke: "hsl(var(--muted-foreground))",
+};
 
 export interface FlowMapState {
   nodes: Node<DataTicketNode>[];
@@ -57,9 +63,7 @@ export const useFlowMapStore = create<FlowMapState & FlowMapActions>(
             ...connection,
             animated: true,
             type: "smoothstep",
-            style: {
-              strokeWidth: "0.150rem",
-            },
+            style: edgesClass,
           },
           get().edges
         ),

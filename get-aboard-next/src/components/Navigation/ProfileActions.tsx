@@ -14,12 +14,6 @@ import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import clsx from "clsx";
 
-const profileImagesOptions = [
-  "/images/profiles/ghost1.png",
-  "/images/profiles/ghost2.png",
-  "/images/profiles/ghost3.png",
-];
-
 export default function ProfileActions({
   session,
   size,
@@ -30,10 +24,7 @@ export default function ProfileActions({
   const router = useRouter();
   const imageSrc: string =
     // @ts-expect-error
-    session.picture ||
-    profileImagesOptions[
-      Math.floor(Math.random() * profileImagesOptions.length)
-    ];
+    session.picture || "/images/profiles/ghost1.png";
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -51,7 +42,11 @@ export default function ProfileActions({
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuLabel>
+          My Account
+          <br />
+          <span className="text-foreground text-xs">{session.user?.email}</span>
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onSelect={() => {

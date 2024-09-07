@@ -6,15 +6,11 @@ import { Github, Menu } from "lucide-react";
 import GetAboardIcon from "../Icons/GetAboardIcon";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ThemeToggler } from "../Theming/ThemeToggler";
-import { useSession } from "next-auth/react";
 import ProfileActions from "./ProfileActions";
-import { Badge } from "@/components/ui/badge";
 import BillingButton from "./BillingButton";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import clsx from "clsx";
 import useGetBillingInfo from "@/hooks/useGetBillingInfo";
-import ProductButton from "../Billing/ProductButton";
 
 const notoSans = Noto_Sans({ subsets: ["latin"] });
 
