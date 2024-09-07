@@ -24,6 +24,7 @@ export async function getOneTimePaymentProducts() {
     const products = await BillingService.billingOneTimePaymentProductsList();
     return products;
   } catch (error) {
+    console.log(JSON.stringify(error, null, 2));
     throw error;
   }
 }
