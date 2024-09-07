@@ -19,7 +19,51 @@ export default async function Home() {
     getOneTimePaymentProducts(),
     getServerSession(authOptions),
   ]);
-  const product = products[0];
+  let billingCard = null;
+  if ("code" in products) {
+    billingCard = (
+      <Card className="border-gray-200 dark:border-gray-800">
+        <CardHeader className="rounded-t-md p-4 bg-gray-50 dark:bg-gray-950">
+          <h3 className="text-xl font-bold">
+            Please Login to view the pricing
+          </h3>
+        </CardHeader>
+        <CardFooter className="flex flex-col items-stretch gap-2 px-10">
+          <Button asChild>
+            <Link href="/login">Login</Link>
+          </Button>
+        </CardFooter>
+      </Card>
+    );
+  } else {
+    const product = products[0];
+    billingCard = (
+      <Card className="border-gray-200 dark:border-gray-800">
+        <CardHeader className="rounded-t-md p-4 bg-gray-50 dark:bg-gray-950">
+          <h3 className="text-xl font-bold">{product.product_name}</h3>
+          <div
+            className="text-sm text-gray-500 dark:text-gray-400"
+            dangerouslySetInnerHTML={{
+              __html: product.product_description ?? "Try it now",
+            }}
+          />
+        </CardHeader>
+        <CardContent
+          className="grid gap-4 p-4 text-sm"
+          dangerouslySetInnerHTML={{ __html: product.description }}
+        />
+        <CardFooter className="p-4 flex flex-col items-stretch gap-2">
+          <div className="text-2xl font-bold">
+            ${parseFloat(product.price) / 100}
+          </div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">
+            One Time Payment
+          </div>
+          <ProductButton products={products} isLoggedIn={session !== null} />
+        </CardFooter>
+      </Card>
+    );
+  }
 
   return (
     <div className="px-10">
@@ -149,33 +193,7 @@ export default async function Home() {
           </p>
         </section>
         <div className="flex justify-center" id="pricing_card">
-          <Card className="border-gray-200 dark:border-gray-800">
-            <CardHeader className="rounded-t-md p-4 bg-gray-50 dark:bg-gray-950">
-              <h3 className="text-xl font-bold">{product.product_name}</h3>
-              <div
-                className="text-sm text-gray-500 dark:text-gray-400"
-                dangerouslySetInnerHTML={{
-                  __html: product.product_description ?? "Try it now",
-                }}
-              />
-            </CardHeader>
-            <CardContent
-              className="grid gap-4 p-4 text-sm"
-              dangerouslySetInnerHTML={{ __html: product.description }}
-            />
-            <CardFooter className="p-4 flex flex-col items-stretch gap-2">
-              <div className="text-2xl font-bold">
-                ${parseFloat(product.price) / 100}
-              </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                One Time Payment
-              </div>
-              <ProductButton
-                products={products}
-                isLoggedIn={session !== null}
-              />
-            </CardFooter>
-          </Card>
+          {billingCard}
         </div>
       </main>
       <footer className="w-full grid grid-cols-2 py-10">

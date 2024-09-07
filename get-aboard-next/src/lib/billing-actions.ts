@@ -25,7 +25,7 @@ export async function getOneTimePaymentProducts() {
     return products;
   } catch (error) {
     console.log(JSON.stringify(error, null, 2));
-    throw error;
+    return { code: "billing_error" };
   }
 }
 
