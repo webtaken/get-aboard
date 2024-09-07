@@ -10,7 +10,7 @@ import { authOptions } from "@/auth";
 
 export async function getSubscriptionPlans() {
   try {
-    await setBasePathToAPI();
+    setBasePathToAPI();
     const subscription_plans = await BillingService.billingPlansList();
     return subscription_plans;
   } catch (error) {
@@ -20,7 +20,7 @@ export async function getSubscriptionPlans() {
 
 export async function getOneTimePaymentProducts() {
   try {
-    await setBasePathToAPI();
+    setBasePathToAPI();
     const products = await BillingService.billingOneTimePaymentProductsList();
     return products;
   } catch (error) {
@@ -30,7 +30,7 @@ export async function getOneTimePaymentProducts() {
 
 export async function getSubscriptionPlan(id: number) {
   try {
-    await setBasePathToAPI();
+    setBasePathToAPI();
     const subscription_plan = await BillingService.billingPlansRetrieve({
       id: id,
     });
@@ -45,7 +45,7 @@ export async function getSubscriptionPlan(id: number) {
 
 export async function getOneTimePaymentProduct(id: number) {
   try {
-    await setBasePathToAPI();
+    setBasePathToAPI();
     const one_time_payment_product =
       await BillingService.billingOneTimePaymentProductsRetrieve({
         id: id,

@@ -10,7 +10,6 @@ import {
   CardFooter,
   Card,
 } from "@/components/ui/card";
-import PlanButton from "@/components/Billing/PlanButton";
 import ProductButton from "@/components/Billing/ProductButton";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";

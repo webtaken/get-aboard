@@ -17,7 +17,7 @@ export async function setCredentialsToAPI() {
   OpenAPI.BASE = process.env.BASE_PATH_API!;
 }
 
-export async function setBasePathToAPI() {
+export function setBasePathToAPI() {
   OpenAPI.BASE = process.env.BASE_PATH_API!;
 }
 
