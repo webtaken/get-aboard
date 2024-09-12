@@ -38,6 +38,9 @@ class OrderSerializer(ModelSerializer):
 
 class HasAccessSerializer(Serializer):
     has_access = BooleanField()
+    has_free_trial = BooleanField()
+    has_order = BooleanField()
+    is_staff = BooleanField()
 
 
 class CheckoutURLSerializer(Serializer):

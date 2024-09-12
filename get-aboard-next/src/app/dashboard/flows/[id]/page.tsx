@@ -4,16 +4,20 @@ import {
   getFlowTemplateOption,
 } from "@/lib/flow-actions";
 import FlowMap from "@/components/Flows/FlowMap";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { getUserHasAccess } from "@/lib/billing-actions";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const { id } = params;
-  const [flow, shareOption, templateOption] = await Promise.all([
+  const [flow, shareOption, templateOption, access] = await Promise.all([
     getFlowById(+id),
     getFlowShareOption(+id),
     getFlowTemplateOption(+id),
+    getUserHasAccess(),
   ]);
-
+  if (!access?.has_access) {
+    redirect("/dashboard");
+  }
   if (!flow) {
     notFound();
   }

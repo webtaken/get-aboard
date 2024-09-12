@@ -5,3 +5,4 @@ MAX_NODES_FREE_PLAN = 15
 # Exception's special codes
 FLOWS_LIMIT_REACHED = "flows_limit_reached"
 NODES_LIMIT_REACHED = "nodes_limit_reached"
+FREE_PLAN_ENDED = "free_plan_ended"

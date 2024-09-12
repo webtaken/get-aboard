@@ -1,8 +1,8 @@
-from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from billing.models import SubscriptionPlan
 from billing.utils import get_product, lemonsqueezy_request
+from GetAboardBackend.settings import env
 
 
 class Command(BaseCommand):
@@ -22,7 +22,7 @@ class Command(BaseCommand):
             method="GET",
             endpoint="/products",
             params={
-                "filter[store_id]": settings.LEMONSQUEEZY_STORE_ID,
+                "filter[store_id]": env("LEMONSQUEEZY_STORE_ID"),
                 "include": "variants",
             },
         ).json()

@@ -20,7 +20,7 @@ export default function ProductButton({
     return (
       <Button className="rounded-lg" asChild>
         <Link href={`/login?next=${encodeURIComponent("/")}`}>
-          Get get-aboard
+          Buy get-aboard
         </Link>
       </Button>
     );
@@ -44,7 +44,7 @@ export default function ProductButton({
       className="flex items-center gap-x-2 rounded-lg"
       disabled={loading}
     >
-      {loading && <Loader2 className="w-4 h-4 animate-spin" />} Get get-aboard
+      {loading && <Loader2 className="w-4 h-4 animate-spin" />} Buy get-aboard
     </Button>
   );
 }

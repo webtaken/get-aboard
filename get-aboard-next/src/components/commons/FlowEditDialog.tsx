@@ -18,8 +18,6 @@ import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { toast as toastSooner } from "sonner";
 import { useRouter } from "next/navigation";
-import { useFlowStore } from "@/stores/FlowStore";
-import { useShallow } from "zustand/react/shallow";
 
 interface FlowEditDialogProps {
   trigger: React.ReactNode;
@@ -57,14 +55,14 @@ export default function FlowEditDialog({
   const [state, dispatch] = useFormState<State>(action, initialState);
 
   useEffect(() => {
-    if (state.errors && state.errors.code === "flows_limit_reached") {
+    if (state.errors && state.errors.code === "free_plan_ended") {
       toastSooner("Upgrade your plan", {
         description:
           "Unlock all features and get unlimited access to our support team.",
         action: {
           label: "Upgrade",
           onClick: () => {
-            router.push("/pricing");
+            router.push("/#pricing_card");
           },
         },
       });

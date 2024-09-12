@@ -38,8 +38,7 @@ interface FlowMenuProps {
 
 export default function FlowMenu({ flow }: FlowMenuProps) {
   const { setTheme } = useTheme();
-  const { status, session, isFreePlan, oneTimePaymentProduct, order } =
-    useGetBillingInfo();
+  const { status, session, oneTimePaymentProduct, order } = useGetBillingInfo();
 
   const router = useRouter();
 
@@ -142,7 +141,7 @@ export default function FlowMenu({ flow }: FlowMenuProps) {
                   subscriptionPlan={oneTimePaymentProduct}
                 />
               )}
-              {isFreePlan && (
+              {!order && (
                 <TooltipProvider delayDuration={100}>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -150,7 +149,7 @@ export default function FlowMenu({ flow }: FlowMenuProps) {
                         href="/#pricing_card"
                         className="text-sm border-2 rounded-xl px-2 py-1 hover:bg-muted-foreground hover:text-muted"
                       >
-                        Free plan
+                        Free trial
                       </Link>
                     </TooltipTrigger>
                     <TooltipContent>

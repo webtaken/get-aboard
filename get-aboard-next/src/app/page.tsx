@@ -9,10 +9,13 @@ import {
   CardContent,
   CardFooter,
   Card,
+  CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
 import ProductButton from "@/components/Billing/ProductButton";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
+import { Badge } from "@/components/ui/badge";
 
 export default async function Home() {
   const [products, session] = await Promise.all([
@@ -38,27 +41,37 @@ export default async function Home() {
   } else {
     const product = products[0];
     billingCard = (
-      <Card className="border-gray-200 dark:border-gray-800">
-        <CardHeader className="rounded-t-md p-4 bg-gray-50 dark:bg-gray-950">
-          <h3 className="text-xl font-bold">{product.product_name}</h3>
-          <div
-            className="text-sm text-gray-500 dark:text-gray-400"
-            dangerouslySetInnerHTML={{
-              __html: product.product_description ?? "Try it now",
-            }}
-          />
+      <Card className="min-w-[350px]">
+        <CardHeader className="rounded-t-md p-4 text-center">
+          <div className="flex justify-center mb-2">
+            <Badge variant="secondary" className="px-3 py-1">
+              15 Days Free Trial
+            </Badge>
+          </div>
+          <CardTitle className="text-2xl font-bold">
+            {product.product_name}
+          </CardTitle>
+          <CardDescription>Start your journey with get-aboard</CardDescription>
         </CardHeader>
-        <CardContent
-          className="grid gap-4 p-4 text-sm"
-          dangerouslySetInnerHTML={{ __html: product.description }}
-        />
+        <CardContent className="text-center">
+          <div className="mb-2">
+            <span className="text-4xl font-bold">
+              ${parseFloat(product.price) / 100}
+            </span>
+          </div>
+          <p className="text-sm font-medium text-primary mb-4">
+            One-time purchase
+          </p>
+          <p className="text-sm text-muted-foreground mb-4">
+            Try it free for 15 days before buying, <br />
+            no card info required
+          </p>
+          <div
+            className="text-sm"
+            dangerouslySetInnerHTML={{ __html: product.description }}
+          />
+        </CardContent>
         <CardFooter className="p-4 flex flex-col items-stretch gap-2">
-          <div className="text-2xl font-bold">
-            ${parseFloat(product.price) / 100}
-          </div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            One Time Payment
-          </div>
           <ProductButton products={products} isLoggedIn={session !== null} />
         </CardFooter>
       </Card>

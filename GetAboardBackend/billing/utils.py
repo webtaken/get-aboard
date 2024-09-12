@@ -1,6 +1,7 @@
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from requests import request
+
+from GetAboardBackend.settings import env
 
 from .models import OneTimePaymentProduct, Order, Subscription, SubscriptionPlan
 
@@ -9,11 +10,11 @@ def lemonsqueezy_request(method: str, endpoint: str, **kwargs):
     try:
         response = request(
             method=method,
-            url=f"{settings.LEMONSQUEEZY_API_BASE}{endpoint}",
+            url=f"{env('LEMONSQUEEZY_API_BASE')}{endpoint}",
             headers={
                 "Accept": "application/vnd.api+json",
                 "Content-Type": "application/vnd.api+json",
-                "Authorization": f"Bearer {settings.LEMONSQUEEZY_API_KEY}",
+                "Authorization": f"Bearer {env('LEMONSQUEEZY_API_KEY')}",
             },
             **kwargs,
         )

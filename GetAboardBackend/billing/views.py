@@ -1,7 +1,6 @@
 import hashlib
 import hmac
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from drf_spectacular.types import OpenApiTypes
@@ -16,6 +15,8 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_500_INTERNAL_SERVER_ERROR
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
+
+from GetAboardBackend.settings import env
 
 from .models import OneTimePaymentProduct, Order, Subscription, SubscriptionPlan
 from .serializers import (
@@ -135,7 +136,7 @@ class SubscriptionViewSet(RetrieveModelMixin, GenericViewSet):
                         "store": {
                             "data": {
                                 "type": "stores",
-                                "id": str(settings.LEMONSQUEEZY_STORE_ID),
+                                "id": str(env("LEMONSQUEEZY_STORE_ID")),
                             }
                         },
                         "variant": {
@@ -217,7 +218,14 @@ class OrderViewSet(UserMixin, RetrieveModelMixin, GenericViewSet):
     @action(methods=["get"], detail=False, url_name="user_has_access")
     def user_has_access(self, request, **kwargs):
         serializer = HasAccessSerializer(
-            data={"has_access": not self.user_has_free_plan or self.user.is_staff}
+            data={
+                "has_access": self.user_has_free_trial
+                or self.user.is_staff
+                or self.user_has_order,
+                "has_free_trial": self.user_has_free_trial,
+                "has_order": self.user_has_order,
+                "is_staff": self.user.is_staff,
+            }
         )
         if serializer.is_valid(raise_exception=True):
             return Response(serializer.validated_data, status=HTTP_200_OK)
@@ -268,7 +276,7 @@ class OrderViewSet(UserMixin, RetrieveModelMixin, GenericViewSet):
                         "store": {
                             "data": {
                                 "type": "stores",
-                                "id": str(settings.LEMONSQUEEZY_STORE_ID),
+                                "id": str(env("LEMONSQUEEZY_STORE_ID")),
                             }
                         },
                         "variant": {
@@ -302,7 +310,7 @@ class LemonSqueezyWebhook(APIView):
 
     def post(self, request: Request, format=None):
         signature = request.META["HTTP_X_SIGNATURE"]
-        secret = settings.LEMONSQUEEZY_WEBHOOK_SECRET
+        secret = env("LEMONSQUEEZY_WEBHOOK_SECRET")
 
         digest = hmac.new(secret.encode(), request.body, hashlib.sha256).hexdigest()
 

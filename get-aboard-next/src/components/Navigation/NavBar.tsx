@@ -26,8 +26,7 @@ function pathnameIsInSharePage(str: string) {
 
 export default function NavBar() {
   const pathname = usePathname();
-  const { status, session, isFreePlan, oneTimePaymentProduct, order } =
-    useGetBillingInfo();
+  const { status, session, oneTimePaymentProduct, order } = useGetBillingInfo();
 
   if (
     pathname == "/login" ||
@@ -64,9 +63,9 @@ export default function NavBar() {
               subscriptionPlan={oneTimePaymentProduct}
             />
           )}
-        {pathname.startsWith("/dashboard") && isFreePlan && (
+        {pathname.startsWith("/dashboard") && !order && (
           <Button className="px-3 py-2" asChild>
-            <Link href="/#pricing_card">Get get-aboard</Link>
+            <Link href="/#pricing_card">Buy get-aboard</Link>
           </Button>
         )}
         {!pathname.startsWith("/dashboard") && (

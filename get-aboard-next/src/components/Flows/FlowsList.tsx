@@ -14,46 +14,35 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Badge } from "../ui/badge";
 import FlowOptions from "./FlowOptions";
-import { Pencil, Lock } from "lucide-react";
+import { Pencil } from "lucide-react";
 import FlowEditDialog from "../commons/FlowEditDialog";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { HasAccess } from "@/client";
 
 dayjs.extend(relativeTime);
 
-export async function FlowsList({ isFreePlan }: { isFreePlan: boolean }) {
+export async function FlowsList({ access }: { access: HasAccess }) {
   const flows = await getUserFlows();
 
   if (flows === undefined) {
     return <div>An error ocurred while retrieving data</div>;
   }
 
-  if (flows.length === 0) {
-    return (
-      <div className="flex flex-col gap-5">
-        <h1 className="text-center font-bold text-2xl">
-          You have no Roadmaps
-          {isFreePlan && ", buy get-aboard to create a new one"}
-        </h1>
-        {isFreePlan && (
-          <h2 className="text-center font-semibold text-xl">
-            If you are a new user please contact{" "}
-            <span className="font-bold">@node_srojas1</span> on x.com
-            <br />
-            To claim your free trial.
-          </h2>
-        )}
+  let message = null;
+  if (access.has_free_trial) {
+    message = (
+      <>
+        <h2 className="text-center font-semibold text-xl">
+          You&apos;re on your free trial
+        </h2>
         <p className="text-center text-sm text-muted-foreground">
-          Start a new one
+          Start a new Roadmap
         </p>
         <div className="flex justify-center">
           <FlowEditDialog
             trigger={
-              <Button
-                disabled={isFreePlan}
-                className="flex items-center gap-x-2"
-              >
-                {isFreePlan && <Lock className="w-4 h-4" />}
+              <Button className="flex items-center gap-x-2">
                 Create Roadmap
               </Button>
             }
@@ -63,8 +52,54 @@ export async function FlowsList({ isFreePlan }: { isFreePlan: boolean }) {
             action={createFlow.bind(null)}
           />
         </div>
-      </div>
+      </>
     );
+  } else {
+    message = (
+      <>
+        <h2 className="text-center font-semibold text-xl">
+          Your free trial has ended up
+        </h2>
+        <p className="text-center text-sm text-muted-foreground">
+          Buy get-aboard to continue
+        </p>
+        <div className="flex justify-center">
+          <Button className="px-3 py-2" asChild>
+            <Link href="/#pricing_card">Buy get-aboard</Link>
+          </Button>
+        </div>
+      </>
+    );
+  }
+
+  if (access.is_staff) {
+    message = (
+      <>
+        <h2 className="text-center font-semibold text-xl">
+          You&apos;re on the staff, feel free to use the app
+        </h2>
+        <p className="text-center text-sm text-muted-foreground">
+          Start a new Roadmap
+        </p>
+        <div className="flex justify-center">
+          <FlowEditDialog
+            trigger={
+              <Button className="flex items-center gap-x-2">
+                Create Roadmap
+              </Button>
+            }
+            title="Create your flow"
+            submitText="Create"
+            // @ts-expect-error
+            action={createFlow.bind(null)}
+          />
+        </div>
+      </>
+    );
+  }
+
+  if (!access.has_access) {
+    return <div className="flex flex-col gap-5">{message}</div>;
   }
 
   return (
@@ -80,27 +115,43 @@ export async function FlowsList({ isFreePlan }: { isFreePlan: boolean }) {
                 <div className="grid grid-cols-6 place-content-center gap-x-2">
                   <div className="col-span-5 flex items-center gap-x-2">
                     <GetAboardIcon className="min-w-6 min-h-6 w-6 h-6 stroke-slate-900 dark:stroke-slate-200" />
-                    <Button
-                      variant="link"
-                      className="text-xl truncate align-middle"
-                      asChild
-                    >
-                      <Link
-                        href={`/dashboard/flows/${flow.flow_id}`}
-                        title={flow.title}
+                    {access.has_access ? (
+                      <Button
+                        variant="link"
+                        className="text-xl truncate align-middle"
+                        asChild
+                      >
+                        <Link
+                          href={`/dashboard/flows/${flow.flow_id}`}
+                          title={flow.title}
+                        >
+                          {flow.title}
+                        </Link>
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="link"
+                        className="text-xl truncate align-middle"
+                        asChild
                       >
                         {flow.title}
-                      </Link>
-                    </Button>
+                      </Button>
+                    )}
                   </div>
                   <div className="col-span-1 mx-auto">
-                    <FlowOptions flow={flow} />
+                    {access.has_access && <FlowOptions flow={flow} />}
                   </div>
                 </div>
               </CardTitle>
-              <CardDescription className="pl-8 flex items-center gap-x-1">
-                Click <Pencil className="w-3 h-3" /> to see options
-              </CardDescription>
+              {access.has_access ? (
+                <CardDescription className="pl-8 flex items-center gap-x-1">
+                  Click <Pencil className="w-3 h-3" /> to see options
+                </CardDescription>
+              ) : (
+                <CardDescription className="pl-8 flex items-center gap-x-1">
+                  Buy get-aboard to edit your flow
+                </CardDescription>
+              )}
             </CardHeader>
             <CardContent>
               <p className="line-clamp-3 text-sm">{flow.description}</p>

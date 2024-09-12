@@ -137,10 +137,10 @@ export async function getUserHasAccess() {
   try {
     await setCredentialsToAPI();
     const access = await BillingService.billingOrderUserHasAccessRetrieve();
-    return access.has_access;
+    return access;
   } catch (error) {
-    console.error(error);
-    return false;
+    console.error(JSON.stringify(error, null, 2));
+    return undefined;
   }
 }
 

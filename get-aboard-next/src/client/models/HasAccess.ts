@@ -5,5 +5,8 @@
 
 export type HasAccess = {
     has_access: boolean;
+    has_free_trial: boolean;
+    has_order: boolean;
+    is_staff: boolean;
 };
 

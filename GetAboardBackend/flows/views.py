@@ -1,8 +1,5 @@
 from billing.constants import (
-    FLOWS_LIMIT_REACHED,
-    MAX_FLOWS_FREE_PLAN,
-    MAX_NODES_FREE_PLAN,
-    NODES_LIMIT_REACHED,
+    FREE_PLAN_ENDED,
 )
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
@@ -39,33 +36,15 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request: Request, *args, **kwargs):
-        if not self.user.is_staff and self.user_has_free_plan:
-            # User has free account
-            # Check if limit has been reached
-            if self.get_queryset().count() >= MAX_FLOWS_FREE_PLAN:
-                raise ValidationError("Max flows limit reached", FLOWS_LIMIT_REACHED)
-        return super().create(request, *args, **kwargs)
-
-    def partial_update(self, request: Request, *args, **kwargs):
-        # Check
-        # - User doesn't have a Subcription associated
-        # - User is updating nodes_map field
-        # - User is not staff user
         if (
             not self.user.is_staff
-            and self.user_has_free_plan
-            and "nodes_map" in request.data
+            and not self.user_has_free_trial
+            and not self.user_has_order
         ):
             # User has free account
-            # Check if limit of nodes map has been reached
-            nodes_map = request.data["nodes_map"]
-            # Check if nodes map has reached the limit
-            if len(nodes_map) > MAX_NODES_FREE_PLAN:
-                raise ValidationError(
-                    "Max nodes limit reached, changes won't take effect",
-                    NODES_LIMIT_REACHED,
-                )
-        return super().partial_update(request, *args, **kwargs)
+            # Check if limit has been reached
+            raise ValidationError("Free trial ended up", FREE_PLAN_ENDED)
+        return super().create(request, *args, **kwargs)
 
     @extend_schema(
         request=None,
@@ -209,16 +188,6 @@ class NodeViewSet(UserMixin, viewsets.ModelViewSet):
     serializer_class = NodeSerializer
     permission_classes = [IsAuthenticated]
     schema = AutoSchema()
-
-    def create(self, request: Request, *args, **kwargs):
-        if not self.user.is_staff and self.user_has_free_plan:
-            # User has free plan
-            flow_id = request.data["flow"]
-            flow = Flow.objects.get(pk=flow_id)
-            # Check if related flow reached the limit
-            if flow.nodes.count() >= MAX_NODES_FREE_PLAN:
-                raise ValidationError("Max nodes limit reached", NODES_LIMIT_REACHED)
-        return super().create(request, *args, **kwargs)
 
     @extend_schema(
         parameters=[
