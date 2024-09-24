@@ -39,10 +39,9 @@ export default function NavBar() {
 
   return (
     <header
-      className={clsx(
-        "px-10 min-w-80 bg-gradient-to-b from-slate-100 to-slate-100/70 dark:from-slate-900 dark:to-slate-900/70 flex justify-between py-5",
-        pathname === "/" && "top-0 sticky"
-      )}
+      className={
+        "px-10 min-w-80 bg-gradient-to-b from-slate-100 to-slate-100/70 dark:from-slate-900 dark:to-slate-900/70 flex justify-between py-5"
+      }
     >
       <div className="flex items-center gap-x-2">
         <Link

@@ -9,7 +9,7 @@ from flows.mixins import UserMixin
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, NotFound
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_500_INTERNAL_SERVER_ERROR
@@ -42,6 +42,7 @@ class OneTimePaymentProductListViewSet(
 ):
     queryset = OneTimePaymentProduct.objects.all()
     serializer_class = OneTimePaymentProductSerializer
+    permission_classes = [AllowAny]
 
 
 class SubscriptionViewSet(RetrieveModelMixin, GenericViewSet):

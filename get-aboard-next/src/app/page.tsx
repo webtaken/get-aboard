@@ -16,6 +16,8 @@ import ProductButton from "@/components/Billing/ProductButton";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 import { Badge } from "@/components/ui/badge";
+import { AnimatedBeamMultipleOutputDemo } from "@/components/Landing/AnimatedBeam";
+import HeroVideoDialog from "@/components/magicui/hero-video-dialog";
 
 export default async function Home() {
   const [products, session] = await Promise.all([
@@ -83,11 +85,6 @@ export default async function Home() {
       <main className="min-h-screen min-w-80 px-5 sm:px-10 md:px-14">
         <div className="grid grid-cols-1 gap-2 md:grid-cols-2 mb-10">
           <div className="space-y-4">
-            {/* <h1 className="mt-20 mb-5 text-left text-5xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-transparent gradient-text bg-gradient-to-r from-fuchsia-500 via-teal-600 to-fuchsia-500 bg-clip-text">
-              Convert onboardings
-              <br />
-              into easy roadmaps
-            </h1> */}
             <h1 className="mt-20 mb-5 text-left text-5xl md:text-5xl lg:text-5xl font-extrabold tracking-tight">
               Convert <span className="text-primary">onboardings</span>
             </h1>
@@ -106,8 +103,9 @@ export default async function Home() {
               </Link>
             </Button>
           </div>
-          <div>
-            <AllToolsIcon className="w-100 h-100" />
+          <div className="hidden sm:block">
+            <AnimatedBeamMultipleOutputDemo />
+            {/* <AllToolsIcon className="w-100 h-100" /> */}
           </div>
         </div>
 
@@ -115,14 +113,20 @@ export default async function Home() {
           Avoid unorganized instruction docs onboardings 🫠 <br />
           in your development team. Make it roadmaps.
         </p>
-        <iframe
-          className="mx-auto w-11/12 h-[150px] sm:h-[250px] md:h-[350px] lg:h-[450px] rounded-lg"
-          src="https://www.youtube.com/embed/xqWuGNOsJPM?autoplay=1&mute=1&controls=0&loop=1"
-          title="Get-aboard Presentation"
-          allow="accelerometer; autoplay; mute; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; loop;"
-          referrerPolicy="strict-origin-when-cross-origin"
-          allowFullScreen
-        ></iframe>
+        <HeroVideoDialog
+          className="dark:hidden block mx-auto w-11/12 h-[150px] sm:h-[250px] md:h-[350px] lg:h-[450px] rounded-lg"
+          animationStyle="from-center"
+          videoSrc="https://www.youtube.com/embed/xqWuGNOsJPM?autoplay=1&mute=1&controls=0&loop=1"
+          thumbnailSrc="/images/marketing/roadmap.jpeg"
+          thumbnailAlt="Demo Video"
+        />
+        <HeroVideoDialog
+          className="hidden dark:block mx-auto w-11/12 h-[150px] sm:h-[250px] md:h-[350px] lg:h-[450px] rounded-lg"
+          animationStyle="from-center"
+          videoSrc="https://www.youtube.com/embed/xqWuGNOsJPM?autoplay=1&mute=1&controls=0&loop=1"
+          thumbnailSrc="https://startup-template-sage.vercel.app/hero-dark.png"
+          thumbnailAlt="Demo Video"
+        />
 
         <h1 className="mt-20 mb-5 text-center text-4xl font-extrabold tracking-tight lg:text-5xl text-transparent gradient-text bg-gradient-to-r from-fuchsia-500 via-teal-600 to-fuchsia-500 bg-clip-text">
           Save time and get
@@ -161,14 +165,20 @@ export default async function Home() {
             </div>
           </div>
           <div className="w-full">
-            <iframe
-              className="mx-auto w-full h-80 rounded-lg"
-              src="https://www.youtube.com/embed/YBvichU4CRU?autoplay=1&mute=1&controls=0&loop=1"
-              title="Share feature"
-              allow="accelerometer; autoplay; mute; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; loop;"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            ></iframe>
+            <HeroVideoDialog
+              className="dark:hidden block mx-auto w-full h-80 rounded-lg"
+              animationStyle="from-center"
+              videoSrc="https://www.youtube.com/embed/YBvichU4CRU?autoplay=1&mute=1&controls=0&loop=1"
+              thumbnailSrc="/images/marketing/share.png"
+              thumbnailAlt="Share Feature"
+            />
+            <HeroVideoDialog
+              className="hidden dark:block mx-auto w-full h-80 rounded-lg"
+              animationStyle="from-center"
+              videoSrc="https://www.youtube.com/embed/YBvichU4CRU?autoplay=1&mute=1&controls=0&loop=1"
+              thumbnailSrc="/images/marketing/share.png"
+              thumbnailAlt="Share Feature"
+            />
           </div>
         </section>
 
@@ -183,14 +193,20 @@ export default async function Home() {
             Make on-boarding process an interactive and{" "}
             <span className="font-semibold">easy-to-follow</span> journey
           </p>
-          <iframe
-            className="mx-auto w-11/12 h-[150px] sm:h-[250px] md:h-[350px] lg:h-[450px] rounded-lg mt-5"
-            src="https://www.youtube.com/embed/57QTBgV0Yqc?autoplay=1&mute=1&controls=0&loop=1"
-            title="Navigation feature"
-            allow="accelerometer; autoplay; mute; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; loop;"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          ></iframe>
+          <HeroVideoDialog
+            className="dark:hidden block mx-auto w-11/12 h-[150px] sm:h-[250px] md:h-[350px] lg:h-[450px] rounded-lg mt-5"
+            animationStyle="from-center"
+            videoSrc="https://www.youtube.com/embed/57QTBgV0Yqc?autoplay=1&mute=1&controls=0&loop=1"
+            thumbnailSrc="/images/marketing/navigation.png"
+            thumbnailAlt="Navigation Feature"
+          />
+          <HeroVideoDialog
+            className="hidden dark:block mx-auto w-11/12 h-[150px] sm:h-[250px] md:h-[350px] lg:h-[450px] rounded-lg mt-5"
+            animationStyle="from-center"
+            videoSrc="https://www.youtube.com/embed/57QTBgV0Yqc?autoplay=1&mute=1&controls=0&loop=1"
+            thumbnailSrc="/images/marketing/navigation.png"
+            thumbnailAlt="Navigation Feature"
+          />
         </section>
 
         <section className="mt-20 flex flex-col justify-center">
