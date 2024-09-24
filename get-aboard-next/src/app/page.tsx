@@ -84,7 +84,17 @@ export default async function Home() {
     <div className="px-10">
       <main className="min-h-screen min-w-80 px-5 sm:px-10 md:px-14">
         <div className="grid grid-cols-1 gap-2 md:grid-cols-2 mb-10">
-          <div className="space-y-4">
+          <div className="space-y-4 self-center">
+            <a
+              href="https://www.producthunt.com/posts/get-aboard?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-get&#0045;aboard"
+              target="_blank"
+            >
+              <img
+                src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=471411&theme=light"
+                alt="get&#0045;aboard - Convert&#0032;your&#0032;onboarding&#0032;process&#0032;into&#0032;interactive&#0032;roadmaps | Product Hunt"
+                className="w-56"
+              />
+            </a>
             <h1 className="mt-20 mb-5 text-left text-5xl md:text-5xl lg:text-5xl font-extrabold tracking-tight">
               Convert <span className="text-primary">onboardings</span>
             </h1>
