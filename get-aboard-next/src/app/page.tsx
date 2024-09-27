@@ -18,6 +18,7 @@ import { authOptions } from "@/auth";
 import { Badge } from "@/components/ui/badge";
 import { AnimatedBeamMultipleOutputDemo } from "@/components/Landing/AnimatedBeam";
 import HeroVideoDialog from "@/components/magicui/hero-video-dialog";
+import Reviews from "@/components/Landing/Reviews";
 
 export default async function Home() {
   const [products, session] = await Promise.all([
@@ -83,7 +84,7 @@ export default async function Home() {
   return (
     <div className="px-10">
       <main className="min-h-screen min-w-80 px-5 sm:px-10 md:px-14">
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 mb-10">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
           <div className="space-y-4 self-center">
             <a
               href="https://www.producthunt.com/posts/get-aboard?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-get&#0045;aboard"
@@ -95,13 +96,13 @@ export default async function Home() {
                 className="w-56"
               />
             </a>
-            <h1 className="mt-20 mb-5 text-left text-5xl md:text-5xl lg:text-5xl font-extrabold tracking-tight">
-              Convert <span className="text-primary">onboardings</span>
+            <h1 className="mt-20 mb-5 text-left text-4xl lg:text-5xl font-bold tracking-tight">
+              Make job <span className="text-primary">onboardings</span>
             </h1>
-            <h1 className="mt-20 mb-5 text-left text-5xl md:text-5xl lg:text-5xl font-extrabold tracking-tight">
-              into <span className="text-primary">easy roadmaps</span>
+            <h1 className="mt-20 mb-5 text-left text-5xl md:text-5xl lg:text-5xl font-bold tracking-tight">
+              in <span className="text-primary">minutes</span> 🚀
             </h1>
-            <p className="font-semibold">
+            <p className="text-muted-foreground font-semibold">
               Organize all important information to new team members in one easy
               to follow roadmap: tools, tech stack, communication software,
               repositories, benefits info, career path, etc.
@@ -118,6 +119,8 @@ export default async function Home() {
             {/* <AllToolsIcon className="w-100 h-100" /> */}
           </div>
         </div>
+
+        <Reviews />
 
         <p className="text-xl text-center mt-20 mb-5 text-muted-foreground">
           Avoid unorganized instruction docs onboardings 🫠 <br />
