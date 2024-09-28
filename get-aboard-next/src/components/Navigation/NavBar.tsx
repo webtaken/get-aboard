@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import ProfileActions from "./ProfileActions";
 import BillingButton from "./BillingButton";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
-import clsx from "clsx";
 import useGetBillingInfo from "@/hooks/useGetBillingInfo";
 
 const notoSans = Noto_Sans({ subsets: ["latin"] });
@@ -29,8 +28,9 @@ export default function NavBar() {
   const { status, session, oneTimePaymentProduct, order } = useGetBillingInfo();
 
   if (
-    pathname == "/login" ||
-    pathname == "/register" ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/register") ||
+    pathname.startsWith("/demo") ||
     pathnameIsInFlowPage(pathname) ||
     pathnameIsInSharePage(pathname)
   ) {
@@ -70,7 +70,7 @@ export default function NavBar() {
         {!pathname.startsWith("/dashboard") && (
           <>
             <Link
-              href={`${process.env.NEXT_PUBLIC_LOCALHOST}/share/4/view`}
+              href="/demo"
               className="text-sm font-semibold highlighted-text"
             >
               demo

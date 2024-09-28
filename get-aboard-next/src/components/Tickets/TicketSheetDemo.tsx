@@ -1,46 +1,45 @@
+"use client";
+import { useEffect } from "react";
+import { Skeleton } from "../ui/skeleton";
+import { useFlowDemoStore } from "@/stores/FlowDemoStore";
+import { useEditorSheetStore } from "@/stores/SheetEditorStore";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import { ChangeEvent, Dispatch, SetStateAction } from "react";
-import { Input } from "../ui/input";
-import { DataTicketNodeDemo } from "../Demos/TicketNodeDemo";
-import EditorDemo from "../Editors/EditorDemo";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "../ui/dialog";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
+import AdvancedEditorDemo from "../Editors/tailwind/advanced-editor-demo";
 
-interface TicketSheetDemoProps {
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-  data: DataTicketNodeDemo;
-}
+export default function TicketEditorSheetDemo() {
+  const { open, setOpen } = useEditorSheetStore();
+  const { node, setNode } = useFlowDemoStore();
 
-export default function TicketSheetDemo({
-  open,
-  setOpen,
-  data,
-}: TicketSheetDemoProps) {
-  const { title, description } = data;
-
-  const changeTitleHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
-  };
+  useEffect(() => {
+    if (!open) {
+      setNode(null);
+    }
+  }, [open, setNode]);
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent className="w-1/2 sm:max-w-none" side="right">
-        <SheetHeader className="pr-6 pt-6">
-          <SheetTitle className="my-2">
-            <Input
-              defaultValue={title}
-              autoFocus={false}
-              onChange={changeTitleHandler}
-              className="text-4xl"
-            />
-          </SheetTitle>
-          <EditorDemo content={description} />
-        </SheetHeader>
-      </SheetContent>
-    </Sheet>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTitle>
+        <DialogDescription>Edit step description</DialogDescription>
+      </DialogTitle>
+      <DialogContent className="flex flex-col max-w-3xl h-[calc(100vh-100px)] p-10">
+        {node ? (
+          <ScrollArea className="max-h-screen">
+            <AdvancedEditorDemo nodeId={node.id} nodeData={node.data} />
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+        ) : (
+          <div className="pr-6 pt-6 space-y-4">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-72 md:h-80 lg:h-96 w-full" />
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }

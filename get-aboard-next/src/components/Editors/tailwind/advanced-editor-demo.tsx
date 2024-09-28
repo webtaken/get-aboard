@@ -19,26 +19,36 @@ import { LinkSelector } from "./selectors/link-selector";
 import { NodeSelector } from "./selectors/node-selector";
 import { MathSelector } from "./selectors/math-selector";
 import { Separator } from "@/components/ui/separator";
-
 import { handleImageDrop, handleImagePaste } from "novel/plugins";
 import GenerativeMenuSwitch from "./generative/generative-menu-switch";
 import { uploadFn } from "./image-upload";
 import { TextButtons } from "./selectors/text-buttons";
 import { slashCommand, suggestionItems } from "./slash-command";
 import { generateJSON } from "@tiptap/react";
+import { useShallow } from "zustand/react/shallow";
+import { DataTicketNodeDemo } from "@/components/Demos/TicketNodeDemo";
+import { useFlowMapDemoStore } from "@/stores/FlowMapDemoStore";
 
 const hljs = require("highlight.js");
 
 const extensions = [...defaultExtensions, slashCommand];
 
-export default function ReadingAdvancedEditor({
-  description,
+export default function AdvancedEditorDemo({
+  nodeId,
+  nodeData,
 }: {
-  description?: string;
+  nodeId: string;
+  nodeData: DataTicketNodeDemo;
 }) {
+  const { updateNodeMapData } = useFlowMapDemoStore(
+    useShallow((state) => ({
+      updateNodeMapData: state.updateNodeMapData,
+    }))
+  );
   const [initialContent, setInitialContent] = useState<null | JSONContent>(
     null
   );
+  const [saveStatus, setSaveStatus] = useState("Saved");
   const [charsCount, setCharsCount] = useState();
 
   const [openNode, setOpenNode] = useState(false);
@@ -59,24 +69,32 @@ export default function ReadingAdvancedEditor({
 
   const debouncedUpdates = useDebouncedCallback(
     async (editor: EditorInstance) => {
+      const htmlContent = editor.getHTML();
       setCharsCount(editor.storage.characterCount.words());
+      updateNodeMapData(nodeId, {
+        ...nodeData,
+        description: highlightCodeblocks(htmlContent),
+      });
+      setSaveStatus("Saved");
     },
     1000
   );
 
   useEffect(() => {
-    const content = description;
-    // const content = window.localStorage.getItem("novel-content");
+    const content = String(nodeData.description);
     if (content) {
       setInitialContent(generateJSON(content, defaultExtensions));
     } else setInitialContent(defaultEditorContent);
-  }, [description]);
+  }, [nodeData.description]);
 
   if (!initialContent) return null;
 
   return (
     <div className="relative w-full max-w-screen-lg">
       <div className="flex absolute right-5 top-5 z-10 mb-5 gap-2">
+        <div className="rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground">
+          {saveStatus}
+        </div>
         <div
           className={
             charsCount
@@ -107,6 +125,7 @@ export default function ReadingAdvancedEditor({
           }}
           onUpdate={({ editor }) => {
             debouncedUpdates(editor);
+            setSaveStatus("Unsaved");
           }}
           slotAfter={<ImageResizer />}
         >
