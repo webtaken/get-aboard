@@ -110,7 +110,7 @@ export default async function Home() {
             <Button asChild>
               <Link href="/demo" className="flex items-center gap-x-2">
                 <Zap className="w-4 h-4" />
-                Try it
+                Try get-aboard now!
               </Link>
             </Button>
           </div>
