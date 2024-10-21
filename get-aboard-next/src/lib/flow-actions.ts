@@ -3,7 +3,11 @@
 import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
-import { ActionStandardError, setCredentialsToAPI } from "@/lib/utils";
+import {
+  ActionStandardError,
+  setBasePathToAPI,
+  setCredentialsToAPI,
+} from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { unstable_noStore as noStore } from "next/cache";
 import {
@@ -223,12 +227,29 @@ export async function unshareFlow(id: number, field: "url" | "pin") {
 export async function getFlowShareOption(id: number) {
   try {
     noStore();
-    await setCredentialsToAPI();
-    const shareOption = await FlowsService.flowsGetShareOptionsRetrieve({
-      id: String(id),
-    });
+    setBasePathToAPI();
+    const shareOption =
+      await FlowsService.flowsFlowsSharedGetShareOptionsRetrieve({
+        id: String(id),
+      });
     return shareOption;
   } catch (error) {
+    return undefined;
+  }
+}
+
+export async function getSharedFlow(id: number, option: string, pin?: string) {
+  try {
+    noStore();
+    setBasePathToAPI();
+    const flow = await FlowsService.flowsFlowsSharedGetSharedFlowRetrieve({
+      id: String(id),
+      option,
+      pin: pin ? pin : undefined,
+    });
+    return flow;
+  } catch (error) {
+    console.log(error);
     return undefined;
   }
 }
@@ -248,7 +269,7 @@ export async function getFlowTemplateOption(id: number) {
 
 export async function validateFlowPin(flowId: number, pin: string) {
   try {
-    await setCredentialsToAPI();
+    setBasePathToAPI();
     const shareOption = await getFlowShareOption(flowId);
     if (!shareOption || !shareOption.pin) throw Error("No pin required");
     revalidatePath(`/share/${flowId}/view`);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ReactFlow, {
   Controls,
   Background,
@@ -19,6 +19,9 @@ import "reactflow/dist/style.css";
 import TicketNodeShared from "../Nodes/TicketNodeShared";
 import FlowControlsShared from "./Controls/FlowControlsShared";
 import FlowMenuShared from "./FlowMenuShared";
+import { getSharedFlow } from "@/lib/flow-actions";
+import { toast } from "../ui/use-toast";
+import { LoaderCircle } from "lucide-react";
 
 const nodeTypes: NodeTypes = { ticket: TicketNodeShared };
 
@@ -67,25 +70,57 @@ function Flow({ serverFlow }: { serverFlow: FlowAPI }) {
   );
 }
 
-interface FlowMapProps {
-  flow: FlowAPI;
-}
-export default function FlowMapShared({ flow }: FlowMapProps) {
+export default function FlowMapShared({
+  flowId,
+  option,
+  pin,
+}: {
+  flowId: number;
+  option: string;
+  pin?: string;
+}) {
+  const [fetching, setFetching] = useState(false);
+  const [flow, setFlow] = useState<FlowAPI | null>(null);
   const { setNodes, setEdges } = useFlowMapStore();
 
   useEffect(() => {
-    const reactFlowEdges = buildFlowEdgesMap(flow.edges_map);
-    const reactFlowNodes = buildFlowNodesMap(flow.nodes_map);
-    setNodes(reactFlowNodes);
-    setEdges(reactFlowEdges);
+    const fetchFlow = async () => {
+      setFetching(true);
+      const fetchedFlow = await getSharedFlow(flowId, option, pin);
+      setFetching(false);
+      if (!fetchedFlow) {
+        toast({ variant: "destructive", title: "Flow not found" });
+        return;
+      }
+      setFlow(fetchedFlow);
+      const reactFlowEdges = buildFlowEdgesMap(fetchedFlow.edges_map);
+      const reactFlowNodes = buildFlowNodesMap(fetchedFlow.nodes_map);
+      setNodes(reactFlowNodes);
+      setEdges(reactFlowEdges);
+    };
+    fetchFlow();
   }, []);
+
+  if (fetching) {
+    return (
+      <div className="flex items-center justify-center py-32">
+        <LoaderCircle className="animate-spin w-10 h-10" />
+      </div>
+    );
+  }
 
   return (
     <>
-      <ReactFlowProvider>
-        <Flow serverFlow={flow} />
-      </ReactFlowProvider>
-      <TicketEditorSheetShared />
+      {flow ? (
+        <>
+          <ReactFlowProvider>
+            <Flow serverFlow={flow} />
+          </ReactFlowProvider>
+          <TicketEditorSheetShared />
+        </>
+      ) : (
+        <p>Flow not found, contact support.</p>
+      )}
     </>
   );
 }

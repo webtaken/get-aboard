@@ -1,13 +1,15 @@
 from billing.constants import (
     FREE_PLAN_ENDED,
 )
+from django.shortcuts import get_object_or_404
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from drf_standardized_errors.openapi import AutoSchema
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound, ValidationError
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.mixins import RetrieveModelMixin
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
@@ -121,6 +123,18 @@ class FlowViewSet(UserMixin, viewsets.ModelViewSet):
 
         return Response({}, status=HTTP_200_OK)
 
+
+class FlowSharedViewSet(viewsets.GenericViewSet):
+    serializer_class = FlowSerializer
+    permission_classes = [AllowAny]
+    schema = AutoSchema()
+
+    def get_queryset(self):
+        return Flow.objects.all()
+
+    def get_object(self):
+        return get_object_or_404(self.get_queryset(), pk=self.kwargs["pk"])
+
     @extend_schema(
         methods=["GET"],
         responses={HTTP_200_OK: FlowShareURLSerializer},
@@ -224,3 +238,10 @@ class NodeViewSet(UserMixin, viewsets.ModelViewSet):
             many=True,
         )
         return Response(serializer.data)
+
+
+class NodeSharedViewSet(RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = Node.objects.all()
+    serializer_class = NodeSerializer
+    permission_classes = [AllowAny]
+    schema = AutoSchema()

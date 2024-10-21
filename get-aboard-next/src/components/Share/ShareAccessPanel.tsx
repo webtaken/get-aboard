@@ -1,23 +1,23 @@
 "use client";
 
-import { Flow } from "@/client";
 import { useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { validateFlowPin } from "@/lib/flow-actions";
 import { toast } from "../ui/use-toast";
+import { AccessCache } from "@/data/types";
 
 interface ShareAccessPanelProps {
-  flow: Flow;
+  flowId: number;
 }
 
-export default function ShareAccessPanel({ flow }: ShareAccessPanelProps) {
+export default function ShareAccessPanel({ flowId }: ShareAccessPanelProps) {
   const [pinValue, setPinValue] = useState("");
-  const [accessCache, setAccessCache] = useLocalStorage<{
-    flowId: number;
-    expiration: number;
-  } | null>("get-aboard-access-cache", null);
+  const [accessCache, setAccessCache] = useLocalStorage<AccessCache[]>(
+    "get-aboard-access-cache",
+    []
+  );
 
   return (
     <div className="my-20 space-y-2">
@@ -34,11 +34,21 @@ export default function ShareAccessPanel({ flow }: ShareAccessPanelProps) {
         />
         <Button
           onClick={async () => {
-            const ok = await validateFlowPin(flow.flow_id, pinValue);
+            const ok = await validateFlowPin(flowId, pinValue);
             if (ok) {
-              setAccessCache({
-                flowId: flow.flow_id,
-                expiration: Date.now() + 24 * 60 * 60 * 1000,
+              setAccessCache((prev) => {
+                const cache = prev.find((cache) => cache.flowId === flowId);
+                if (cache) {
+                  cache.expiration = Date.now() + 24 * 7 * 60 * 60 * 1000;
+                  cache.pin = pinValue;
+                } else {
+                  prev.push({
+                    flowId,
+                    expiration: Date.now() + 24 * 7 * 60 * 60 * 1000,
+                    pin: pinValue,
+                  });
+                }
+                return prev;
               });
             } else {
               toast({

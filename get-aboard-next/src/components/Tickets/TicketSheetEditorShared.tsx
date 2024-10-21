@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getNodeById } from "@/lib/node-actions";
+import { getSharedNodeById } from "@/lib/node-actions";
 import { Skeleton } from "../ui/skeleton";
 import { useFlowStore } from "@/stores/FlowStore";
 import { toast } from "../ui/use-toast";
@@ -18,7 +18,7 @@ export default function TicketEditorSheetShared({}: TicketSheetEditorSharedProps
 
   useEffect(() => {
     const fetchNodeData = async (fetchingNodeId: number) => {
-      const fetchedNode = await getNodeById(fetchingNodeId!);
+      const fetchedNode = await getSharedNodeById(fetchingNodeId!);
       if (fetchedNode) {
         setNode(fetchedNode);
       } else {

@@ -59,8 +59,8 @@ export type { FlowsCreateTitleErrorComponent } from './models/FlowsCreateTitleEr
 export type { FlowsCreateUserErrorComponent } from './models/FlowsCreateUserErrorComponent';
 export type { FlowsCreateValidationError } from './models/FlowsCreateValidationError';
 export type { FlowsDestroyErrorResponse400 } from './models/FlowsDestroyErrorResponse400';
-export type { FlowsGetSharedFlowRetrieveErrorResponse400 } from './models/FlowsGetSharedFlowRetrieveErrorResponse400';
-export type { FlowsGetShareOptionsRetrieveErrorResponse400 } from './models/FlowsGetShareOptionsRetrieveErrorResponse400';
+export type { FlowsFlowsSharedGetSharedFlowRetrieveErrorResponse400 } from './models/FlowsFlowsSharedGetSharedFlowRetrieveErrorResponse400';
+export type { FlowsFlowsSharedGetShareOptionsRetrieveErrorResponse400 } from './models/FlowsFlowsSharedGetShareOptionsRetrieveErrorResponse400';
 export type { FlowShareURL } from './models/FlowShareURL';
 export type { FlowsListErrorResponse400 } from './models/FlowsListErrorResponse400';
 export type { FlowsNodesCreateDescriptionErrorComponent } from './models/FlowsNodesCreateDescriptionErrorComponent';
@@ -80,6 +80,7 @@ export type { FlowsNodesPartialUpdateNonFieldErrorsErrorComponent } from './mode
 export type { FlowsNodesPartialUpdateTitleErrorComponent } from './models/FlowsNodesPartialUpdateTitleErrorComponent';
 export type { FlowsNodesPartialUpdateValidationError } from './models/FlowsNodesPartialUpdateValidationError';
 export type { FlowsNodesRetrieveErrorResponse400 } from './models/FlowsNodesRetrieveErrorResponse400';
+export type { FlowsNodesSharedRetrieveErrorResponse400 } from './models/FlowsNodesSharedRetrieveErrorResponse400';
 export type { FlowsNodesUpdateDescriptionErrorComponent } from './models/FlowsNodesUpdateDescriptionErrorComponent';
 export type { FlowsNodesUpdateError } from './models/FlowsNodesUpdateError';
 export type { FlowsNodesUpdateErrorResponse400 } from './models/FlowsNodesUpdateErrorResponse400';

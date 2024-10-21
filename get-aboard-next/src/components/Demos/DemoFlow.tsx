@@ -56,7 +56,6 @@ function Flow({ nodeId }: DemoFlowProps) {
   );
 
   useEffect(() => {
-    console.log("update");
     window.localStorage.setItem(
       "flow-demo",
       JSON.stringify({ nodes: debouncedNodes, edges: debouncedEdges })

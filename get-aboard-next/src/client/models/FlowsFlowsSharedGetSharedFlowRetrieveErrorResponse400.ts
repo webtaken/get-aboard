@@ -5,5 +5,5 @@
 
 import type { ParseErrorResponse } from './ParseErrorResponse';
 
-export type FlowsGetSharedFlowRetrieveErrorResponse400 = ParseErrorResponse;
+export type FlowsFlowsSharedGetSharedFlowRetrieveErrorResponse400 = ParseErrorResponse;
 

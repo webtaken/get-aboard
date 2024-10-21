@@ -126,56 +126,6 @@ export class FlowsService {
      * @returns FlowShareURL
      * @throws ApiError
      */
-    public static flowsGetShareOptionsRetrieve({
-        id,
-    }: {
-        id: string,
-    }): CancelablePromise<FlowShareURL> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/flows/{id}/get_share_options/',
-            path: {
-                'id': id,
-            },
-        });
-    }
-
-    /**
-     * @returns Flow
-     * @throws ApiError
-     */
-    public static flowsGetSharedFlowRetrieve({
-        id,
-        option,
-        pin,
-    }: {
-        id: string,
-        /**
-         * Sends the option to share only allowed: "view", "comment" or "edit"
-         */
-        option: string,
-        /**
-         * The access pin in case share options will need it
-         */
-        pin?: string,
-    }): CancelablePromise<Flow> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/flows/{id}/get_shared_flow/',
-            path: {
-                'id': id,
-            },
-            query: {
-                'option': option,
-                'pin': pin,
-            },
-        });
-    }
-
-    /**
-     * @returns FlowShareURL
-     * @throws ApiError
-     */
     public static flowsShareFlowPartialUpdate({
         id,
         option,
@@ -233,6 +183,56 @@ export class FlowsService {
     }
 
     /**
+     * @returns FlowShareURL
+     * @throws ApiError
+     */
+    public static flowsFlowsSharedGetShareOptionsRetrieve({
+        id,
+    }: {
+        id: string,
+    }): CancelablePromise<FlowShareURL> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/flows/flows-shared/{id}/get_share_options/',
+            path: {
+                'id': id,
+            },
+        });
+    }
+
+    /**
+     * @returns Flow
+     * @throws ApiError
+     */
+    public static flowsFlowsSharedGetSharedFlowRetrieve({
+        id,
+        option,
+        pin,
+    }: {
+        id: string,
+        /**
+         * Sends the option to share only allowed: "view", "comment" or "edit"
+         */
+        option: string,
+        /**
+         * The access pin in case share options will need it
+         */
+        pin?: string,
+    }): CancelablePromise<Flow> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/flows/flows-shared/{id}/get_shared_flow/',
+            path: {
+                'id': id,
+            },
+            query: {
+                'option': option,
+                'pin': pin,
+            },
+        });
+    }
+
+    /**
      * @returns Node
      * @throws ApiError
      */
@@ -273,6 +273,27 @@ export class FlowsService {
             url: '/flows/nodes/',
             body: requestBody,
             mediaType: 'application/json',
+        });
+    }
+
+    /**
+     * @returns Node
+     * @throws ApiError
+     */
+    public static flowsNodesSharedRetrieve({
+        nodeId,
+    }: {
+        /**
+         * A unique integer value identifying this node.
+         */
+        nodeId: number,
+    }): CancelablePromise<Node> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/flows/nodes-shared/{node_id}/',
+            path: {
+                'node_id': nodeId,
+            },
         });
     }
 

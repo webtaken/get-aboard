@@ -6,7 +6,11 @@ import {
   PatchedNode,
 } from "@/client";
 import { Node } from "@/client";
-import { ActionStandardError, setCredentialsToAPI } from "./utils";
+import {
+  ActionStandardError,
+  setBasePathToAPI,
+  setCredentialsToAPI,
+} from "./utils";
 
 export async function getFlowNodes(id: number) {
   try {
@@ -22,6 +26,16 @@ export async function getNodeById(id: number) {
   try {
     await setCredentialsToAPI();
     const node = await FlowsService.flowsNodesRetrieve({ nodeId: id });
+    return node;
+  } catch (error) {
+    return undefined;
+  }
+}
+
+export async function getSharedNodeById(id: number) {
+  try {
+    setBasePathToAPI();
+    const node = await FlowsService.flowsNodesSharedRetrieve({ nodeId: id });
     return node;
   } catch (error) {
     return undefined;

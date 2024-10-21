@@ -16,6 +16,7 @@ import { updateFlowByForm } from "@/lib/flow-actions";
 import { Button } from "../ui/button";
 import {
   LayoutDashboardIcon,
+  LogInIcon,
   LogOut,
   Menu,
   MoonIcon,
@@ -81,28 +82,41 @@ export default function FlowMenuShared({ flow }: FlowMenuSharedProps) {
         <p className="text-sm text-muted-foreground">{flow.description}</p>
         <Separator className="my-2" />
         <div className="flex flex-col">
-          <Button variant="ghost" className="justify-start text-sm">
-            <Link href="/dashboard" className="flex items-center gap-x-2">
-              <LayoutDashboardIcon className="w-3.5 h-3.5" /> Go to dashboard
-            </Link>
-          </Button>
-          <Button
-            variant="ghost"
-            className="flex items-center gap-x-2 justify-start text-sm"
-            onClick={() => {
-              async function logout() {
-                const data = await signOut({
-                  redirect: false,
-                  callbackUrl: "/",
-                });
-                router.push(data.url);
-              }
-              logout();
-            }}
-          >
-            <LogOut className="w-3.5 h-3.5" /> Logout
-          </Button>
-          <Separator className="my-2" />
+          {session ? (
+            <>
+              <Button variant="ghost" className="justify-start text-sm">
+                <Link href="/dashboard" className="flex items-center gap-x-2">
+                  <LayoutDashboardIcon className="w-3.5 h-3.5" /> Go to
+                  dashboard
+                </Link>
+              </Button>
+              <Button
+                variant="ghost"
+                className="flex items-center gap-x-2 justify-start text-sm"
+                onClick={() => {
+                  async function logout() {
+                    const data = await signOut({
+                      redirect: false,
+                      callbackUrl: "/",
+                    });
+                    router.push(data.url);
+                  }
+                  logout();
+                }}
+              >
+                <LogOut className="w-3.5 h-3.5" /> Logout
+              </Button>
+              <Separator className="my-2" />
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" className="justify-start text-sm">
+                <Link href="/login" className="flex items-center gap-x-2">
+                  <LogInIcon className="w-3.5 h-3.5" /> Login
+                </Link>
+              </Button>
+            </>
+          )}
           <div className="flex justify-between items-center text-sm">
             <span className="font-medium">Theme</span>
             <div className="flex items-center border-2 rounded-md">
